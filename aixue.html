@@ -262,6 +262,11 @@
   }
   .bar-result.correct { color: #34C759; }
   .bar-result.wrong { color: #FF3B30; }
+  .level-badge {
+    display: inline-block; padding: 2px 10px; border-radius: 8px;
+    font-size: 12px; font-weight: 600;
+    background: var(--primary-light); color: var(--primary);
+  }
   /* Adjust main content for bottom bar */
   body.has-bottom-bar #panel-exercise .exercise-list {
     padding-bottom: 33vh;
@@ -518,11 +523,23 @@ Have you ever eaten Japanese food?
         <option value="sentence-writing">仿写句子 (Sentence writing)</option>
         <option value="rewrite">句子改写 (Sentence rewriting)</option>
       </select>
-      <label for="ex-grammar" style="margin-top:14px;">语法 / 知识点</label>
-      <input type="text" id="ex-grammar" placeholder="例如：现在完成时、被动语态、条件句..." value="现在完成时 (Present Perfect)">
+      <label for="ex-grammar" style="margin-top:14px;">语法 / 知识点（可选）</label>
+      <input type="text" id="ex-grammar" placeholder="留空则根据考试级别自动出题">
       <label for="ex-requirement" style="margin-top:14px;">具体要求（可选）</label>
       <textarea id="ex-requirement" placeholder="比如：用 already/yet 各造2句、用 for/since 填空等..." rows="3"></textarea>
-      <label for="ex-count" style="margin-top:14px;">出题数量</label>
+      <label for="ex-level" style="margin-top:14px;">🎯 考试级别</label>
+      <select id="ex-level">
+        <option value="YLE">🟢 YLE (Starters/Movers/Flyers)</option>
+        <option value="KET">🔵 KET (A2 Key)</option>
+        <option value="PET">🟡 PET (B1 Preliminary)</option>
+        <option value="FCE" selected>🟠 FCE (B2 First)</option>
+        <option value="CAE">🔴 CAE (C1 Advanced)</option>
+        <option value="CPE">🟣 CPE (C2 Proficiency)</option>
+        <option value="IELTS">📘 雅思 IELTS</option>
+        <option value="TOEFL">📙 托福 TOEFL</option>
+      </select>
+      <div style="margin-top:14px;">
+        <label>出题数量</label>
       <select id="ex-count">
         <option value="3">3 题</option>
         <option value="5" selected>5 题</option>
@@ -535,7 +552,7 @@ Have you ever eaten Japanese food?
       </div>
     </div>
     <div class="card" id="exercise-result">
-      <div class="card-title">📝 练习题</div>
+      <div class="card-title" id="ex-result-title">📝 练习题 <span id="ex-level-badge" class="level-badge" style="display:none;"></span></div>
       <div id="exercise-output">
         <div class="status-msg"><span class="emoji">👆</span>设置好之后点击「生成题目」</div>
       </div>
@@ -889,15 +906,190 @@ function showKnowledgeFallback(topic, content) {
   showKnowledgeResult(cards.join('\n'));
 }
 
+// ========== Question Banks by Exam Level ==========
+const questionBanks = {
+  YLE: {
+    fill: [
+      { q: 'This __________ a cat.', a: 'is' },
+      { q: 'I __________ seven years old.', a: 'am' },
+      { q: 'She __________ a red apple.', a: 'has/has got/have' },
+      { q: 'The dog __________ very big.', a: 'is' },
+      { q: 'We __________ to school every day.', a: 'go' },
+      { q: 'He can __________ (swim) very fast.', a: 'swim' },
+      { q: 'There __________ two birds in the tree.', a: 'are' },
+      { q: 'I __________ (like) ice cream.', a: 'like' },
+      { q: 'She __________ (play) with her toys now.', a: 'is playing' },
+      { q: 'The book is __________ the table.', a: 'on' },
+      { q: 'They are __________ (go) to the park.', a: 'going' },
+      { q: 'My favorite animal __________ a panda.', a: 'is' },
+      { q: 'I __________ (have) two brothers.', a: 'have' },
+      { q: 'It is raining. Take your __________.', a: 'umbrella' },
+      { q: 'The cat is __________ (sleep) on the chair.', a: 'sleeping' },
+    ],
+    writing: [{ q: 'Look at the picture. Write three sentences about your bedroom.<br>Use: there is / there are / my', a: '(Open-ended) Example: There is a bed. There are two books. My desk is blue.' }],
+    rewrite: [{ q: 'The cat is small.<br>→ The cat __________ not big.', a: 'is' }, { q: 'I have a red pen. → This __________ my red pen.', a: 'is' }],
+  },
+  KET: {
+    fill: [
+      { q: 'I __________ (go) to the cinema yesterday.', a: 'went' },
+      { q: 'She __________ (not/like) coffee.', a: 'doesn\'t like' },
+      { q: '__________ you finish your homework?', a: 'Did' },
+      { q: 'We are going __________ (visit) the museum.', a: 'to visit' },
+      { q: 'He __________ (be) late for school every day.', a: 'is' },
+      { q: 'There __________ (be) some milk in the fridge.', a: 'is' },
+      { q: 'I can __________ (speak) English and Chinese.', a: 'speak' },
+      { q: 'She __________ (buy) a new dress last weekend.', a: 'bought' },
+      { q: 'How much __________ these shoes cost?', a: 'do' },
+      { q: 'They __________ (not/go) to the party last night.', a: 'didn\'t go' },
+      { q: 'My brother is taller __________ me.', a: 'than' },
+      { q: 'I __________ (never/eat) Italian food before.', a: 'have never eaten/haven\'t eaten' },
+      { q: 'You must __________ (be) quiet in the library.', a: 'be' },
+      { q: 'The restaurant is __________ the left of the bank.', a: 'on' },
+      { q: 'We __________ (live) in this city since 2018.', a: 'have lived/have been living' },
+    ],
+    writing: [{ q: 'Write about your daily routine (3-4 sentences).<br>Use: always / usually / sometimes / never', a: '(Open-ended) Example: I usually get up at 7. I always have breakfast. I sometimes walk to school.' }],
+    rewrite: [{ q: 'I walk to school every day. → I __________ to school on foot every day.', a: 'go' }, { q: 'She is a good singer. → She can __________ very well.', a: 'sing' }],
+  },
+  PET: {
+    fill: [
+      { q: 'If it __________ (rain) tomorrow, we will stay home.', a: 'rains' },
+      { q: 'She __________ (study) English for three years.', a: 'has been studying/has studied' },
+      { q: 'The book __________ (write) by J.K. Rowling.', a: 'was written' },
+      { q: 'I enjoy __________ (play) football at weekends.', a: 'playing' },
+      { q: 'He __________ (just/finish) his homework.', a: 'has just finished' },
+      { q: 'This is the __________ (good) restaurant in town.', a: 'best' },
+      { q: 'They __________ (not/see) each other since 2020.', a: 'haven\'t seen' },
+      { q: 'You should __________ (apologize) to her.', a: 'apologize' },
+      { q: 'The train __________ (leave) at 6 PM every day.', a: 'leaves' },
+      { q: 'I don\'t know where she __________ (go).', a: 'went/has gone' },
+      { q: 'We __________ (have) dinner when the phone rang.', a: 'were having' },
+      { q: 'She told me __________ (not/worry) about the exam.', a: 'not to worry' },
+      { q: 'The more you practice, the __________ (good) you get.', a: 'better' },
+      { q: 'He is __________ (tall) than his brother.', a: 'taller' },
+      { q: 'I wish I __________ (can) fly.', a: 'could' },
+    ],
+    writing: [{ q: 'Describe a memorable holiday you have had (4-5 sentences).<br>Use: past tenses / first / then / finally', a: '(Open-ended) Example: Last summer I went to Paris. First, I visited the Eiffel Tower. Then I tried French food. Finally, I bought souvenirs.' }],
+    rewrite: [{ q: 'I started learning English two years ago. I still learn now.<br>→ I __________ English for two years.', a: 'have been learning' }, { q: 'Someone stole my bike. → My bike __________.', a: 'was stolen' }],
+  },
+  FCE: {
+    fill: [
+      { q: 'I __________ (visit) London three times.', a: 'have visited' },
+      { q: 'She __________ (already/finish) her homework.', a: 'has already finished' },
+      { q: 'They __________ (not/be) to the new museum yet.', a: "haven't been" },
+      { q: '__________ you ever __________ (eat) Japanese food?', a: 'Have, eaten' },
+      { q: 'He __________ (just/arrive) from Shanghai.', a: 'has just arrived' },
+      { q: 'We __________ (know) each other for ten years.', a: 'have known' },
+      { q: 'The house __________ (build) in 1920.', a: 'was built' },
+      { q: 'If I __________ (be) you, I would accept the offer.', a: 'were' },
+      { q: 'She regrets not __________ (study) harder.', a: 'having studied/studying' },
+      { q: 'The teacher demanded that we __________ (be) on time.', a: 'be' },
+      { q: 'Not until I got home __________ I realize my mistake.', a: 'did' },
+      { q: '__________ (give) more time, I could do it better.', a: 'Given' },
+      { q: 'I prefer __________ (walk) to taking the bus.', a: 'walking' },
+      { q: 'Hardly __________ we left when it started raining.', a: 'had' },
+      { q: 'She is used to __________ (get) up early.', a: 'getting' },
+    ],
+    writing: [{ q: 'Write an essay discussing the advantages and disadvantages of social media (120-150 words).<br>Use: on the one hand / however / in addition / on balance', a: '(Open-ended) Use linking words, give examples, state your opinion.' }],
+    rewrite: [{ q: 'I haven\'t seen such a beautiful sunset before.<br>→ It\'s the first time I __________ such a beautiful sunset.', a: 'have seen' }, { q: 'People say that exercise is good for health.<br>→ Exercise __________ good for health.', a: 'is said to be' }],
+  },
+  CAE: {
+    fill: [
+      { q: 'The lecture was __________ (interest) but I was __________ (tire).', a: 'interesting, tired' },
+      { q: 'No sooner __________ he arrived than the meeting began.', a: 'had' },
+      { q: 'She __________ (study) for hours before the exam started.', a: 'had been studying' },
+      { q: 'Under no circumstances __________ we allow smoking here.', a: 'should/may/can' },
+      { q: 'The company__________ (found) in 1995 by two engineers.', a: 'was founded' },
+      { q: 'He is believed __________ (work) abroad at the moment.', a: 'to be working' },
+      { q: '__________ (consider) the circumstances, she did very well.', a: 'Considering' },
+      { q: 'I\'d rather you __________ (not/tell) anyone about this.', a: 'didn\'t tell' },
+      { q: 'The artist__________ (influence) by Japanese woodblock prints.', a: 'was influenced' },
+      { q: 'Such __________ the demand that we had to print more copies.', a: 'was' },
+      { q: 'The findings__________ (relate) to the earlier study.', a: 'relate/are related' },
+      { q: 'She has a tendency __________ (exaggerate) things.', a: 'to exaggerate' },
+      { q: 'Were it not for her help, I __________ (fail).', a: 'would have failed' },
+      { q: '__________ (compare) to last year, profits have doubled.', a: 'Compared' },
+      { q: 'The report__________ (make) public next week.', a: 'will be made' },
+    ],
+    writing: [{ q: 'Write a formal letter to the editor expressing your views on climate change policies.<br>Use: advanced vocabulary / formal register / linkers', a: '(Open-ended) Use: I am writing with regard to... / It is widely acknowledged that... / Furthermore... / In conclusion...' }],
+    rewrite: [{ q: 'People think the CEO was involved in the scandal.<br>→ The CEO __________ in the scandal.', a: 'is thought to have been involved' }, { q: 'It was such a complex problem that nobody could solve it.<br>→ So complex __________ that nobody could solve it.', a: 'was the problem' }],
+  },
+  CPE: {
+    fill: [
+      { q: '__________ such the devastation that the town was never rebuilt.', a: 'Was' },
+      { q: 'She is a woman __________ integrity is beyond question.', a: 'whose' },
+      { q: 'Not only __________ he finish the project, but he also won the award.', a: 'did' },
+      { q: 'The implications of the discovery are far-__________.', a: 'reaching' },
+      { q: 'His argument was __________ (controvert) and sparked debate.', a: 'controversial' },
+      { q: 'The government__________ (implement) the new policy gradually.', a: 'is implementing/will implement' },
+      { q: '__________ (give) that it was his first attempt, he performed admirably.', a: 'Given' },
+      { q: 'Had I known earlier, I __________ (act) differently.', a: 'would have acted' },
+      { q: 'The phenomenon is __________ (explain) in terms of quantum physics.', a: 'explained/best explained' },
+      { q: 'She has an uncanny knack for __________ (get) to the heart of the matter.', a: 'getting' },
+      { q: 'It is a truth universally __________ (acknowledge)...', a: 'acknowledged' },
+      { q: 'The author__________ (criticize) for his portrayal of the era.', a: 'was criticized/has been criticized' },
+      { q: '__________ (try) as he might, he could not convince the committee.', a: 'Try' },
+      { q: 'Lest there be any misunderstanding, I __________ (state) my position clearly.', a: 'state/would like to state' },
+      { q: 'The evidence__________ (point) to a different conclusion entirely.', a: 'points' },
+    ],
+    writing: [{ q: 'Write a critical review of a recent film or book you have encountered, discussing its themes, techniques, and overall impact.<br>Use: sophisticated vocabulary / complex structures / academic register', a: '(Open-ended) Demonstrate near-native proficiency, use nuanced expressions, hedging, and complex grammatical structures.' }],
+    rewrite: [{ q: 'It is widely accepted that the situation is unsustainable.<br>→ The situation is __________ unsustainable.', a: 'widely accepted/accepted as/to be' }, { q: 'Nobody could have predicted the outcome of the election.<br>→ The outcome of the election __________.', a: 'could not have been predicted' }],
+  },
+  IELTS: {
+    fill: [
+      { q: '__________ (global) has led to increased cultural exchange.', a: 'Globalisation/Globalization' },
+      { q: 'The graph __________ (illustrate) the changes in population over time.', a: 'illustrates/shows' },
+      { q: '__________ (urban) is a growing trend in developing countries.', a: 'Urbanisation/Urbanization' },
+      { q: 'There are several __________ (advantage) to renewable energy.', a: 'advantages/benefits' },
+      { q: 'The __________ (consume) of fossil fuels must be reduced.', a: 'consumption' },
+      { q: 'One possible __________ (solve) is to invest in public transport.', a: 'solution' },
+      { q: 'This has a significant __________ (affect) on the environment.', a: 'effect/impact' },
+      { q: 'The number of students __________ (increase) steadily since 2000.', a: 'has increased/has been increasing' },
+      { q: 'Many people believe that technology __________ (improve) our quality of life.', a: 'improves/has improved' },
+      { q: '__________ (compare) to last year, unemployment has dropped.', a: 'Compared' },
+      { q: 'It is __________ (argue) that climate change is the biggest threat.', a: 'argued' },
+      { q: 'The __________ (major) of respondents agreed with the proposal.', a: 'majority' },
+      { q: 'There has been a__________ (grow) demand for online education.', a: 'growing/increase in' },
+      { q: '__________ (economy) development often comes at an environmental cost.', a: 'Economic' },
+      { q: 'This essay will __________ (discussion) the causes and effects.', a: 'discuss' },
+    ],
+    writing: [{ q: 'Write about the advantages and disadvantages of online learning for university students (250 words).<br>Use: academic vocabulary / topic sentences / linking words', a: '(IELTS Task 2) Structure: Introduction → Body 1 (advantages) → Body 2 (disadvantages) → Conclusion' }],
+    rewrite: [{ q: 'People say that regular exercise is important for health.<br>→ It __________ that regular exercise is important for health.', a: 'is said' }, { q: 'The government should invest more in public transport.<br>→ More investment in public transport __________ by the government.', a: 'should be made' }],
+  },
+  TOEFL: {
+    fill: [
+      { q: 'According to the passage, the main cause of __________ (global) is...', a: 'global warming' },
+      { q: 'The professor __________ (emphasis) the importance of critical thinking.', a: 'emphasized' },
+      { q: 'In contrast to the reading, the lecture __________ (suggest)...', a: 'suggests' },
+      { q: 'The author provides several __________ (example) to support his claim.', a: 'examples' },
+      { q: '__________ (base) on the evidence, we can conclude that...', a: 'Based' },
+      { q: 'The study __________ (conduct) over a period of five years.', a: 'was conducted' },
+      { q: 'One of the __________ (characterize) of modern art is...', a: 'characteristics' },
+      { q: 'The __________ (signify) of this discovery cannot be overstated.', a: 'significance' },
+      { q: 'Research __________ (indicate) that students benefit from group work.', a: 'indicates' },
+      { q: 'The lecture __________ (challenge) the view presented in the reading.', a: 'challenges' },
+      { q: '__________ (addition) to the main point, the author mentions...', a: 'In addition' },
+      { q: 'The results of the experiment were __________ (significance).', a: 'significant' },
+      { q: 'The professor uses the example of __________ (illustrate) her point.', a: 'to illustrate' },
+      { q: 'There is a __________ (relate) between sleep and academic performance.', a: 'relationship/correlation' },
+      { q: 'The passage __________ (primary) focuses on the economic impacts.', a: 'primarily' },
+    ],
+    writing: [{ q: 'Do you agree or disagree with the following statement?<br>"It is more important for students to study history and literature than to study science and technology."<br>Use specific reasons and examples.', a: '(TOEFL Independent Writing) State your opinion, give 2-3 supporting reasons with examples, address counterargument, conclude.' }],
+    rewrite: [{ q: 'The lecture explains the process of photosynthesis.<br>→ The process of photosynthesis __________ by the lecture.', a: 'is explained' }, { q: 'Some people believe that art is essential, but others disagree.<br>→ While some people believe art is essential, __________.', a: 'others disagree' }],
+  },
+};
+
 // ========== Generate Exercise ==========
-async function generateExercise() {
+function generateExercise() {
   const type = document.getElementById('ex-type').value;
-  const grammar = document.getElementById('ex-grammar').value.trim();
+  const level = document.getElementById('ex-level').value;
   const count = parseInt(document.getElementById('ex-count').value);
-  if (!grammar) {
-    document.getElementById('exercise-output').innerHTML = '<div class="status-msg"><span class="emoji">⚠️</span>请输入语法/知识点名称</div>';
-    return;
-  }
+  
+  // Show level badge
+  const badge = document.getElementById('ex-level-badge');
+  const levelNames = { YLE:'YLE', KET:'KET', PET:'PET', FCE:'FCE', CAE:'CAE', CPE:'CPE', IELTS:'IELTS', TOEFL:'TOEFL' };
+  badge.textContent = '🎯 ' + levelNames[level];
+  badge.style.display = 'inline-block';
+  
   document.getElementById('exercise-output').innerHTML = '<div class="status-msg"><span class="emoji">⏳</span>正在出题中...</div>';
   setTimeout(() => showExerciseFallback(type, count), 300);
 }
@@ -914,40 +1106,25 @@ let isListening = false;
 function showExerciseFallback(type, count) {
   const isTeacher = currentUser && currentUser.role === 'teacher';
   const isStudent = currentUser && currentUser.role === 'student';
-  const pp = [
-    { q: 'I __________ (visit) London three times.', a: 'have visited' },
-    { q: 'She __________ (already/finish) her homework.', a: 'has already finished' },
-    { q: 'They __________ (not/be) to the new museum yet.', a: "haven't been" },
-    { q: '__________ you ever __________ (eat) Japanese food?', a: 'Have, eaten' },
-    { q: 'He __________ (just/arrive) from Shanghai.', a: 'has just arrived' },
-    { q: 'We __________ (know) each other for ten years.', a: 'have known' },
-    { q: 'I __________ (never/see) such a beautiful sunset.', a: 'have never seen' },
-    { q: '__________ she __________ (find) her keys yet?', a: 'Has, found' },
-    { q: 'How long __________ you __________ (have) this phone?', a: 'have, had' },
-    { q: 'My parents __________ (live) in this city since 2010.', a: 'have lived' },
-  ];
-  const writing = [
-    { q: 'Example: I have been to Japan twice.<br><br>Write about:<br>1. A country you have visited<br>2. Something you have already done today<br>3. Something you have never done but want to try', a: '(Open-ended) e.g. I have visited France. / I have already had breakfast.' },
-  ];
-  const rewrite = [
-    { q: 'I started learning English two years ago. I still learn English now.<br>→ I __________ English __________ two years.', a: 'have been learning, for' },
-    { q: 'She bought the house last year. She still lives there.<br>→ She __________ in the house __________ last year.', a: 'has lived, since' },
-    { q: 'This is the first time I have seen such a whale.<br>→ I __________ never __________ such a whale before.', a: 'have, seen' },
-  ];
-  let pool = type === 'fill-blank' ? pp : type === 'sentence-writing' ? writing : rewrite;
+  const level = document.getElementById('ex-level').value;
+  
+  // Get questions for selected level and type
+  const bank = questionBanks[level];
+  const typeKey = type === 'fill-blank' ? 'fill' : type === 'sentence-writing' ? 'writing' : 'rewrite';
+  let pool = bank[typeKey] || questionBanks.FCE.fill;
+  
   const label = type === 'fill-blank' ? '填空题' : type === 'sentence-writing' ? '仿写句子' : '句子改写';
+  
   if (isTeacher) {
-    // Teacher: show all questions with answer toggle
     let html = '';
     for (let i = 0; i < count; i++) {
       const p = pool[i % pool.length];
-      html += `<div class="ex-card fade-up"><div><span class="ex-num">${i+1}</span> <strong>${label}</strong></div><div class="ex-question">${p.q.replace(/_{2,}/g,'<span class="blank">______</span>')}</div><button class="show-answer-btn" onclick="toggleAnswer(this)">👀 查看答案</button><div class="ex-answer">${p.a}</div></div>`;
+      html += `<div class="ex-card fade-up"><div><span class="ex-num">\${i+1}</span> <strong>\${label}</strong></div><div class="ex-question">\${p.q.replace(/_/g,'<span class="blank">______</span>')}</div><button class="show-answer-btn" onclick="toggleAnswer(this)">👀 查看答案</button><div class="ex-answer">\${p.a}</div></div>`;
     }
     showExerciseResult(html);
     document.getElementById('ex-bottom-bar').classList.remove('show');
     document.body.classList.remove('has-bottom-bar');
   } else {
-    // Student: store questions, show one at a time with bottom bar
     exState.questions = [];
     for (let i = 0; i < count; i++) {
       exState.questions.push(pool[i % pool.length]);
@@ -966,20 +1143,16 @@ function showStudentQuestion(idx) {
   const count = exState.questions.length;
   const label = exState.type === 'fill-blank' ? '填空题' : exState.type === 'sentence-writing' ? '仿写句子' : '句子改写';
   
-  // Show question in the output area
-  const html = `<div class="student-q-wrap"><div class="ex-card fade-up"><div><span class="ex-num">${idx+1}</span> <strong>${label}</strong></div><div class="ex-question">${q.q.replace(/_{2,}/g,'<span class="blank">______</span>')}</div><div class="ex-answer show">${q.a}</div></div></div>`;
+  const html = `<div class="student-q-wrap"><div class="ex-card fade-up"><div><span class="ex-num">\${idx+1}</span> <strong>\${label}</strong></div><div class="ex-question">\${q.q.replace(/_/g,'<span class="blank">______</span>')}</div><div class="ex-answer show">\${q.a}</div></div></div>`;
   showExerciseResult(html);
   
-  // Update bottom bar
-  document.getElementById('bar-counter').textContent = `第 ${idx+1}/${count} 题`;
+  document.getElementById('bar-counter').textContent = `第 \${idx+1}/\${count} 题`;
   document.getElementById('bar-answer').value = '';
   document.getElementById('bar-answer').className = '';
   document.getElementById('bar-result').textContent = '';
   document.getElementById('bar-result').className = 'bar-result';
   document.getElementById('bar-prev').disabled = idx === 0;
   document.getElementById('bar-next').disabled = idx === count - 1;
-  
-  // Scroll to top of exercises
   document.getElementById('exercise-output').scrollIntoView({ behavior: 'smooth' });
 }
 
@@ -997,22 +1170,18 @@ function checkBarAnswer() {
   if (!q) return;
   
   const userAns = input.value.trim().toLowerCase();
-  if (!userAns) {
-    input.style.borderColor = '#FF3B30';
-    input.focus();
-    return;
-  }
+  if (!userAns) { input.focus(); return; }
   
   const acceptable = q.a.toLowerCase().split('/').map(s => s.trim());
   const matched = acceptable.some(a => userAns === a || userAns.includes(a) || a.includes(userAns));
   
   if (matched) {
     input.className = 'correct';
-    result.textContent = '✅ 回答正确！太棒了！';
+    result.textContent = '✅ 回答正确！';
     result.className = 'bar-result correct';
   } else {
     input.className = 'wrong';
-    result.textContent = `❌ 正确答案：${q.a}`;
+    result.textContent = `❌ 正确答案：\${q.a}`;
     result.className = 'bar-result wrong';
   }
 }
