@@ -342,7 +342,7 @@
       <div class="quick-login">
         <button class="quick-login-btn" onclick="quickLogin('teacher@aixue.com')">👩‍🏫 老师</button>
         <button class="quick-login-btn" onclick="quickLogin('student@aixue.com')">👦 学生</button>
-        <button class="quick-login-btn" onclick="quickLogin('demo@aixue.com')">🧪 试用</button>
+        <button class="quick-login-btn" onclick="quickLogin('parent@aixue.com')">👨‍👩‍👧 家长</button>
       </div>
       <div class="auth-switch">
         还没有账号？<a onclick="showAuth('register')">立即注册 →</a>
@@ -528,7 +528,15 @@ Have you ever eaten Japanese food?
       <input type="text" id="ex-grammar" placeholder="留空则根据考试级别自动出题">
       <label for="ex-requirement" style="margin-top:14px;">具体要求（可选）</label>
       <textarea id="ex-requirement" placeholder="比如：用 already/yet 各造2句、用 for/since 填空等..." rows="3"></textarea>
-      <label for="ex-level" style="margin-top:14px;">🎯 考试级别</label>
+      <label for="ex-difficulty" style="margin-top:14px;">📊 难度</label>
+      <select id="ex-difficulty" onchange="onDifficultyChange()">
+        <option value="easy">🟢 简单</option>
+        <option value="basic" selected>🟡 基础</option>
+        <option value="intermediate">🟠 进阶</option>
+        <option value="hard">🔴 较难</option>
+        <option value="master">🟣 大师</option>
+      </select>
+      <label for="ex-level" style="margin-top:14px;">🎯 考试级别（按难度自动选）</label>
       <select id="ex-level">
         <option value="YLE">🟢 YLE (Starters/Movers/Flyers)</option>
         <option value="KET">🔵 KET (A2 Key)</option>
@@ -1205,12 +1213,35 @@ function generateExercise() {
   
   // Show level badge
   const badge = document.getElementById('ex-level-badge');
+  const diffNames = { easy:'🟢简单', basic:'🟡基础', intermediate:'🟠进阶', hard:'🔴较难', master:'🟣大师' };
+  const diff = document.getElementById('ex-difficulty').value;
   const levelNames = { YLE:'YLE', KET:'KET', PET:'PET', FCE:'FCE', CAE:'CAE', CPE:'CPE', IELTS:'IELTS', TOEFL:'TOEFL' };
-  badge.textContent = '🎯 ' + levelNames[level];
+  badge.textContent = (diffNames[diff]||'') + ' · ' + (levelNames[level]||'');
   badge.style.display = 'inline-block';
   
   document.getElementById('exercise-output').innerHTML = '<div class="status-msg"><span class="emoji">⏳</span>正在出题中...</div>';
   setTimeout(() => showExerciseFallback(type, count), 300);
+}
+
+// ========== Difficulty → Level mapping ==========
+const diffLevelMap = {
+  easy: 'YLE',
+  basic: 'PET',
+  intermediate: 'FCE',
+  hard: 'CAE',
+  master: 'CPE',
+};
+
+function onDifficultyChange() {
+  const diff = document.getElementById('ex-difficulty').value;
+  const level = diffLevelMap[diff] || 'FCE';
+  document.getElementById('ex-level').value = level;
+  // Update the badge label too if exercises are generated
+  const badge = document.getElementById('ex-level-badge');
+  if (badge.style.display !== 'none') {
+    const diffNames = { easy:'🟢简单', basic:'🟡基础', intermediate:'🟠进阶', hard:'🔴较难', master:'🟣大师' };
+    badge.textContent = (diffNames[diff]||'') + ' · ' + level;
+  }
 }
 
 function showExerciseResult(html) {

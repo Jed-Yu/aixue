@@ -237,10 +237,12 @@ app.post('/api/quick-login', (req, res) => {
     // 自动创建体验账号
     const name = email === 'teacher@aixue.com' ? '李老师'
                : email === 'student@aixue.com' ? '小明同学'
+               : email === 'parent@aixue.com' ? '王家长'
                : '体验用户';
     // Assign default role based on email
     const defaultRole = email === 'teacher@aixue.com' ? 'teacher'
                       : email === 'student@aixue.com' ? 'student'
+                      : email === 'parent@aixue.com' ? 'parent'
                       : '';
     users[email] = { email, name, password: '123456', createdAt: Date.now(), demo: true, role: defaultRole };
     saveUsers(users);
