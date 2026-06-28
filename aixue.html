@@ -3,458 +3,74 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<title>爱学 · 英语小题库</title>
+<title>英语小题库</title>
 <style>
-  :root {
-    --primary: #4F86F7;
-    --primary-light: #E8F0FE;
-    --primary-dark: #3A6FD8;
-    --accent: #FF8C42;
-    --accent-light: #FFF3E8;
-    --success: #34C759;
-    --danger: #FF3B30;
-    --bg: #F5F7FB;
-    --card: #FFFFFF;
-    --text: #2C3E50;
-    --text-light: #7F8C9B;
-    --border: #E8ECF3;
-    --radius: 16px;
-    --shadow: 0 4px 24px rgba(79,134,247,0.10);
-  }
-  * { margin:0; padding:0; box-sizing:border-box; }
-  body {
-    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'PingFang SC', 'Microsoft YaHei', sans-serif;
-    background: var(--bg);
-    color: var(--text);
-    min-height: 100vh;
-  }
-  .auth-container {
-    min-height: 100vh;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    padding: 24px;
-    background: linear-gradient(135deg, #F5F7FB 0%, #E8F0FE 100%);
-  }
-  .auth-box {
-    background: var(--card);
-    border-radius: 24px;
-    box-shadow: 0 8px 40px rgba(79,134,247,0.12);
-    padding: 40px 32px;
-    width: 100%;
-    max-width: 400px;
-  }
-  .auth-logo { text-align: center; margin-bottom: 32px; }
-  .auth-logo .emoji { font-size: 48px; display: block; margin-bottom: 8px; }
-  .auth-logo h1 {
-    font-size: 28px;
-    font-weight: 800;
-    background: linear-gradient(135deg, var(--primary), var(--accent));
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    background-clip: text;
-  }
-  .auth-logo p { font-size: 14px; color: var(--text-light); margin-top: 4px; }
-  .auth-form { display: flex; flex-direction: column; gap: 16px; }
-  .auth-form .field { position: relative; }
-  .auth-form label { display: block; font-size: 14px; font-weight: 600; color: var(--text); margin-bottom: 6px; }
-  .auth-form input {
-    width: 100%; padding: 14px 16px;
-    border: 2px solid var(--border);
-    border-radius: 12px; font-size: 16px; font-family: inherit;
-    transition: border-color .2s; background: var(--bg); color: var(--text); outline: none;
-  }
-  .auth-form input:focus { border-color: var(--primary); background: #fff; }
-  .auth-form input::placeholder { color: #B0B8C8; }
-  .code-row { display: flex; gap: 10px; }
-  .code-row input { flex: 1; }
-  .code-btn {
-    flex-shrink: 0; padding: 14px 18px; border: none; border-radius: 12px;
-    font-size: 14px; font-weight: 600; background: var(--primary-light);
-    color: var(--primary); cursor: pointer; white-space: nowrap; transition: all .2s;
-  }
-  .code-btn:hover { background: #D6E5FF; }
-  .code-btn:disabled { background: #E8ECF3; color: var(--text-light); cursor: not-allowed; }
-  .auth-btn {
-    padding: 14px; border: none; border-radius: 12px; font-size: 16px; font-weight: 700;
-    background: var(--primary); color: #fff; cursor: pointer; transition: all .25s;
-    box-shadow: 0 4px 14px rgba(79,134,247,0.3); width: 100%;
-  }
-  .auth-btn:hover { background: var(--primary-dark); transform: translateY(-1px); }
-  .auth-btn:active { transform: translateY(0); }
-  .auth-switch { text-align: center; margin-top: 20px; font-size: 14px; color: var(--text-light); }
-  .auth-switch a { color: var(--primary); font-weight: 600; cursor: pointer; text-decoration: none; }
-  .auth-switch a:hover { text-decoration: underline; }
-  .auth-error { background: #FFF0F0; border-radius: 10px; padding: 10px 14px; font-size: 14px; color: var(--danger); display: none; }
-  .auth-error.show { display: block; }
-  .auth-success { background: #E8F8ED; border-radius: 10px; padding: 10px 14px; font-size: 14px; color: #1E8E3E; display: none; }
-  .auth-success.show { display: block; }
-  .divider { display: flex; align-items: center; gap: 12px; color: var(--text-light); font-size: 13px; margin: 4px 0; }
-  .divider::before, .divider::after { content: ''; flex: 1; height: 1px; background: var(--border); }
-  .quick-login { display: flex; gap: 8px; flex-wrap: wrap; }
-  .quick-login-btn {
-    flex: 1; min-width: 80px; padding: 10px; border: 2px solid var(--border);
-    border-radius: 10px; background: #fff; cursor: pointer; font-size: 13px;
-    color: var(--text-light); transition: all .2s; text-align: center;
-  }
-  .quick-login-btn:hover { border-color: var(--primary); color: var(--primary); }
-  .app-container { display: none; padding: 20px; max-width: 860px; margin: 0 auto; }
-  .app-container.show { display: block; }
-  .top-bar {
-    display: flex; align-items: center; justify-content: space-between;
-    margin-bottom: 20px; padding: 12px 20px; background: var(--card);
-    border-radius: var(--radius); box-shadow: var(--shadow);
-  }
-  .top-bar .user-info { display: flex; align-items: center; gap: 10px; }
-  .top-bar .avatar {
-    width: 36px; height: 36px; border-radius: 50%; background: var(--primary-light);
-    color: var(--primary); display: flex; align-items: center; justify-content: center;
-    font-weight: 700; font-size: 16px;
-  }
-  .top-bar .username { font-weight: 600; font-size: 15px; }
-  .top-bar .logout-btn {
-    padding: 8px 16px; border: none; border-radius: 8px;
-    background: #FFF0F0; color: var(--danger); font-size: 13px; font-weight: 600; cursor: pointer;
-  }
-  .top-bar .logout-btn:hover { background: #FFE0E0; }
-  .header { text-align: center; margin-bottom: 24px; }
-  .logo-text {
-    font-size: 32px; font-weight: 800;
-    background: linear-gradient(135deg, var(--primary), var(--accent));
-    -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
-  }
-  .subtitle { font-size: 15px; color: var(--text-light); margin-top: 4px; }
-  .badge { display: inline-block; background: var(--accent-light); color: var(--accent); font-size: 13px; font-weight: 600; padding: 3px 12px; border-radius: 20px; margin-top: 6px; }
-  .tabs { display: flex; gap: 4px; background: var(--card); border-radius: var(--radius); padding: 4px; box-shadow: var(--shadow); margin-bottom: 20px; }
-  .tab-btn { flex: 1; padding: 12px 20px; border: none; background: transparent; border-radius: 12px; font-size: 15px; font-weight: 600; color: var(--text-light); cursor: pointer; transition: all .25s; }
-  .tab-btn:hover { color: var(--text); }
-  .tab-btn.active { background: var(--primary); color: #fff; box-shadow: 0 2px 8px rgba(79,134,247,0.3); }
-  .tab-btn .icon { margin-right: 6px; }
-  .panel { display: none; }
-  .panel.active { display: block; }
-  .card { background: var(--card); border-radius: var(--radius); box-shadow: var(--shadow); padding: 24px; margin-bottom: 20px; }
-  .card-title { font-size: 17px; font-weight: 700; margin-bottom: 16px; display: flex; align-items: center; gap: 8px; }
-  label { display: block; font-size: 14px; font-weight: 600; margin-bottom: 6px; color: var(--text); }
-  textarea, input, select {
-    width: 100%; padding: 12px 16px; border: 2px solid var(--border); border-radius: 12px;
-    font-size: 15px; font-family: inherit; transition: border-color .2s;
-    background: var(--bg); color: var(--text); outline: none;
-  }
-  textarea:focus, input:focus, select:focus { border-color: var(--primary); }
-  textarea { resize: vertical; min-height: 100px; }
-  select {
-    appearance: none;
-    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%237F8C9B' stroke-width='2' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");
-    background-repeat: no-repeat; background-position: right 14px center; cursor: pointer;
-  }
-  .btn { padding: 12px 28px; border: none; border-radius: 12px; font-size: 15px; font-weight: 700; cursor: pointer; transition: all .25s; display: inline-flex; align-items: center; gap: 6px; }
-  .btn-primary { background: var(--primary); color: #fff; box-shadow: 0 4px 14px rgba(79,134,247,0.3); }
-  .btn-primary:hover { background: var(--primary-dark); transform: translateY(-1px); }
-  .btn-secondary { background: var(--primary-light); color: var(--primary); }
-  .btn-secondary:hover { background: #D6E5FF; }
-  .btn-group { display: flex; gap: 10px; margin-top: 14px; flex-wrap: wrap; }
-  .knowledge-grid { display: grid; gap: 14px; margin-top: 16px; }
-  .k-card { background: var(--bg); border-radius: 12px; padding: 18px; border-left: 4px solid var(--primary); }
-  .k-card.grammar { border-left-color: var(--primary); }
-  .k-card.vocab { border-left-color: var(--accent); }
-  .k-card.sentence { border-left-color: var(--success); }
-  .k-card.tip { border-left-color: #AF52DE; }
-  .k-card .k-tag { display: inline-block; font-size: 12px; font-weight: 600; padding: 2px 10px; border-radius: 10px; margin-bottom: 8px; }
-  .k-card.grammar .k-tag { background: var(--primary-light); color: var(--primary); }
-  .k-card.vocab .k-tag { background: var(--accent-light); color: var(--accent); }
-  .k-card.sentence .k-tag { background: #E8F8ED; color: #1E8E3E; }
-  .k-card.tip .k-tag { background: #F0E8FF; color: #AF52DE; }
-  .k-card .k-title { font-size: 16px; font-weight: 700; margin-bottom: 6px; }
-  .k-card .k-desc { font-size: 14px; color: var(--text-light); line-height: 1.6; }
-  .k-card .k-example { margin-top: 10px; padding: 10px 14px; background: rgba(255,255,255,0.7); border-radius: 8px; font-size: 14px; line-height: 1.6; }
-  .exercise-list { margin-top: 16px; }
-  .ex-card { background: var(--bg); border-radius: 12px; padding: 18px; margin-bottom: 12px; border-left: 4px solid var(--accent); }
-  .ex-card .ex-num { display: inline-flex; align-items: center; justify-content: center; width: 28px; height: 28px; background: var(--accent); color: #fff; border-radius: 50%; font-size: 13px; font-weight: 700; margin-right: 8px; }
-  .ex-card .ex-question { font-size: 15px; line-height: 1.7; margin-top: 8px; }
-  .fill-input {
-    display: inline-block; width: 120px; padding: 6px 10px;
-    border: 2px solid var(--border); border-radius: 8px;
-    font-size: 14px; font-family: inherit;
-    transition: all .2s; outline: none;
-    background: #fff;
-  }
-  .fill-input:focus { border-color: var(--primary); }
-  .fill-input.correct { border-color: #34C759; background: #E8F8ED; }
-  .fill-input.wrong { border-color: #FF3B30; background: #FFF0F0; }
-  .check-btn {
-    padding: 6px 16px; border: none; border-radius: 8px;
-    font-size: 13px; font-weight: 600; cursor: pointer;
-    background: var(--success); color: #fff;
-    transition: all .2s;
-  }
-  .check-btn:hover { opacity: 0.9; }
-  .ex-bottom-bar {
-    position: fixed; bottom: 0; left: 0; right: 0;
-    height: 33vh; max-height: 280px;
-    background: var(--card); border-top: 2px solid var(--border);
-    box-shadow: 0 -4px 20px rgba(0,0,0,0.08);
-    padding: 16px 20px;
-    display: none; flex-direction: column;
-    z-index: 100;
-    border-radius: 20px 20px 0 0;
-  }
-  .ex-bottom-bar.show { display: flex; }
-  .ex-bottom-bar .bar-top {
-    display: flex; justify-content: space-between; align-items: center;
-    margin-bottom: 10px;
-  }
-  .ex-bottom-bar .bar-counter {
-    font-size: 14px; font-weight: 600; color: var(--text-light);
-  }
-  .ex-bottom-bar .bar-nav {
-    display: flex; gap: 8px;
-  }
-  .ex-bottom-bar .bar-nav button {
-    padding: 6px 14px; border: 2px solid var(--border); border-radius: 10px;
-    background: #fff; font-size: 13px; font-weight: 600;
-    color: var(--text); cursor: pointer; transition: all .2s;
-  }
-  .ex-bottom-bar .bar-nav button:hover { border-color: var(--primary); color: var(--primary); }
-  .ex-bottom-bar .bar-nav button:disabled { opacity: 0.3; cursor: not-allowed; }
-  .ex-bottom-bar .bar-input-row {
-    display: flex; gap: 10px; align-items: center;
-    flex: 1;
-  }
-  .ex-bottom-bar .bar-input-row input {
-    flex: 1; padding: 14px 16px;
-    border: 2px solid var(--border); border-radius: 12px;
-    font-size: 16px; font-family: inherit; outline: none;
-    background: var(--bg);
-    transition: border-color .2s;
-  }
-  .ex-bottom-bar .bar-input-row input:focus { border-color: var(--primary); background: #fff; }
-  .ex-bottom-bar .bar-input-row input.correct { border-color: #34C759; background: #E8F8ED; }
-  .ex-bottom-bar .bar-input-row input.wrong { border-color: #FF3B30; background: #FFF0F0; }
-  .mic-btn {
-    width: 46px; height: 46px; border-radius: 50%;
-    border: 2px solid var(--border); background: #fff;
-    font-size: 20px; cursor: pointer;
-    display: flex; align-items: center; justify-content: center;
-    transition: all .2s; flex-shrink: 0;
-  }
-  .mic-btn:hover { border-color: var(--primary); }
-  .mic-btn.listening {
-    border-color: #FF3B30; background: #FFF0F0;
-    animation: pulse 1s infinite;
-  }
-  @keyframes pulse {
-    0% { box-shadow: 0 0 0 0 rgba(255,59,48,0.3); }
-    50% { box-shadow: 0 0 0 8px rgba(255,59,48,0); }
-    100% { box-shadow: 0 0 0 0 rgba(255,59,48,0); }
-  }
-  .bar-check-btn {
-    padding: 14px 24px; border: none; border-radius: 12px;
-    background: var(--primary); color: #fff;
-    font-size: 15px; font-weight: 700; cursor: pointer;
-    transition: all .2s; white-space: nowrap;
-    box-shadow: 0 4px 12px rgba(79,134,247,0.3);
-  }
-  .bar-check-btn:hover { background: var(--primary-dark); transform: translateY(-1px); }
-  .bar-check-btn:active { transform: translateY(0); }
-  .ex-bottom-bar .bar-result {
-    font-size: 13px; margin-top: 6px; text-align: center;
-    min-height: 20px;
-  }
-  .bar-result.correct { color: #34C759; }
-  .bar-result.wrong { color: #FF3B30; }
-  .level-badge {
-    display: inline-block; padding: 2px 10px; border-radius: 8px;
-    font-size: 12px; font-weight: 600;
-    background: var(--primary-light); color: var(--primary);
-  }
-  /* Adjust main content for bottom bar */
-  body.has-bottom-bar #panel-exercise .exercise-list {
-    padding-bottom: 33vh;
-  }
-  /* Student question card in center */
-  .student-q-wrap {
-    text-align: center; padding: 20px 0;
-  }
-  .student-q-wrap .ex-card {
-    display: inline-block; text-align: left;
-    max-width: 100%; width: 100%;
-  }
-  .ex-card .ex-question .blank { display: inline-block; min-width: 80px; border-bottom: 2px dashed var(--primary); padding: 0 4px; color: var(--primary); font-weight: 600; }
-  .ex-card .ex-answer { margin-top: 10px; padding: 10px 14px; background: rgba(52,199,89,0.1); border-radius: 8px; font-size: 14px; color: #1E8E3E; display: none; }
-  .ex-card .ex-answer.show { display: block; }
-  .ex-card .ex-answer::before { content: "✅ 答案："; font-weight: 600; }
-  .show-answer-btn { margin-top: 8px; font-size: 13px; color: var(--primary); background: none; border: none; cursor: pointer; padding: 4px 0; }
-  .status-msg { text-align: center; padding: 40px 20px; color: var(--text-light); font-size: 15px; }
-  .status-msg .emoji { font-size: 40px; display: block; margin-bottom: 12px; }
-  .helper-note { background: var(--primary-light); border-radius: 12px; padding: 14px 18px; font-size: 14px; color: var(--primary-dark); margin-top: 16px; display: flex; align-items: flex-start; gap: 10px; }
-  @media (max-width: 600px) {
-    .app-container { padding: 12px; } .auth-box { padding: 28px 20px; } .card { padding: 16px; }
-    .logo-text { font-size: 26px; } .tab-btn { font-size: 13px; padding: 10px 12px; }
-    .btn { width: 100%; justify-content: center; } .k-card { padding: 14px; }
-    .quick-login-btn { font-size: 12px; padding: 8px 6px; min-width: 60px; }
-  .role-badge {
-    display: inline-block; margin-left: 6px; padding: 1px 8px;
-    border-radius: 8px; font-size: 11px; font-weight: 600;
-  }
-  .role-badge.student { background: #E8F8ED; color: #1E8E3E; }
-  .role-badge.parent { background: #FFF3E8; color: #FF8C42; }
-  .role-badge.teacher { background: var(--primary-light); color: var(--primary); }
-  }
-  @keyframes fadeUp { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: translateY(0); } }
-  .fade-up { animation: fadeUp .4s ease-out; }
-  .toast {
-    position: fixed; top: 20px; left: 50%; transform: translateX(-50%);
-    background: var(--text); color: #fff; padding: 12px 24px; border-radius: 12px;
-    font-size: 14px; font-weight: 500; z-index: 1000; opacity: 0;
-    transition: opacity .3s; pointer-events: none; max-width: 90%; text-align: center;
-    box-shadow: 0 4px 20px rgba(0,0,0,0.2);
-  }
-  .toast.show { opacity: 1; }
+:root{--primary:#4F86F7;--primary-light:#E8F0FE;--primary-dark:#3A6FD8;--accent:#FF8C42;--accent-light:#FFF3E8;--success:#34C759;--danger:#FF3B30;--bg:#F5F7FB;--card:#FFF;--text:#2C3E50;--text-light:#7F8C9B;--border:#E8ECF3;--radius:16px;--shadow:0 4px 24px rgba(79,134,247,0.10)}*{margin:0;padding:0;box-sizing:border-box}body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,'PingFang SC','Microsoft YaHei',sans-serif;background:var(--bg);color:var(--text);min-height:100vh}.auth-container{min-height:100vh;display:flex;align-items:center;justify-content:center;padding:24px;background:linear-gradient(135deg,#F5F7FB,#E8F0FE)}.auth-box{background:var(--card);border-radius:24px;box-shadow:0 8px 40px rgba(79,134,247,0.12);padding:40px 32px;width:100%;max-width:400px}.auth-logo{text-align:center;margin-bottom:32px}.auth-logo .emoji{font-size:48px;display:block;margin-bottom:8px}.auth-logo h1{font-size:28px;font-weight:800;background:linear-gradient(135deg,var(--primary),var(--accent));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}.auth-logo p{font-size:14px;color:var(--text-light);margin-top:4px}.auth-form{display:flex;flex-direction:column;gap:16px}.auth-form label{display:block;font-size:14px;font-weight:600;color:var(--text);margin-bottom:6px}.auth-form input{width:100%;padding:14px 16px;border:2px solid var(--border);border-radius:12px;font-size:16px;font-family:inherit;transition:border-color .2s;background:var(--bg);color:var(--text);outline:none}.auth-form input:focus{border-color:var(--primary);background:#fff}.code-row{display:flex;gap:10px}.code-row input{flex:1}.code-btn{flex-shrink:0;padding:14px 18px;border:none;border-radius:12px;font-size:14px;font-weight:600;background:var(--primary-light);color:var(--primary);cursor:pointer;white-space:nowrap}.code-btn:hover{background:#D6E5FF}.code-btn:disabled{background:#E8ECF3;color:var(--text-light);cursor:not-allowed}.auth-btn{padding:14px;border:none;border-radius:12px;font-size:16px;font-weight:700;background:var(--primary);color:#fff;cursor:pointer;width:100%}.auth-btn:hover{background:var(--primary-dark)}.auth-switch{text-align:center;margin-top:20px;font-size:14px;color:var(--text-light)}.auth-switch a{color:var(--primary);font-weight:600;cursor:pointer;text-decoration:none}.auth-error{background:#FFF0F0;border-radius:10px;padding:10px 14px;font-size:14px;color:var(--danger);display:none}.auth-error.show{display:block}.auth-success{background:#E8F8ED;border-radius:10px;padding:10px 14px;font-size:14px;color:#1E8E3E;display:none}.divider{display:flex;align-items:center;gap:12px;color:var(--text-light);font-size:13px;margin:4px 0}.divider::before,.divider::after{content:'';flex:1;height:1px;background:var(--border)}.quick-login{display:flex;gap:8px}.quick-login-btn{flex:1;padding:10px;border:2px solid var(--border);border-radius:10px;background:#fff;cursor:pointer;font-size:13px;color:var(--text-light);text-align:center}.quick-login-btn:hover{border-color:var(--primary);color:var(--primary)}.app-container{display:none;padding:12px;max-width:960px;margin:0 auto}.app-container.show{display:block}.top-bar{display:flex;align-items:center;gap:8px;margin-bottom:12px;padding:10px 16px;background:var(--card);border-radius:var(--radius);box-shadow:var(--shadow)}.top-bar .user-info{display:flex;align-items:center;gap:10px;flex:1}.top-bar .avatar{width:36px;height:36px;border-radius:50%;background:var(--primary-light);color:var(--primary);display:flex;align-items:center;justify-content:center;font-weight:700;font-size:16px}.top-bar .username{font-weight:600;font-size:15px}.top-bar .edit-profile-btn{padding:6px 12px;border:none;border-radius:8px;background:var(--primary-light);color:var(--primary);font-size:12px;font-weight:600;cursor:pointer}.top-bar .logout-btn{padding:6px 12px;border:none;border-radius:8px;background:#FFF0F0;color:var(--danger);font-size:12px;font-weight:600;cursor:pointer}.header{text-align:center;margin-bottom:16px}.logo-text{font-size:26px;font-weight:800;background:linear-gradient(135deg,var(--primary),var(--accent));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}.subtitle{font-size:13px;color:var(--text-light);margin-top:2px}.badge{display:inline-block;background:var(--accent-light);color:var(--accent);font-size:11px;font-weight:600;padding:2px 10px;border-radius:20px;margin-top:4px}.tabs{display:flex;gap:4px;background:var(--card);border-radius:var(--radius);padding:4px;box-shadow:var(--shadow);margin-bottom:12px;overflow-x:auto}.tab-btn{flex-shrink:0;padding:10px 14px;border:none;background:transparent;border-radius:10px;font-size:13px;font-weight:600;color:var(--text-light);cursor:pointer;white-space:nowrap}.tab-btn:hover{color:var(--text)}.tab-btn.active{background:var(--primary);color:#fff;box-shadow:0 2px 8px rgba(79,134,247,0.3)}.panel{display:none}.panel.active{display:block}.card{background:var(--card);border-radius:var(--radius);box-shadow:var(--shadow);padding:16px;margin-bottom:12px}.card-title{font-size:16px;font-weight:700;margin-bottom:12px;display:flex;align-items:center;gap:8px}label{display:block;font-size:13px;font-weight:600;margin-bottom:4px;color:var(--text)}textarea,input,select{width:100%;padding:10px 14px;border:2px solid var(--border);border-radius:10px;font-size:14px;font-family:inherit;transition:border-color .2s;background:var(--bg);color:var(--text);outline:none}textarea:focus,input:focus,select:focus{border-color:var(--primary)}textarea{resize:vertical;min-height:80px}select{appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%237F8C9B' stroke-width='2' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 12px center;cursor:pointer}.btn{padding:10px 20px;border:none;border-radius:10px;font-size:14px;font-weight:700;cursor:pointer;display:inline-flex;align-items:center;gap:6px}.btn-primary{background:var(--primary);color:#fff;box-shadow:0 4px 14px rgba(79,134,247,0.3)}.btn-primary:hover{background:var(--primary-dark)}.btn-secondary{background:var(--primary-light);color:var(--primary)}.btn-secondary:hover{background:#D6E5FF}.btn-danger{background:#FFF0F0;color:var(--danger)}.btn-danger:hover{background:#FFE0E0}.btn-group{display:flex;gap:8px;margin-top:10px;flex-wrap:wrap}.btn-sm{padding:6px 12px;font-size:12px}.ex-list{display:grid;gap:10px;margin-top:12px}.ex-card{background:var(--bg);border-radius:10px;padding:14px;border-left:4px solid var(--accent)}.ex-card .ex-num{display:inline-flex;align-items:center;justify-content:center;width:24px;height:24px;background:var(--accent);color:#fff;border-radius:50%;font-size:12px;font-weight:700;margin-right:6px}.ex-card .ex-q{font-size:14px;line-height:1.6;margin-top:6px}.ex-card .ex-q .blank{display:inline-block;min-width:70px;border-bottom:2px dashed var(--primary);padding:0 4px;color:var(--primary);font-weight:600}.ex-card .ex-ans{display:none;margin-top:8px;padding:8px 12px;background:rgba(52,199,89,0.1);border-radius:8px;font-size:13px;color:#1E8E3E}.ex-card .ex-ans.show{display:block}.show-ans-btn{font-size:12px;color:var(--primary);background:none;border:none;cursor:pointer;padding:4px 0}.status-msg{text-align:center;padding:30px 20px;color:var(--text-light);font-size:14px}.status-msg .emoji{font-size:36px;display:block;margin-bottom:8px}.helper-note{background:var(--primary-light);border-radius:10px;padding:12px 16px;font-size:13px;color:var(--primary-dark);margin-top:12px;display:flex;align-items:flex-start;gap:8px}.role-badge{display:inline-block;margin-left:4px;padding:1px 6px;border-radius:6px;font-size:11px;font-weight:600}.role-badge.student{background:#E8F8ED;color:#1E8E3E}.role-badge.parent{background:#FFF3E8;color:#FF8C42}.role-badge.teacher{background:var(--primary-light);color:var(--primary)}.modal-overlay{position:fixed;inset:0;z-index:999;background:rgba(0,0,0,0.5);display:flex;align-items:center;justify-content:center;padding:20px}.modal-box{background:var(--card);border-radius:20px;padding:28px 24px;max-width:500px;width:100%;max-height:80vh;overflow-y:auto;box-shadow:0 20px 60px rgba(0,0,0,0.2)}.modal-title{font-size:20px;font-weight:800;text-align:center;margin-bottom:16px}.modal-close{float:right;padding:4px 10px;border:none;background:var(--bg);border-radius:8px;cursor:pointer;font-size:16px}.toast{position:fixed;top:20px;left:50%;transform:translateX(-50%);background:var(--text);color:#fff;padding:10px 20px;border-radius:10px;font-size:14px;z-index:2000;opacity:0;transition:opacity .3s;pointer-events:none;max-width:90%;text-align:center}.toast.show{opacity:1}.form-group{margin-bottom:12px}.form-group label{display:block;font-size:13px;font-weight:600;margin-bottom:4px;color:var(--text)}.form-group input,.form-group select,.form-group textarea{width:100%;padding:10px 14px;border:2px solid var(--border);border-radius:10px;font-size:14px;font-family:inherit;background:var(--bg);outline:none}.form-group input:focus,.form-group select:focus,.form-group textarea:focus{border-color:var(--primary)}.class-card{padding:14px;border:2px solid var(--border);border-radius:12px;cursor:pointer;transition:all .2s;margin-bottom:8px}.class-card:hover{border-color:var(--primary)}.class-card .name{font-weight:700;font-size:15px}.class-card .meta{font-size:12px;color:var(--text-light);margin-top:4px}.member-tag{display:inline-block;padding:2px 8px;border-radius:6px;font-size:11px;margin:2px}.member-tag.student{background:#E8F8ED;color:#1E8E3E}.member-tag.parent{background:#FFF3E8;color:#FF8C42}.member-tag.teacher{background:var(--primary-light);color:var(--primary)}.schedule-day{padding:8px 12px;background:var(--bg);border-radius:8px;margin-bottom:6px;font-size:13px}.hw-card{padding:12px;border-left:4px solid var(--primary);background:var(--bg);border-radius:8px;margin-bottom:8px}.hw-card .hw-title{font-weight:600;font-size:14px}.hw-card .hw-meta{font-size:12px;color:var(--text-light);margin-top:4px}.hw-question{padding:12px;background:var(--card);border-radius:8px;margin-bottom:8px;border:1px solid var(--border)}.hw-option{display:block;padding:8px 12px;margin:4px 0;border:2px solid var(--border);border-radius:8px;cursor:pointer;font-size:14px}.hw-option:hover{border-color:var(--primary)}.hw-option.selected{border-color:var(--primary);background:var(--primary-light)}@media(max-width:600px){.auth-box{padding:28px 16px}.card{padding:12px}.tabs{overflow-x:auto}.tab-btn{font-size:12px;padding:8px 10px}}@keyframes fadeUp{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}.fade-up{animation:fadeUp .3s ease-out}.row{display:flex;gap:8px;flex-wrap:wrap}.row>*{flex:1;min-width:120px}
 </style>
 </head>
 <body>
-
 <div id="toast" class="toast"></div>
 
-<!-- ===== LOGIN ===== -->
+<!-- ===== AUTH ===== -->
 <div id="auth-login" class="auth-container">
   <div class="auth-box fade-up">
-    <div class="auth-logo">
-      <span class="emoji">📚</span>
-      <h1>爱学</h1>
-      <p>英语小题库</p>
-    </div>
+    <div class="auth-logo"><span class="emoji">📚</span><h1>英语小题库</h1><p>YLE · KET · PET · FCE · CAE · CPE · 雅思 · 托福</p></div>
     <div class="auth-form">
       <div id="login-error" class="auth-error"></div>
-      <div class="field">
-        <label>📧 邮箱</label>
-        <input type="email" id="login-email" placeholder="请输入邮箱地址" autocomplete="email">
-      </div>
-      <div class="field">
-        <label>🔑 验证码</label>
+      <div><label>📧 邮箱</label><input type="email" id="login-email" placeholder="请输入邮箱" autocomplete="email"></div>
+      <div><label>🔑 验证码</label>
         <div class="code-row">
           <input type="text" id="login-code" placeholder="6位验证码" maxlength="6" inputmode="numeric">
           <button class="code-btn" id="login-send-code" onclick="sendCode('login')">获取验证码</button>
         </div>
       </div>
-      <button class="auth-btn" id="login-btn" onclick="handleLogin()">登 录</button>
+      <button class="auth-btn" onclick="handleLogin()">登 录</button>
       <div class="divider">⚡ 快速体验</div>
       <div class="quick-login">
         <button class="quick-login-btn" onclick="quickLogin('teacher@aixue.com')">👩‍🏫 老师</button>
         <button class="quick-login-btn" onclick="quickLogin('student@aixue.com')">👦 学生</button>
         <button class="quick-login-btn" onclick="quickLogin('parent@aixue.com')">👨‍👩‍👧 家长</button>
       </div>
-      <div class="auth-switch">
-        还没有账号？<a onclick="showAuth('register')">立即注册 →</a>
-      </div>
+      <div class="auth-switch">还没有账号？<a onclick="showAuth('register')">立即注册 →</a></div>
     </div>
   </div>
 </div>
 
-<!-- ===== REGISTER ===== -->
-<div id="auth-register" class="auth-container" style="display:none;">
+<div id="auth-register" class="auth-container" style="display:none">
   <div class="auth-box fade-up">
-    <div class="auth-logo">
-      <span class="emoji">📚</span>
-      <h1>注册爱学</h1>
-      <p>创建你的学习账号</p>
-    </div>
+    <div class="auth-logo"><span class="emoji">📚</span><h1>注册英语小题库</h1><p>创建你的账号</p></div>
     <div class="auth-form">
       <div id="reg-error" class="auth-error"></div>
       <div id="reg-success" class="auth-success"></div>
-      <div class="field">
-        <label>📧 邮箱</label>
-        <input type="email" id="reg-email" placeholder="你的邮箱地址" autocomplete="email">
-      </div>
-      <div class="field">
-        <label>👤 昵称</label>
-        <input type="text" id="reg-name" placeholder="怎么称呼你？" maxlength="20">
-      </div>
-      <div class="field">
-        <label>🔒 设置密码</label>
-        <input type="password" id="reg-pwd" placeholder="至少6位密码" maxlength="20" autocomplete="new-password">
-      </div>
-      <div class="field">
-        <label>🔑 验证码</label>
+      <div><label>📧 邮箱</label><input type="email" id="reg-email" placeholder="你的邮箱" autocomplete="email"></div>
+      <div><label>👤 昵称（3-16字）</label><input type="text" id="reg-name" placeholder="昵称将用于被查找" maxlength="16"></div>
+      <div><label>🔒 密码</label><input type="password" id="reg-pwd" placeholder="至少6位" maxlength="20" autocomplete="new-password"></div>
+      <div><label>🔑 验证码</label>
         <div class="code-row">
           <input type="text" id="reg-code" placeholder="6位验证码" maxlength="6" inputmode="numeric">
           <button class="code-btn" id="reg-send-code" onclick="sendCode('register')">获取验证码</button>
         </div>
       </div>
       <button class="auth-btn" onclick="handleRegister()">注 册</button>
-      <div class="auth-switch">
-        已有账号？<a onclick="showAuth('login')">去登录 →</a>
-      </div>
+      <div class="auth-switch">已有账号？<a onclick="showAuth('login')">去登录 →</a></div>
     </div>
   </div>
 </div>
 
-<!-- ===== ROLE SELECTION MODAL ===== -->
-<div id="role-modal" class="modal-overlay" style="display:none;">
-  <div class="modal-box fade-up">
-    <div class="modal-emoji">🎭</div>
-    <h2 class="modal-title">选择你的身份</h2>
-    <p class="modal-desc">选一个身份，让爱学更好地为你服务</p>
-    <div class="role-options">
-      <div class="role-card" onclick="selectRole('student')">
-        <div class="role-icon">👦</div>
-        <div class="role-name">学生</div>
-        <div class="role-desc">刷题备考，提高英语</div>
-      </div>
-      <div class="role-card" onclick="selectRole('parent')">
-        <div class="role-icon">👨‍👩‍👧</div>
-        <div class="role-name">家长</div>
-        <div class="role-desc">关注孩子的学习进度</div>
-      </div>
-      <div class="role-card" onclick="selectRole('teacher')">
-        <div class="role-icon">👩‍🏫</div>
-        <div class="role-name">老师</div>
-        <div class="role-desc">出题、整理知识点、管理学生</div>
-      </div>
+<!-- ===== ROLE SELECT MODAL ===== -->
+<div id="role-modal" class="modal-overlay" style="display:none">
+  <div class="modal-box fade-up" style="text-align:center">
+    <div style="font-size:48px;margin-bottom:12px">🎭</div>
+    <div class="modal-title">选择你的身份</div>
+    <p style="font-size:14px;color:var(--text-light);margin-bottom:20px">选一个身份，让平台更好地为你服务</p>
+    <div style="display:flex;flex-direction:column;gap:8px">
+      <div class="class-card" onclick="selectRole('student')"><div class="name">👦 学生</div><div class="meta">刷题备考，提高英语</div></div>
+      <div class="class-card" onclick="selectRole('parent')"><div class="name">👨‍👩‍👧 家长</div><div class="meta">关注孩子的学习进度</div></div>
+      <div class="class-card" onclick="selectRole('teacher')"><div class="name">👩‍🏫 老师</div><div class="meta">管理班级、出题、布置作业</div></div>
     </div>
-    <button class="modal-skip-btn" onclick="skipRole()">稍后再说 →</button>
+    <button class="auth-switch" style="margin-top:12px;border:none;background:none;cursor:pointer" onclick="skipRole()">稍后再说 →</button>
   </div>
 </div>
-
-<style>
-.modal-overlay {
-  position: fixed; inset: 0; z-index: 999;
-  background: rgba(0,0,0,0.5);
-  display: flex; align-items: center; justify-content: center;
-  padding: 24px;
-}
-.modal-box {
-  background: var(--card); border-radius: 24px;
-  padding: 40px 32px 28px; max-width: 440px; width: 100%;
-  text-align: center;
-  box-shadow: 0 20px 60px rgba(0,0,0,0.2);
-}
-.modal-emoji { font-size: 48px; margin-bottom: 12px; }
-.modal-title { font-size: 22px; font-weight: 800; color: var(--text); margin-bottom: 4px; }
-.modal-desc { font-size: 14px; color: var(--text-light); margin-bottom: 24px; }
-.role-options { display: flex; flex-direction: column; gap: 10px; }
-.role-card {
-  display: flex; align-items: center; gap: 14px;
-  padding: 16px; border-radius: 14px;
-  border: 2px solid var(--border);
-  cursor: pointer; transition: all .2s;
-  text-align: left;
-}
-.role-card:hover {
-  border-color: var(--primary);
-  background: var(--primary-light);
-  transform: translateX(4px);
-}
-.role-card .role-icon { font-size: 32px; flex-shrink: 0; }
-.role-card .role-name { font-size: 16px; font-weight: 700; color: var(--text); }
-.role-card .role-desc { font-size: 13px; color: var(--text-light); }
-.modal-skip-btn {
-  margin-top: 20px; padding: 8px 20px;
-  border: none; background: transparent;
-  color: var(--text-light); font-size: 14px; cursor: pointer;
-}
-.modal-skip-btn:hover { color: var(--text); }
-</style>
 
 <!-- ===== MAIN APP ===== -->
 <div id="app-main" class="app-container">
@@ -463,963 +79,618 @@
       <div class="avatar" id="user-avatar">👤</div>
       <div>
         <div class="username" id="user-name">用户</div>
-        <div style="font-size:12px;color:var(--text-light)">
-          <span id="user-email"></span>
-          <span id="user-role-badge" class="role-badge" style="display:none;"></span>
-        </div>
+        <div style="font-size:11px;color:var(--text-light)"><span id="user-email"></span><span id="user-role-badge" class="role-badge" style="display:none"></span></div>
       </div>
+      <button class="edit-profile-btn" onclick="showEditProfile()" style="margin-left:auto">✏️ 编辑</button>
     </div>
-    <button class="logout-btn" onclick="handleLogout()">退出登录</button>
+    <button class="logout-btn" onclick="handleLogout()">退出</button>
   </div>
 
   <div class="header">
-    <div class="logo-text">爱学 · AiXue</div>
-    <div class="subtitle">英语小题库 — 整理知识点 · 出练习题</div>
-    <div class="badge">🎯 YLE · KET · PET · FCE · CAE · CPE · 雅思 · 托福</div>
+    <div class="logo-text">英语小题库</div>
+    <div class="subtitle">YLE · KET · PET · FCE · CAE · CPE · 雅思 · 托福 — 出题 · 班级 · 作业</div>
+    <div class="badge" id="role-display">🎯 已登录</div>
   </div>
 
   <div class="tabs" id="main-tabs">
-    <button class="tab-btn active" onclick="switchTab('knowledge')"><span class="icon">📝</span> 整理知识点</button>
-    <button class="tab-btn" onclick="switchTab('exercise')"><span class="icon">✍️</span> 出题练习</button>
-    <button class="tab-btn" id="students-tab" onclick="switchTab('students')" style="display:none;"><span class="icon">👥</span> 学生管理</button>
+    <button class="tab-btn active" onclick="switchTab('knowledge')">📝 知识点</button>
+    <button class="tab-btn" onclick="switchTab('exercise')">✍️ 出题</button>
+    <button class="tab-btn" id="tab-classes" onclick="switchTab('classes')" style="display:none">🏫 班级</button>
+    <button class="tab-btn" id="tab-homework" onclick="switchTab('homework')" style="display:none">📋 作业</button>
+    <button class="tab-btn" id="tab-aiassist" onclick="switchTab('aiassist')" style="display:none">🤖 爱学助手</button>
+    <button class="tab-btn" id="tab-students" onclick="switchTab('students')" style="display:none">👥 学生管理</button>
   </div>
 
+  <!-- ===== KNOWLEDGE ===== -->
   <div id="panel-knowledge" class="panel active">
     <div class="card">
-      <div class="card-title">📥 输入内容</div>
-      <label for="k-topic">知识点标题</label>
-      <input type="text" id="k-topic" placeholder="例如：现在完成时、被动语态、短语动词..." value="现在完成时 (Present Perfect)">
-      <label for="k-content" style="margin-top:14px;">详细内容 / 笔记</label>
-      <textarea id="k-content" placeholder="把你学到的内容或笔记粘贴在这里...">I have visited London three times.
+      <div class="card-title">📥 整理知识点</div>
+      <div class="form-group"><label>标题</label><input type="text" id="k-topic" value="现在完成时"></div>
+      <div class="form-group"><label>内容</label><textarea id="k-content" rows="4">I have visited London three times.
 She has already finished her homework.
 They haven't been to the new museum yet.
-Have you ever eaten Japanese food?
 
 关键词：already, yet, ever, never, just, for, since
 结构：have/has + 过去分词
-
-用法：
-1. 表示过去的经历（不强调具体时间）
-2. 表示从过去持续到现在的状态（for/since）
-3. 表示刚刚完成的动作（just）</textarea>
-      <div class="btn-group">
-        <button class="btn btn-primary" onclick="generateKnowledge()">✨ 开始整理</button>
-        <button class="btn btn-secondary" onclick="loadSampleKnowledge()">📂 换一个示例</button>
-      </div>
+用法：经历 / 持续状态 / 刚刚完成</textarea></div>
+      <div class="btn-group"><button class="btn btn-primary" onclick="generateKnowledge()">✨ 开始整理</button><button class="btn btn-secondary" onclick="loadSampleKnowledge()">📂 示例</button></div>
     </div>
-    <div class="card" id="knowledge-result">
-      <div class="card-title">📋 整理结果</div>
-      <div id="knowledge-output">
-        <div class="status-msg"><span class="emoji">👆</span>输入内容后点击「开始整理」</div>
-      </div>
-    </div>
+    <div class="card"><div class="card-title">📋 整理结果</div><div id="knowledge-output"><div class="status-msg"><span class="emoji">👆</span>输入内容后点击整理</div></div></div>
   </div>
 
+  <!-- ===== EXERCISE ===== -->
   <div id="panel-exercise" class="panel">
-    <div class="card" id="ex-settings-card">
+    <div class="card">
       <div class="card-title">⚙️ 出题设置</div>
-      <label for="ex-type">题 型</label>
-      <select id="ex-type">
-        <option value="fill-blank">填空题 (Fill in the blank)</option>
-        <option value="sentence-writing">仿写句子 (Sentence writing)</option>
-        <option value="rewrite">句子改写 (Sentence rewriting)</option>
-      </select>
-      <label for="ex-grammar" style="margin-top:14px;">语法 / 知识点（可选）</label>
-      <input type="text" id="ex-grammar" placeholder="留空则根据考试级别自动出题">
-      <label for="ex-requirement" style="margin-top:14px;">具体要求（可选）</label>
-      <textarea id="ex-requirement" placeholder="比如：用 already/yet 各造2句、用 for/since 填空等..." rows="3"></textarea>
-      <label for="ex-difficulty" style="margin-top:14px;">📊 难度</label>
-      <select id="ex-difficulty" onchange="onDifficultyChange()">
-        <option value="easy">🟢 简单</option>
-        <option value="basic" selected>🟡 基础</option>
-        <option value="intermediate">🟠 进阶</option>
-        <option value="hard">🔴 较难</option>
-        <option value="master">🟣 大师</option>
-      </select>
-      <label for="ex-level" style="margin-top:14px;">🎯 考试级别（按难度自动选）</label>
-      <select id="ex-level">
-        <option value="YLE">🟢 YLE (Starters/Movers/Flyers)</option>
-        <option value="KET">🔵 KET (A2 Key)</option>
-        <option value="PET">🟡 PET (B1 Preliminary)</option>
-        <option value="FCE" selected>🟠 FCE (B2 First)</option>
-        <option value="CAE">🔴 CAE (C1 Advanced)</option>
-        <option value="CPE">🟣 CPE (C2 Proficiency)</option>
-        <option value="IELTS">📘 雅思 IELTS</option>
-        <option value="TOEFL">📙 托福 TOEFL</option>
-      </select>
-      <div style="margin-top:14px;">
-        <label>出题数量</label>
-      <select id="ex-count">
-        <option value="3">3 题</option>
-        <option value="5" selected>5 题</option>
-        <option value="8">8 题</option>
-        <option value="10">10 题</option>
-      </select>
-      <div class="btn-group">
-        <button class="btn btn-primary" onclick="generateExercise()">✨ 生成题目</button>
-        <button class="btn btn-secondary" onclick="loadSampleExercise()">📂 换一个示例</button>
+      <div class="form-group"><label>题 型</label>
+        <select id="ex-type"><option value="fill-blank">填空题</option><option value="sentence-writing">仿写句子</option><option value="rewrite">句子改写</option></select>
+      </div>
+      <div class="form-group"><label>🎯 考试级别</label>
+        <select id="ex-level"><option value="YLE">YLE</option><option value="KET">KET</option><option value="PET">PET</option><option value="FCE" selected>FCE</option><option value="CAE">CAE</option><option value="CPE">CPE</option><option value="IELTS">雅思</option><option value="TOEFL">托福</option></select>
+      </div>
+      <div class="form-group"><label>📊 出题数量</label>
+        <select id="ex-count"><option value="3">3题</option><option value="5" selected>5题</option><option value="8">8题</option><option value="10">10题</option></select>
+      </div>
+      <div class="btn-group"><button class="btn btn-primary" onclick="generateExercise()">✨ 生成题目</button><button class="btn btn-secondary" onclick="loadSampleExercise()">📂 示例</button></div>
+    </div>
+    <div class="card"><div class="card-title">📝 练习题 <span id="ex-level-badge" class="role-badge" style="display:none"></span></div><div id="exercise-output"><div class="status-msg"><span class="emoji">👆</span>点击生成题目</div></div></div>
+  </div>
+
+  <!-- ===== CLASSES (Teacher) ===== -->
+  <div id="panel-classes" class="panel">
+    <div class="card">
+      <div class="card-title">🏫 班级管理</div>
+      <div class="row">
+        <input type="text" id="cls-name" placeholder="班级名称（如：周一班）">
+        <select id="cls-level"><option value="YLE">YLE</option><option value="KET">KET</option><option value="PET">PET</option><option value="FCE" selected>FCE</option><option value="CAE">CAE</option><option value="CPE">CPE</option><option value="IELTS">雅思</option><option value="TOEFL">托福</option></select>
+        <button class="btn btn-primary btn-sm" onclick="createClass()">➕ 创建</button>
       </div>
     </div>
-    <div class="card" id="exercise-result">
-      <div class="card-title" id="ex-result-title">📝 练习题 <span id="ex-level-badge" class="level-badge" style="display:none;"></span></div>
-      <div id="exercise-output">
-        <div class="status-msg"><span class="emoji">👆</span>设置好之后点击「生成题目」</div>
-      </div>
+    <div id="class-list"><div class="status-msg"><span class="emoji">👆</span>还没有班级</div></div>
+  </div>
+
+  <!-- ===== HOMEWORK ===== -->
+  <div id="panel-homework" class="panel">
+    <div class="card">
+      <div class="card-title">📋 作业</div>
+      <p style="font-size:13px;color:var(--text-light);margin-bottom:10px">选择班级查看/发布作业</p>
+      <div class="form-group"><label>选择班级</label><select id="hw-class-select" onchange="loadHomework()"><option value="">请选择班级</option></select></div>
+      <div id="homework-content"><div class="status-msg"><span class="emoji">👆</span>选好班级后查看作业</div></div>
     </div>
   </div>
 
-  <!-- ===== Student Bottom Bar ===== -->
-  <div id="ex-bottom-bar" class="ex-bottom-bar">
-    <div class="bar-top">
-      <span class="bar-counter" id="bar-counter">第 1/5 题</span>
-      <div class="bar-nav">
-        <button id="bar-prev" onclick="navQuestion(-1)">← 上一题</button>
-        <button id="bar-next" onclick="navQuestion(1)">下一题 →</button>
+  <!-- ===== AI ASSISTANT (Teacher) ===== -->
+  <div id="panel-aiassist" class="panel">
+    <div class="card" style="text-align:center">
+      <div style="font-size:56px;margin-bottom:12px">🤖</div>
+      <div class="modal-title">爱学助手</div>
+      <p style="font-size:13px;color:var(--text-light);margin-bottom:4px">告诉我在哪天几点到几点哪个班需要加课</p>
+      <p style="font-size:12px;color:var(--text-light);margin-bottom:16px">格式：<code>09:00到10:30 周一班 多上一节课</code></p>
+      <div style="display:flex;gap:8px;max-width:500px;margin:0 auto">
+        <input type="text" id="ai-input" placeholder="说或输入：14:00到15:30 周二班 多上一节课" style="flex:1">
+        <button class="mic-btn" id="ai-mic" onclick="toggleAiVoice()" style="width:42px;height:42px;border-radius:50%;border:2px solid var(--border);background:#fff;font-size:18px;cursor:pointer;flex-shrink:0">🎤</button>
+        <button class="btn btn-primary btn-sm" onclick="processAiCommand()" style="flex-shrink:0">发送</button>
       </div>
+      <div id="ai-result" style="margin-top:16px;text-align:left;max-width:500px;margin-left:auto;margin-right:auto"></div>
     </div>
-    <div class="bar-input-row">
-      <input type="text" id="bar-answer" placeholder="输入你的答案..." autocomplete="off">
-      <button class="mic-btn" id="mic-btn" onclick="toggleVoice()" title="语音输入">🎤</button>
-      <button class="bar-check-btn" onclick="checkBarAnswer()">✅ 检查</button>
-    </div>
-    <div class="bar-result" id="bar-result"></div>
   </div>
 
-  <!-- ===== Student Management Panel (Teacher/Parent) ===== -->
+  <!-- ===== STUDENT MANAGEMENT (Teacher) ===== -->
   <div id="panel-students" class="panel">
-    <div class="card" style="text-align:center;padding:40px 20px">
-      <div style="font-size:56px;margin-bottom:16px">👥</div>
-      <h2 style="font-size:20px;font-weight:700;margin-bottom:8px">学生管理</h2>
-      <p style="color:var(--text-light);font-size:14px;margin-bottom:24px">添加学生并设置学习进度（考试级别）</p>
-
-      <div style="display:flex;gap:10px;flex-wrap:wrap;max-width:500px;margin:0 auto">
-        <input type="email" id="stu-email" placeholder="学生邮箱" style="flex:2;min-width:150px">
-        <input type="text" id="stu-name" placeholder="学生姓名" style="flex:1;min-width:100px">
-        <select id="stu-level" style="flex:1;min-width:100px">
-          <option value="YLE">YLE</option>
-          <option value="KET">KET</option>
-          <option value="PET">PET</option>
-          <option value="FCE" selected>FCE</option>
-          <option value="CAE">CAE</option>
-          <option value="CPE">CPE</option>
-          <option value="IELTS">IELTS</option>
-          <option value="TOEFL">TOEFL</option>
-        </select>
-        <button class="btn btn-primary" onclick="addStudent()" style="flex-shrink:0">➕ 添加</button>
+    <div class="card" style="text-align:center">
+      <div style="font-size:48px;margin-bottom:12px">👥</div>
+      <div class="modal-title">学生管理</div>
+      <p style="font-size:13px;color:var(--text-light);margin-bottom:16px">添加学生并设置学习进度</p>
+      <div class="row" style="max-width:500px;margin:0 auto">
+        <input type="text" id="stu-email" placeholder="学生邮箱" style="flex:2">
+        <input type="text" id="stu-name" placeholder="学生姓名" style="flex:1">
+        <select id="stu-level" style="flex:1"><option value="YLE">YLE</option><option value="KET">KET</option><option value="PET">PET</option><option value="FCE">FCE</option><option value="CAE">CAE</option><option value="CPE">CPE</option><option value="IELTS">雅思</option><option value="TOEFL">托福</option></select>
+        <button class="btn btn-primary btn-sm" onclick="addStudent()">➕ 添加</button>
       </div>
-
-      <div id="student-list" style="margin-top:24px;max-width:500px;margin-left:auto;margin-right:auto;text-align:left">
-        <div class="status-msg"><span class="emoji">👆</span>还没有添加学生，在上方添加吧</div>
-      </div>
+      <div id="student-list" style="margin-top:16px;max-width:500px;margin-left:auto;margin-right:auto;text-align:left"><div class="status-msg"><span class="emoji">👆</span>暂无学生</div></div>
     </div>
   </div>
 
-  <div class="helper-note">
-    <span style="font-size:20px;flex-shrink:0;">💡</span>
-    <div>
-      <strong>提示：</strong>所有数据保存在服务端，换个设备登录同一账号即可继续学习。<br>
-      演示模式下验证码直接显示在页面上。配置 SMTP 后可发送真实邮件。<br>
-      需要更多帮助，在群里 @虾仔 就好 🦐
-    </div>
-  </div>
+  <div class="helper-note"><span style="font-size:18px;flex-shrink:0">💡</span><div><strong>提示：</strong>所有数据保存在服务端。@虾仔 获取帮助</div></div>
 </div>
 
 <script>
-// ========== Session ==========
 let currentUser = null;
-const SESSION_KEY = 'aixue_session_email';
+const SESSION_KEY = 'eng_quiz_session';
+function getSession(){return localStorage.getItem(SESSION_KEY)}
+function setSession(e){localStorage.setItem(SESSION_KEY,e)}
+function clearSession(){localStorage.removeItem(SESSION_KEY)}
+async function api(path,data){const r=await fetch(path,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(data)});return r.json()}
+let toastTimer=null;
+function showToast(m){const t=document.getElementById('toast');t.textContent=m;t.classList.add('show');clearTimeout(toastTimer);toastTimer=setTimeout(()=>t.classList.remove('show'),2500)}
 
-function getSession() { return localStorage.getItem(SESSION_KEY); }
-function setSession(email) { localStorage.setItem(SESSION_KEY, email); }
-function clearSession() { localStorage.removeItem(SESSION_KEY); }
-
-async function api(path, data) {
-  const resp = await fetch(path, {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify(data),
-  });
-  return resp.json();
+// ===== AUTH =====
+function showAuth(p){document.getElementById('auth-login').style.display=p==='login'?'':'none';document.getElementById('auth-register').style.display=p==='register'?'':'none';['login-error','reg-error','reg-success'].forEach(i=>document.getElementById(i).classList.remove('show'));document.querySelectorAll('[id^="ch-"]').forEach(e=>e.remove())}
+(async function(){const e=getSession();if(e){const r=await api('/api/check-session',{email:e});if(r.valid&&r.user)enterApp(r.user);else clearSession()}})()
+const codeTimers={};
+async function sendCode(type){
+  const eid=type==='login'?'login-email':'reg-email';
+  const email=document.getElementById(eid).value.trim();
+  if(!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)){showToast('请输入正确邮箱');return}
+  const r=await api('/api/send-code',{email});
+  const btn=document.getElementById(type==='login'?'login-send-code':'reg-send-code');
+  btn.disabled=true;let c=60;btn.textContent=`${c}s`;
+  if(codeTimers[type])clearInterval(codeTimers[type]);
+  codeTimers[type]=setInterval(()=>{c--;if(c<=0){clearInterval(codeTimers[type]);btn.disabled=false;btn.textContent='重新获取'}else btn.textContent=`${c}s`},1000);
+  document.querySelectorAll('[id^="ch-"]').forEach(e=>e.remove());
+  if(r.success){showToast(`📨 已发送到 ${email}`);if(r.demo){const h=document.createElement('div');h.id='ch-'+type;h.style.cssText='font-size:12px;color:var(--success);margin-top:4px';h.textContent=`📨 演示码：${r.code}`;document.getElementById(eid).closest('div').after(h)}}
+  else showToast(r.error||'发送失败')
 }
-
-// ========== Toast ==========
-let toastTimer = null;
-function showToast(msg) {
-  const t = document.getElementById('toast');
-  t.textContent = msg;
-  t.classList.add('show');
-  clearTimeout(toastTimer);
-  toastTimer = setTimeout(() => t.classList.remove('show'), 3000);
+async function handleRegister(){
+  const e=document.getElementById('reg-email').value.trim(),n=document.getElementById('reg-name').value.trim(),p=document.getElementById('reg-pwd').value.trim(),c=document.getElementById('reg-code').value.trim();
+  const er=document.getElementById('reg-error'),su=document.getElementById('reg-success');er.classList.remove('show');su.classList.remove('show');
+  if(!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(e)){er.textContent='请输入正确邮箱';er.classList.add('show');return}
+  if(n.length<3||n.length>16){er.textContent='昵称需3-16个字';er.classList.add('show');return}
+  if(p.length<6){er.textContent='密码至少6位';er.classList.add('show');return}
+  if(!c){er.textContent='请输入验证码';er.classList.add('show');return}
+  const r=await api('/api/register',{email:e,name:n,password:p,code:c});
+  if(r.success){su.textContent='🎉 注册成功！跳转中...';su.classList.add('show');setTimeout(()=>{setSession(e);enterApp(r.user)},1000)}
+  else{er.textContent=r.error;er.classList.add('show')}
 }
-
-// ========== Auth Routing ==========
-function showAuth(page) {
-  document.getElementById('auth-login').style.display = page === 'login' ? '' : 'none';
-  document.getElementById('auth-register').style.display = page === 'register' ? '' : 'none';
-  ['login-error','reg-error','reg-success'].forEach(id => document.getElementById(id).classList.remove('show'));
-  document.querySelectorAll('[id^="code-hint-"]').forEach(el => el.remove());
+async function handleLogin(){
+  const e=document.getElementById('login-email').value.trim(),c=document.getElementById('login-code').value.trim();
+  const er=document.getElementById('login-error');er.classList.remove('show');
+  if(!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(e)){er.textContent='请输入正确邮箱';er.classList.add('show');return}
+  if(!c){er.textContent='请输入验证码';er.classList.add('show');return}
+  const r=await api('/api/login',{email:e,code:c});
+  if(r.success){setSession(e);enterApp(r.user)}else{er.textContent=r.error;er.classList.add('show')}
 }
-
-// Check session on load
-(async function() {
-  const email = getSession();
-  if (email) {
-    const result = await api('/api/check-session', { email });
-    if (result.valid && result.user) {
-      enterApp(result.user);
-    } else {
-      clearSession();
-    }
-  }
-})();
-
-// ========== Send Code ==========
-const codeTimers = {};
-async function sendCode(type) {
-  const emailId = type === 'login' ? 'login-email' : 'reg-email';
-  const email = document.getElementById(emailId).value.trim();
-  if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
-    showToast('请输入正确的邮箱地址');
-    return;
-  }
-
-  const result = await api('/api/send-code', { email });
-  const btn = document.getElementById(type === 'login' ? 'login-send-code' : 'reg-send-code');
-
-  // Cooldown
-  btn.disabled = true;
-  let countdown = 60;
-  btn.textContent = `${countdown}s`;
-  if (codeTimers[type]) clearInterval(codeTimers[type]);
-  codeTimers[type] = setInterval(() => {
-    countdown--;
-    if (countdown <= 0) {
-      clearInterval(codeTimers[type]);
-      btn.disabled = false;
-      btn.textContent = '重新获取';
-    } else {
-      btn.textContent = `${countdown}s`;
-    }
-  }, 1000);
-
-  // Remove old hints
-  document.querySelectorAll('[id^="code-hint-"]').forEach(el => el.remove());
-
-  if (result.success) {
-    showToast(`📨 验证码已发送到 ${email}`);
-    if (result.demo) {
-      const hint = document.createElement('div');
-      hint.id = 'code-hint-' + type;
-      hint.style.cssText = 'font-size:12px;color:var(--success);margin-top:4px;';
-      hint.textContent = `📨 演示验证码：${result.code}（服务器未配置SMTP，此码直接可用）`;
-      document.getElementById(emailId).closest('.field').after(hint);
-    }
-  } else {
-    showToast(result.error || '发送失败，请重试');
-  }
+async function quickLogin(email){
+  const r=await api('/api/quick-login',{email});
+  if(r.success){setSession(email);enterApp(r.user)}else showToast('登录失败')
 }
+const diffLevelMap={easy:'YLE',basic:'KET',intermediate:'PET',hard:'FCE',master:'CAE'};
 
-// ========== Register ==========
-async function handleRegister() {
-  const email = document.getElementById('reg-email').value.trim();
-  const name = document.getElementById('reg-name').value.trim();
-  const pwd = document.getElementById('reg-pwd').value.trim();
-  const code = document.getElementById('reg-code').value.trim();
-  const errEl = document.getElementById('reg-error');
-  const sucEl = document.getElementById('reg-success');
-  errEl.classList.remove('show');
-  sucEl.classList.remove('show');
+// ===== ENTER/LEAVE APP =====
+function enterApp(user){
+  currentUser=user;
+  document.getElementById('auth-login').style.display='none';document.getElementById('auth-register').style.display='none';
+  if(!user.role){document.getElementById('role-modal').style.display='flex';window._pendingUser=user;return}
+  showMainApp(user)
+}
+function showMainApp(user){
+  currentUser=user;
+  document.getElementById('role-modal').style.display='none';document.getElementById('app-main').classList.add('show');
+  document.getElementById('user-name').textContent=user.name||'用户';document.getElementById('user-email').textContent=user.email;
+  document.getElementById('user-avatar').textContent=user.name?user.name.charAt(0):'👤';
+  const badge=document.getElementById('user-role-badge');
+  const rl={student:'👦学生',parent:'👨‍👩‍👧家长',teacher:'👩‍🏫老师'};
+  if(user.role&&rl[user.role]){badge.textContent=rl[user.role];badge.className='role-badge '+user.role;badge.style.display='inline-block'}else badge.style.display='none';
+  // Role-based tab visibility
+  const st=document.getElementById('students-tab'),ct=document.getElementById('tab-classes'),ht=document.getElementById('tab-homework'),at=document.getElementById('tab-aiassist');
+  if(user.role==='teacher'){st.style.display='';ct.style.display='';ht.style.display='';at.style.display='';loadClasses();loadHomework()} 
+  else if(user.role==='parent'){st.style.display='none';ct.style.display='';ht.style.display='';at.style.display='none';loadClasses()}
+  else{st.style.display='none';ct.style.display='none';ht.style.display='';at.style.display='none';loadHomework()}
+  document.getElementById('role-display').textContent=rl[user.role]||'🎯 已登录';
+  if(user.role==='student'&&user.assignedLevel)document.getElementById('ex-level').value=user.assignedLevel;
+  generateKnowledge()
+}
+function refreshUI(){if(currentUser)showMainApp(currentUser)}
 
-  if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) { showError(errEl, '请输入正确的邮箱'); return; }
-  if (!name) { showError(errEl, '请输入昵称'); return; }
-  if (pwd.length < 6) { showError(errEl, '密码至少6位'); return; }
-  if (!code) { showError(errEl, '请输入验证码'); return; }
+async function selectRole(role){
+  const u=window._pendingUser;if(!u)return;
+  const r=await api('/api/set-role',{email:u.email,role});
+  if(r.success){showMainApp(r.user);showToast('✅ 已设为'+{student:'学生',parent:'家长',teacher:'老师'}[role])}else showToast(r.error||'设置失败')
+}
+function skipRole(){const u=window._pendingUser;if(u)showMainApp(u)}
+function handleLogout(){
+  currentUser=null;clearSession();
+  document.getElementById('app-main').classList.remove('show');document.getElementById('role-modal').style.display='none';window._pendingUser=null;
+  document.getElementById('auth-login').style.display='';document.getElementById('login-email').value='';document.getElementById('login-code').value='';
+  document.querySelectorAll('[id^="ch-"]').forEach(e=>e.remove());showToast('已退出')
+}
+function showError(el,m){el.textContent=m;el.classList.add('show')}
 
-  const result = await api('/api/register', { email, name, password: pwd, code });
-  if (result.success) {
-    sucEl.textContent = '🎉 注册成功！正在跳转...';
-    sucEl.classList.add('show');
-    setTimeout(() => { setSession(email); enterApp(result.user); }, 1000);
-  } else {
-    showError(errEl, result.error);
+// ===== EDIT PROFILE =====
+function showEditProfile(){
+  const m=document.getElementById('profile-modal');
+  if(!m){
+    const d=document.createElement('div');d.id='profile-modal';d.className='modal-overlay';d.style.display='flex';
+    d.innerHTML=`
+      <div class="modal-box">
+        <div class="modal-title">✏️ 编辑个人信息</div>
+        <div class="form-group"><label>昵称（3-16字，不可重复）</label><input type="text" id="edit-name" value="${currentUser.name||''}" maxlength="16"></div>
+        <div id="edit-error" style="color:var(--danger);font-size:13px;margin-bottom:8px;display:none"></div>
+        <div class="btn-group"><button class="btn btn-primary" onclick="saveProfile()">💾 保存</button><button class="btn btn-secondary" onclick="this.closest('.modal-overlay').remove()">取消</button></div>
+      </div>`;
+    document.body.appendChild(d);
+    document.getElementById('edit-name').focus();
+    document.getElementById('edit-name').select()
   }
 }
-
-// ========== Login ==========
-async function handleLogin() {
-  const email = document.getElementById('login-email').value.trim();
-  const code = document.getElementById('login-code').value.trim();
-  const errEl = document.getElementById('login-error');
-  errEl.classList.remove('show');
-
-  if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) { showError(errEl, '请输入正确的邮箱'); return; }
-  if (!code) { showError(errEl, '请输入验证码'); return; }
-
-  const result = await api('/api/login', { email, code });
-  if (result.success) {
-    setSession(email);
-    enterApp(result.user);
-  } else {
-    showError(errEl, result.error);
-  }
+async function saveProfile(){
+  const name=document.getElementById('edit-name').value.trim();
+  const err=document.getElementById('edit-error');
+  if(name.length<3||name.length>16){err.textContent='昵称需3-16个字';err.style.display='block';return}
+  const r=await api('/api/profile/update',{email:currentUser.email,name});
+  if(r.success){currentUser=r.user;document.getElementById('user-name').textContent=name;document.getElementById('profile-modal').remove();showToast('✅ 已更新')}
+  else{err.textContent=r.error;err.style.display='block'}
 }
 
-// ========== Quick Login ==========
-async function quickLogin(email) {
-  const result = await api('/api/quick-login', { email });
-  if (result.success) {
-    setSession(email);
-    enterApp(result.user);
-  } else {
-    showToast('快速登录失败，请重试');
-  }
+// ===== TAB =====
+function switchTab(name){
+  const idxMap={knowledge:0,exercise:1,classes:2,homework:3,aiassist:4,students:5};
+  const idx=idxMap[name]||0;
+  document.querySelectorAll('.tab-btn').forEach((b,i)=>b.classList.toggle('active',i===idx));
+  document.querySelectorAll('.panel').forEach(p=>p.classList.remove('active'));
+  document.getElementById('panel-'+name).classList.add('active')
 }
 
-// ========== Enter / Leave App ==========
-function enterApp(user) {
-  document.getElementById('auth-login').style.display = 'none';
-  document.getElementById('auth-register').style.display = 'none';
-  document.getElementById('app-main').classList.remove('show');
-
-  // Show role selection if no role set
-  if (!user.role) {
-    document.getElementById('role-modal').style.display = 'flex';
-    window._pendingUser = user;
-    return;
-  }
-
-  showMainApp(user);
+// ===== KNOWLEDGE =====
+const kSamples=[{topic:'现在完成时',content:'I have visited London three times.\nShe has already finished her homework.\nThey have not been to the museum yet.\n\n关键词：already, yet, ever, never, for, since\n结构：have/has + 过去分词\n用法：经历 / 持续 / 刚刚'},{topic:'被动语态',content:'The cake was eaten by the dog.\nEnglish is spoken worldwide.\nThe letter has been sent.\n\n结构：be + 过去分词\n各种时态：一般现在/过去/完成/情态动词'}];
+let kIdx=0;
+function loadSampleKnowledge(){kIdx=(kIdx+1)%kSamples.length;const s=kSamples[kIdx];document.getElementById('k-topic').value=s.topic;document.getElementById('k-content').value=s.content;generateKnowledge()}
+async function generateKnowledge(){
+  const t=document.getElementById('k-topic').value.trim(),c=document.getElementById('k-content').value.trim();
+  if(!t||!c){document.getElementById('knowledge-output').innerHTML='<div class="status-msg"><span class="emoji">⚠️</span>请输入内容</div>';return}
+  document.getElementById('knowledge-output').innerHTML='<div class="status-msg"><span class="emoji">⏳</span>整理中...</div>';
+  setTimeout(()=>showKF(t,c),200)
+}
+function showKF(t,c){
+  const lines=c.split('\n').filter(l=>l.trim());let secs={'介绍':[]},cur='介绍';
+  for(const l of lines){const s=l.trim();if(/^(用法|结构|注意|关键词)/i.test(s)){cur=s.replace(/[：:].*/,'').trim();if(!secs[cur])secs[cur]=[];const r=s.replace(/^[^：:]*[：:]\s*/,'');if(r)secs[cur].push(r)}else if(s)secs[cur].push(s)}
+  const tm={0:{t:'grammar',l:'语法点'},1:{t:'vocab',l:'词汇'},2:{t:'sentence',l:'句型'},3:{t:'tip',l:'注意事项'}};let cards=[],i=0;
+  for(const[st,sl]of Object.entries(secs)){if(!sl.length)continue;const tag=tm[i%4];const ex=sl.filter(l=>/[.!?]$/.test(l.trim())&&l.trim().length>5);const d=sl.filter(l=>!ex.includes(l)).join('<br>');cards.push('<div class="ex-card fade-up" style="border-left-color:var(--primary)"><span style="font-size:12px;font-weight:600;background:var(--primary-light);color:var(--primary);padding:2px 8px;border-radius:6px">'+tag.l+'</span><div style="font-weight:700;margin-top:6px">'+st+'</div><div style="font-size:13px;color:var(--text-light);margin-top:4px;line-height:1.5">'+(d||'相关内容')+'</div>'+(ex.length?'<div style="margin-top:8px;padding:8px 12px;background:rgba(255,255,255,0.7);border-radius:6px;font-size:13px">'+ex.join('<br>')+'</div>':'')+'</div>');i++}
+  if(!cards.length)cards.push('<div class="ex-card fade-up" style="border-left-color:var(--primary)"><div style="font-weight:700">'+t+'</div><div style="margin-top:6px">'+lines.join('<br>')+'</div></div>');
+  document.getElementById('knowledge-output').innerHTML='<div style="display:grid;gap:10px">'+cards.join('\n')+'</div>'
 }
 
-function showMainApp(user) {
-  currentUser = user;
-  document.getElementById('role-modal').style.display = 'none';
-  document.getElementById('app-main').classList.add('show');
-  document.getElementById('user-name').textContent = user.name || '用户';
-  document.getElementById('user-email').textContent = user.email;
-  document.getElementById('user-avatar').textContent = user.name ? user.name.charAt(0) : '👤';
-
-  // Show role badge
-  const badge = document.getElementById('user-role-badge');
-  const roleLabels = { student: '👦 学生', parent: '👨‍👩‍👧 家长', teacher: '👩‍🏫 老师' };
-  if (user.role && roleLabels[user.role]) {
-    badge.textContent = roleLabels[user.role];
-    badge.className = 'role-badge ' + user.role;
-    badge.style.display = 'inline-block';
-  } else {
-    badge.style.display = 'none';
+// ===== EXERCISE =====
+const qBanks={
+  YLE:[{q:'This __ a cat.',a:'is'},{q:'I __ seven years old.',a:'am'},{q:'She has a red __.',a:'apple'},{q:'The dog is very __.',a:'big'},{q:'We __ to school.',a:'go'},{q:'He can __ fast.',a:'swim'},{q:'There __ two birds.',a:'are'},{q:'I __ ice cream.',a:'like'},{q:'She __ playing now.',a:'is'},{q:'The book is __ the table.',a:'on'}],
+  KET:[{q:'I __ (go) to the cinema yesterday.',a:'went'},{q:'She __ (not/like) coffee.',a:"doesn't like"},{q:'__ you finish homework?',a:'Did'},{q:'We are going __ (visit) the museum.',a:'to visit'},{q:'There __ some milk.',a:'is'},{q:'She __ a new dress last week.',a:'bought'},{q:'How much __ these shoes?',a:'do'},{q:'My brother is taller __ me.',a:'than'},{q:'You must __ quiet.',a:'be'},{q:'We __ (live) here since 2018.',a:'have lived'}],
+  PET:[{q:'If it __ (rain), we will stay home.',a:'rains'},{q:'She __ English for 3 years.',a:'has studied/has been studying'},{q:'The book __ (write) by Rowling.',a:'was written'},{q:'I enjoy __ (play) football.',a:'playing'},{q:'This is the __ (good) restaurant.',a:'best'},{q:'They __ (not/see) each other since 2020.',a:"haven't seen"},{q:'The train __ (leave) at 6pm.',a:'leaves'},{q:'We __ (have) dinner when the phone rang.',a:'were having'},{q:'She told me not __ (worry).',a:'to worry'},{q:'The more you practice, the __ (good) you get.',a:'better'}],
+  FCE:[{q:'I __ (visit) London three times.',a:'have visited'},{q:'She __ (already/finish) homework.',a:'has already finished'},{q:'They __ (not/be) to the new museum.',a:"haven't been"},{q:'__ you ever __ (eat) Japanese food?',a:'Have,eaten'},{q:'The house __ (build) in 1920.',a:'was built'},{q:'If I __ (be) you, I would accept.',a:'were'},{q:'She regrets not __ (study) harder.',a:'studying/having studied'},{q:'Hardly __ we left when it rained.',a:'had'},{q:'She is used to __ (get) up early.',a:'getting'},{q:'The teacher demanded we __ (be) on time.',a:'be'}],
+  CAE:[{q:'No sooner __ he arrived than the meeting began.',a:'had'},{q:'She __ (study) for hours before the exam.',a:'had been studying'},{q:'Under no circumstances __ we allow this.',a:'should/may/can'},{q:'The company __ (found) in 1995.',a:'was founded'},{q:"I'd rather you __ (not/tell) anyone.",a:"didn't tell"},{q:'Such __ the demand that we printed more.',a:'was'},{q:'Were it not for her, I __ (fail).',a:'would have failed'},{q:'__ (compare) to last year, profits doubled.',a:'Compared'},{q:'The report __ (make) public next week.',a:'will be made'},{q:'He is believed __ (work) abroad.',a:'to be working'}],
+  CPE:[{q:'__ such the devastation that the town was never rebuilt.',a:'Was'},{q:'She is a woman __ integrity is beyond question.',a:'whose'},{q:'Not only __ he finish, but he won.',a:'did'},{q:'The implications are far-__.',a:'reaching'},{q:'__ (give) it was his first try, he did well.',a:'Given'},{q:'Had I known, I __ (act) differently.',a:'would have acted'},{q:'She has a knack for __ (get) to the heart.',a:'getting'},{q:'Lest there be misunderstanding, I __ state my position.',a:'would like to/will'},{q:'The evidence __ (point) to a different conclusion.',a:'points'},{q:'Try __ he might, he could not convince them.',a:'as'}],
+  IELTS:[{q:'__ (global) has led to increased cultural exchange.',a:'Globalisation/Globalization'},{q:'The graph __ (illustrate) the changes.',a:'illustrates/shows'},{q:'There are several __ (advantage) to renewable energy.',a:'advantages/benefits'},{q:'The __ (consume) of fossil fuels must be reduced.',a:'consumption'},{q:'This has a significant __ (affect) on the environment.',a:'effect/impact'},{q:'The number __ (increase) steadily since 2000.',a:'has increased'},{q:'It is __ (argue) that climate change is a threat.',a:'argued'},{q:'The __ (major) of respondents agreed.',a:'majority'},{q:'__ (compare) to last year, unemployment dropped.',a:'Compared'},{q:'This essay will __ (discussion) the causes.',a:'discuss'}],
+  TOEFL:[{q:'According to the passage, the main cause of __ is...',a:'global warming'},{q:'The professor __ (emphasis) the importance.',a:'emphasized'},{q:'In contrast, the lecture __ (suggest)...',a:'suggests'},{q:'The author provides several __ (example).',a:'examples'},{q:'__ (base) on the evidence, we can conclude...',a:'Based'},{q:'The study __ (conduct) over five years.',a:'was conducted'},{q:'The __ (signify) of this discovery is huge.',a:'significance'},{q:'Research __ (indicate) that group work helps.',a:'indicates'},{q:'The lecture __ (challenge) the reading view.',a:'challenges'},{q:'The results were __ (significance).',a:'significant'}],
+};
+const exSamples=[{type:'fill-blank',level:'FCE',count:5}];let exIdx=0;
+function loadSampleExercise(){const s=exSamples[exIdx%exSamples.length];exIdx++;document.getElementById('ex-type').value=s.type;document.getElementById('ex-level').value=s.level;document.getElementById('ex-count').value=s.count;generateExercise()}
+function generateExercise(){
+  const type=document.getElementById('ex-type').value,level=document.getElementById('ex-level').value,count=parseInt(document.getElementById('ex-count').value);
+  document.getElementById('ex-level-badge').textContent='🎯 '+level;document.getElementById('ex-level-badge').style.display='inline-block';
+  document.getElementById('exercise-output').innerHTML='<div class="status-msg"><span class="emoji">⏳</span>出题中...</div>';
+  setTimeout(()=>showEF(type,level,count),200)
+}
+function showEF(type,level,count){
+  const isT=currentUser&&currentUser.role==='teacher';
+  const pool=qBanks[level]||qBanks.FCE;
+  const label=type==='fill-blank'?'填空题':type==='sentence-writing'?'仿写句子':'句子改写';
+  let html='';
+  for(let i=0;i<count;i++){
+    const p=pool[i%pool.length];
+    const q=p.q.replace(/_+/g,'<span class="blank">______</span>');
+    if(isT)html+=`<div class="ex-card fade-up"><div><span class="ex-num">${i+1}</span><strong>${label}</strong></div><div class="ex-q">${q}</div><button class="show-ans-btn" onclick="this.nextElementSibling.classList.toggle('show');this.textContent=this.nextElementSibling.classList.contains('show')?'🙈隐藏':'👀查看'">👀 查看答案</button><div class="ex-ans">${p.a}</div></div>`;
+    else html+=`<div class="ex-card fade-up"><div><span class="ex-num">${i+1}</span><strong>${label}</strong></div><div class="ex-q">${q}</div></div>`;
   }
-
-  // Show student management tab for teacher/parent
-  const stuTab = document.getElementById('students-tab');
-  if (user.role === 'teacher' || user.role === 'parent') {
-    stuTab.style.display = '';
-    loadStudents();
-  } else {
-    stuTab.style.display = 'none';
-  }
-  
-  // Auto-set exercise level if assigned by teacher
-  if (user.role === 'student' && user.assignedLevel) {
-    document.getElementById('ex-level').value = user.assignedLevel;
-  }
-
-  generateKnowledge();
+  document.getElementById('exercise-output').innerHTML='<div class="ex-list">'+html+'</div>'
 }
 
-async function loadStudents() {
-  const result = await api('/api/students', { email: currentUser.email });
-  if (result.success) renderStudents(result.students);
+// ===== CLASS MANAGEMENT =====
+async function createClass(){
+  const name=document.getElementById('cls-name').value.trim(),level=document.getElementById('cls-level').value;
+  if(!name){showToast('请输入班级名称');return}
+  const r=await api('/api/classes/create',{teacherEmail:currentUser.email,name,examLevel:level});
+  if(r.success){showToast('✅ 班级已创建');document.getElementById('cls-name').value='';loadClasses()}else showToast(r.error)
 }
-
-function renderStudents(students) {
-  const container = document.getElementById('student-list');
-  if (!students || !students.length) {
-    container.innerHTML = '<div class="status-msg"><span class="emoji">👆</span>还没有添加学生，在上方添加吧</div>';
-    return;
-  }
-  const levelNames = { YLE:'🟢 YLE', KET:'🔵 KET', PET:'🟡 PET', FCE:'🟠 FCE', CAE:'🔴 CAE', CPE:'🟣 CPE', IELTS:'📘 IELTS', TOEFL:'📙 TOEFL' };
-  let html = '<div style="display:flex;flex-direction:column;gap:10px">';
-  for (const s of students) {
-    html += `<div style="display:flex;align-items:center;justify-content:space-between;padding:12px 16px;background:var(--bg);border-radius:12px;gap:10px;flex-wrap:wrap">
-      <div><strong>\${s.name}</strong><br><span style="font-size:13px;color:var(--text-light)">\${s.email}</span></div>
-      <div style="display:flex;align-items:center;gap:8px">
-        <select onchange="updateStudentLevel('\${s.email}', this.value)" style="padding:6px 10px;font-size:13px;width:auto">
-          <option value="YLE" \${s.level==='YLE'?'selected':''}>YLE</option>
-          <option value="KET" \${s.level==='KET'?'selected':''}>KET</option>
-          <option value="PET" \${s.level==='PET'?'selected':''}>PET</option>
-          <option value="FCE" \${s.level==='FCE'?'selected':''}>FCE</option>
-          <option value="CAE" \${s.level==='CAE'?'selected':''}>CAE</option>
-          <option value="CPE" \${s.level==='CPE'?'selected':''}>CPE</option>
-          <option value="IELTS" \${s.level==='IELTS'?'selected':''}>IELTS</option>
-          <option value="TOEFL" \${s.level==='TOEFL'?'selected':''}>TOEFL</option>
-        </select>
-        <span style="font-size:13px;font-weight:600">\${levelNames[s.level]}</span>
-        <button onclick="removeStudent('\${s.email}')" style="padding:6px 12px;border:none;border-radius:8px;background:#FFF0F0;color:#FF3B30;font-size:13px;cursor:pointer">✕</button>
+async function loadClasses(){
+  if(!currentUser)return;
+  const r=await api('/api/classes/list',{email:currentUser.email});
+  if(!r.success)return;
+  renderClasses(r.classes);
+  // Update homework class selector
+  const sel=document.getElementById('hw-class-select');
+  sel.innerHTML='<option value="">请选择班级</option>';
+  for(const c of r.classes)sel.innerHTML+=`<option value="${c.id}">${c.name} (${c.examLevel})</option>`
+}
+function renderClasses(classes){
+  const container=document.getElementById('class-list');
+  if(!classes.length){container.innerHTML='<div class="status-msg"><span class="emoji">👆</span>还没有班级</div>';return}
+  let html='';
+  for(const c of classes){
+    const isTeacher=currentUser&&c.teacherEmail===currentUser.email;
+    html+=`<div class="class-card fade-up">
+      <div style="display:flex;justify-content:space-between;align-items:start;flex-wrap:wrap;gap:8px">
+        <div><div class="name">${c.name}</div><div class="meta">🎯 ${c.examLevel} ${isTeacher?'· 我的班级':''}</div></div>
+        <div style="display:flex;gap:4px">
+          ${isTeacher?`<button class="btn btn-secondary btn-sm" onclick="showClassDetail('${c.id}')">📋 详情</button><button class="btn btn-secondary btn-sm" onclick="showClassSchedule('${c.id}')">📅 课表</button><button class="btn btn-secondary btn-sm" onclick="showAddMember('${c.id}')">➕ 成员</button><button class="btn btn-danger btn-sm" onclick="deleteClass('${c.id}')">✕</button>`:`<button class="btn btn-secondary btn-sm" onclick="showClassDetail('${c.id}')">📋 查看</button>`}
+        </div>
       </div>
-    </div>`;
+      <div style="margin-top:8px;font-size:12px;color:var(--text-light)">
+        成员: ${(c.members||[]).length}人
+        ${c.schedule&&c.schedule.length?`| ${c.schedule.map(s=>s.day+' '+s.startTime+'-'+s.endTime).join(' / ')}`:''}
+      </div>
+      ${c.members&&c.members.length?`<div style="margin-top:6px">${c.members.map(m=>`<span class="member-tag ${m.memberRole||'student'}">${m.name}</span>`).join('')}</div>`:''}
+    </div>`
   }
-  html += '</div>';
-  container.innerHTML = html;
+  container.innerHTML=html
+}
+async function deleteClass(id){
+  if(!confirm('确定删除该班级？'))return;
+  const r=await api('/api/classes/delete',{classId:id});
+  if(r.success){showToast('已删除');loadClasses()}
+}
+function showAddMember(classId){
+  const d=document.createElement('div');d.className='modal-overlay';d.style.display='flex';
+  d.innerHTML=`<div class="modal-box">
+    <div class="modal-title">添加成员</div>
+    <div class="form-group"><label>用户昵称</label><input type="text" id="add-name" placeholder="输入用户昵称搜索"></div>
+    <div class="form-group"><label>身份</label><select id="add-role"><option value="student">学生</option><option value="parent">家长</option></select></div>
+    <div id="add-result" style="font-size:13px;margin-top:8px"></div>
+    <div class="btn-group"><button class="btn btn-primary" onclick="doAddMember('${classId}')">添加</button><button class="btn btn-secondary" onclick="this.closest('.modal-overlay').remove()">取消</button></div>
+  </div>`;
+  document.body.appendChild(d)
+}
+async function doAddMember(classId){
+  const name=document.getElementById('add-name').value.trim(),role=document.getElementById('add-role').value;
+  if(!name){showToast('请输入昵称');return}
+  const r=await api('/api/classes/add-member',{classId,userName:name,role});
+  if(r.success){document.getElementById('add-result').textContent='✅ 已添加';loadClasses();setTimeout(()=>document.querySelector('.modal-overlay').remove(),800)}
+  else document.getElementById('add-result').textContent='❌ '+r.error
+}
+function showClassDetail(classId){
+  const d=document.createElement('div');d.className='modal-overlay';d.style.display='flex';
+  d.innerHTML=`<div class="modal-box"><div class="modal-title">⏳ 加载中...</div></div>`;document.body.appendChild(d);
+  api('/api/classes/detail',{classId}).then(r=>{
+    if(!r.success){d.innerHTML=`<div class="modal-box"><div class="modal-title">❌ 加载失败</div><div class="btn-group"><button class="btn btn-secondary" onclick="this.closest('.modal-overlay').remove()">关闭</button></div></div>`;return}
+    const c=r.class,hw=r.homework||[];
+    d.innerHTML=`<div class="modal-box"><div class="modal-title">${c.name}</div>
+      <p style="font-size:13px;color:var(--text-light);margin-bottom:12px">🎯 ${c.examLevel} | 成员 ${(c.members||[]).length}人</p>
+      ${c.schedule&&c.schedule.length?`<div style="margin-bottom:12px"><strong>📅 上课时间：</strong>${c.schedule.map(s=>`<div class="schedule-day">${s.day} ${s.startTime}-${s.endTime}</div>`).join('')}</div>`:''}
+      ${c.members&&c.members.length?`<div style="margin-bottom:12px"><strong>👥 成员：</strong>${c.members.map(m=>`<span class="member-tag ${m.memberRole||'student'}">${m.name}${currentUser.role==='teacher'?` <span style="cursor:pointer;color:var(--danger)" onclick="removeMember('${classId}','${m.email}')">✕</span>`:''}</span>`).join(' ')}</div>`:'<p style="font-size:13px;color:var(--text-light)">暂无成员</p>'}
+      ${hw.length?`<div style="margin-top:12px"><strong>📋 作业：</strong>${hw.slice(0,5).map(h=>`<div class="hw-card"><div class="hw-title">${h.title}</div><div class="hw-meta">${h.type} | ${h.dueDate||'无截止'}</div></div>`).join('')}</div>`:''}
+      ${c.classLogs&&c.classLogs.length?`<div style="margin-top:12px"><strong>📝 课堂记录：</strong>${c.classLogs.slice(-5).reverse().map(l=>`<div class="schedule-day">${l.date} ${l.time}${l.cancelled?' ❌取消':''}<br>${l.content||''}${l.progress?' | 进度：'+l.progress:''}</div>`).join('')}</div>`:''}
+      <div class="btn-group"><button class="btn btn-secondary" onclick="this.closest('.modal-overlay').remove()">关闭</button></div></div>`
+  })
+}
+async function removeMember(classId,email){
+  if(!confirm('确定移除？'))return;
+  const r=await api('/api/classes/remove-member',{classId,userEmail:email});
+  if(r.success){showToast('已移除');loadClasses();document.querySelector('.modal-overlay').remove()}else showToast(r.error)
+}
+function showClassSchedule(classId){
+  const d=document.createElement('div');d.className='modal-overlay';d.style.display='flex';
+  d.innerHTML=`<div class="modal-box">
+    <div class="modal-title">📅 设置上课时间</div>
+    <div id="schedule-entries">
+      <div class="schedule-entry row" style="margin-bottom:8px">
+        <select class="s-day" style="flex:1"><option>周一</option><option>周二</option><option>周三</option><option>周四</option><option>周五</option><option>周六</option><option>周日</option></select>
+        <input type="time" class="s-start" value="09:00" style="flex:1">
+        <input type="time" class="s-end" value="10:30" style="flex:1">
+      </div>
+    </div>
+    <button class="btn btn-secondary btn-sm" onclick="addScheduleRow()" style="margin-bottom:12px">➕ 添加时段</button>
+    <div class="btn-group"><button class="btn btn-primary" onclick="saveSchedule('${classId}')">💾 保存</button><button class="btn btn-secondary" onclick="this.closest('.modal-overlay').remove()">取消</button></div>
+  </div>`;
+  document.body.appendChild(d)
+}
+function addScheduleRow(){
+  const e=document.getElementById('schedule-entries');
+  e.innerHTML+=`<div class="schedule-entry row" style="margin-bottom:8px"><select class="s-day" style="flex:1"><option>周一</option><option>周二</option><option>周三</option><option>周四</option><option>周五</option><option>周六</option><option>周日</option></select><input type="time" class="s-start" value="14:00" style="flex:1"><input type="time" class="s-end" value="15:30" style="flex:1"></div>`
+}
+async function saveSchedule(classId){
+  const entries=document.querySelectorAll('.schedule-entry');
+  const schedule=[];
+  for(const e of entries){
+    const day=e.querySelector('.s-day').value,start=e.querySelector('.s-start').value,end=e.querySelector('.s-end').value;
+    if(day&&start&&end)schedule.push({day,startTime:start,endTime:end})
+  }
+  const r=await api('/api/classes/set-schedule',{classId,schedule});
+  if(r.success){showToast('✅ 已保存');document.querySelector('.modal-overlay').remove();loadClasses()}
+}
+// Class notes (after class)
+function showClassNote(classId){
+  const d=document.createElement('div');d.className='modal-overlay';d.style.display='flex';
+  d.innerHTML=`<div class="modal-box"><div class="modal-title">📝 课堂记录</div>
+    <div class="form-group"><label>学习内容</label><textarea id="note-content" rows="2" placeholder="今天学了什么"></textarea></div>
+    <div class="form-group"><label>学习进度</label><input type="text" id="note-progress" placeholder="完成到哪了"></div>
+    <div class="btn-group">
+      <button class="btn btn-primary" onclick="saveClassNote('${classId}')">💾 保存</button>
+      <button class="btn btn-danger" onclick="cancelClass('${classId}')">❌ 课堂取消</button>
+      <button class="btn btn-secondary" onclick="this.closest('.modal-overlay').remove()">关闭</button>
+    </div></div>`;
+  document.body.appendChild(d)
+}
+async function saveClassNote(classId){
+  const c=document.getElementById('note-content').value.trim(),p=document.getElementById('note-progress').value.trim();
+  const r=await api('/api/classes/add-note',{classId,content:c,progress:p,cancelled:false});
+  if(r.success){showToast('✅ 已记录');document.querySelector('.modal-overlay').remove();showToast('🎉 课堂记录已保存！')}
+}
+async function cancelClass(classId){
+  if(!confirm('确定标记为课堂取消？'))return;
+  const r=await api('/api/classes/add-note',{classId,content:'',progress:'',cancelled:true});
+  if(r.success){showToast('已标记取消');document.querySelector('.modal-overlay').remove();loadClasses()}
 }
 
-async function addStudent() {
-  const email = document.getElementById('stu-email').value.trim();
-  const name = document.getElementById('stu-name').value.trim();
-  const level = document.getElementById('stu-level').value;
-  if (!email) { showToast('请输入学生邮箱'); return; }
-  
-  const result = await api('/api/students/add', {
-    teacherEmail: currentUser.email,
-    studentEmail: email,
-    studentName: name || email.split('@')[0],
-    level
+// ===== HOMEWORK =====
+async function loadHomework(){
+  const classId=document.getElementById('hw-class-select').value;
+  const container=document.getElementById('homework-content');
+  if(!classId){container.innerHTML='<div class="status-msg"><span class="emoji">👆</span>选好班级</div>';return}
+  const r=await api('/api/homework/list',{classId});
+  if(!r.success)return;
+  const isTeacher=currentUser&&currentUser.role==='teacher';
+  let html=(isTeacher?`<button class="btn btn-primary btn-sm" onclick="showCreateHW('${classId}')" style="margin-bottom:12px">📝 发布作业</button>`:'')+'<div id="hw-list">';
+  if(!r.homework.length)html+='<div class="status-msg"><span class="emoji">📋</span>暂无作业</div>';
+  else for(const h of r.homework){
+    const typeLabel={choice:'选择题',sentence-fill:'填句题','true-false':'判断题','fill-blank':'填词题'}[h.type]||h.type;
+    html+=`<div class="hw-card"><div class="hw-title">${h.title}</div><div class="hw-meta">${typeLabel} | 共${h.questions.length}题 | ${h.dueDate?('截止：'+h.dueDate):''}</div>`
+    if(isTeacher)html+=`<button class="show-ans-btn" onclick="showHWPreview('${h.id}')">👀 查看题目</button>`;
+    html+='</div>'
+  }
+  html+='</div>';
+  container.innerHTML=html
+}
+function showCreateHW(classId){
+  const d=document.createElement('div');d.className='modal-overlay';d.style.display='flex';
+  d.innerHTML=`<div class="modal-box" style="max-width:600px"><div class="modal-title">📝 发布作业</div>
+    <div class="form-group"><label>标题</label><input type="text" id="hw-title" placeholder="作业标题"></div>
+    <div class="form-group"><label>题型</label>
+      <select id="hw-type" onchange="updateHWTypeUI()">
+        <option value="choice">选择题</option>
+        <option value="fill-blank">填词题</option>
+        <option value="true-false">判断题</option>
+        <option value="sentence-fill">填句题</option>
+      </select></div>
+    <div class="form-group"><label>截止日期</label><input type="date" id="hw-due"></div>
+    <div id="hw-questions-container">
+      <div class="hw-question" id="hw-q-0">
+        <input type="text" class="hw-q-text" placeholder="题目内容" style="margin-bottom:6px">
+        <div class="hw-options">
+          <label><input type="radio" name="hw-ans-0" value="0"> <input type="text" class="hw-opt" placeholder="选项A" style="width:80%"></label>
+          <label><input type="radio" name="hw-ans-0" value="1"> <input type="text" class="hw-opt" placeholder="选项B" style="width:80%"></label>
+          <label><input type="radio" name="hw-ans-0" value="2"> <input type="text" class="hw-opt" placeholder="选项C" style="width:80%"></label>
+          <label><input type="radio" name="hw-ans-0" value="3"> <input type="text" class="hw-opt" placeholder="选项D" style="width:80%"></label>
+        </div>
+      </div>
+    </div>
+    <button class="btn btn-secondary btn-sm" onclick="addHWQuestion()">➕ 添加题目</button>
+    <div class="btn-group" style="margin-top:12px"><button class="btn btn-primary" onclick="doCreateHW('${classId}')">📝 发布</button><button class="btn btn-secondary" onclick="this.closest('.modal-overlay').remove()">取消</button></div></div>`;
+  document.body.appendChild(d)
+}
+function updateHWTypeUI(){
+  const type=document.getElementById('hw-type').value;
+  document.querySelectorAll('#hw-questions-container .hw-question').forEach((q,i)=>{
+    const opts=q.querySelector('.hw-options');
+    if(type==='true-false'){opts.innerHTML='<label><input type="radio" name="hw-ans-'+i+'" value="true"> True</label><label><input type="radio" name="hw-ans-'+i+'" value="false"> False</label>'}
+    else if(type==='fill-blank'||type==='sentence-fill'){opts.innerHTML='<input type="text" class="hw-ans-text" placeholder="正确答案" style="width:60%">'}
+    else{opts.innerHTML='<label><input type="radio" name="hw-ans-'+i+'" value="0"> <input type="text" class="hw-opt" placeholder="选项A" style="width:80%"></label><label><input type="radio" name="hw-ans-'+i+'" value="1"> <input type="text" class="hw-opt" placeholder="选项B" style="width:80%"></label><label><input type="radio" name="hw-ans-'+i+'" value="2"> <input type="text" class="hw-opt" placeholder="选项C" style="width:80%"></label><label><input type="radio" name="hw-ans-'+i+'" value="3"> <input type="text" class="hw-opt" placeholder="选项D" style="width:80%"></label>'}
+  })
+}
+let hwQCount=1;
+function addHWQuestion(){
+  const type=document.getElementById('hw-type').value;
+  const i=hwQCount++;
+  const c=document.getElementById('hw-questions-container');
+  let optsHtml='';
+  if(type==='true-false')optsHtml='<label><input type="radio" name="hw-ans-'+i+'" value="true"> True</label><label><input type="radio" name="hw-ans-'+i+'" value="false"> False</label>';
+  else if(type==='fill-blank'||type==='sentence-fill')optsHtml='<input type="text" class="hw-ans-text" placeholder="正确答案" style="width:60%">';
+  else optsHtml='<label><input type="radio" name="hw-ans-'+i+'" value="0"> <input type="text" class="hw-opt" placeholder="选项A" style="width:80%"></label><label><input type="radio" name="hw-ans-'+i+'" value="1"> <input type="text" class="hw-opt" placeholder="选项B" style="width:80%"></label><label><input type="radio" name="hw-ans-'+i+'" value="2"> <input type="text" class="hw-opt" placeholder="选项C" style="width:80%"></label><label><input type="radio" name="hw-ans-'+i+'" value="3"> <input type="text" class="hw-opt" placeholder="选项D" style="width:80%"></label>';
+  const div=document.createElement('div');div.className='hw-question';div.id='hw-q-'+i;
+  div.innerHTML='<input type="text" class="hw-q-text" placeholder="题目内容" style="margin-bottom:6px"><div class="hw-options">'+optsHtml+'</div><button class="show-ans-btn" onclick="this.parentElement.remove()">✕ 删除</button>';
+  c.appendChild(div)
+}
+async function doCreateHW(classId){
+  const title=document.getElementById('hw-title').value.trim(),type=document.getElementById('hw-type').value,due=document.getElementById('hw-due').value;
+  if(!title){showToast('请输入标题');return}
+  const questions=[];let valid=true;
+  document.querySelectorAll('#hw-questions-container .hw-question').forEach(q=>{
+    const text=q.querySelector('.hw-q-text')?.value.trim();
+    if(!text)return;
+    let answer='';const opts=[];
+    if(type==='choice'){q.querySelectorAll('.hw-opt').forEach(o=>opts.push(o.value.trim()));const sel=q.querySelector('input[type=radio]:checked');if(sel)answer=opts[parseInt(sel.value)]||''}
+    else if(type==='true-false'){const sel=q.querySelector('input[type=radio]:checked');if(sel)answer=sel.value}
+    else{answer=q.querySelector('.hw-ans-text')?.value.trim()||''}
+    if(text&&answer)questions.push({q:text,options:opts,answer})
   });
-  if (result.success) {
-    showToast('✅ 已添加学生：' + email);
-    renderStudents(result.students);
-    document.getElementById('stu-email').value = '';
-    document.getElementById('stu-name').value = '';
-  } else {
-    showToast(result.error || '添加失败');
+  if(!questions.length){showToast('请添加至少一题');return}
+  const r=await api('/api/homework/create',{classId,teacherEmail:currentUser.email,title,type,questions,dueDate:due});
+  if(r.success){showToast('✅ 作业已发布');document.querySelector('.modal-overlay').remove();loadHomework()}
+  else showToast(r.error)
+}
+function showHWPreview(id){
+  api('/api/homework/list',{classId:'_all'}).then(r=>{
+    if(!r.success)return;
+    // Find the specific homework
+  })
+  // Simple fallback: just show what we have
+  const cards=document.querySelectorAll('.hw-card');
+  for(const c of cards)if(c.querySelector('.hw-title')&&c.querySelector('.show-ans-btn')===event.target){
+    const detail=c.querySelector('.hw-meta')?.textContent||'';
+    showToast('查看作业详情 (功能开发中)')
   }
 }
 
-async function updateStudentLevel(email, level) {
-  const result = await api('/api/students/update', { teacherEmail: currentUser.email, studentEmail: email, level });
-  if (result.success) {
-    showToast('✅ 已更新学习进度');
+// ===== AI ASSISTANT =====
+let aiListening=false;let aiRecognition=null;
+function toggleAiVoice(){
+  const btn=document.getElementById('ai-mic');
+  if(!('webkitSpeechRecognition'in window)&&!('SpeechRecognition'in window)){showToast('请用Chrome浏览器');return}
+  if(aiListening){if(aiRecognition)aiRecognition.stop();aiListening=false;btn.textContent='🎤';btn.style.borderColor='var(--border)';return}
+  const SR=window.SpeechRecognition||window.webkitSpeechRecognition;
+  aiRecognition=new SR();aiRecognition.lang='zh-CN';aiRecognition.continuous=false;aiRecognition.interimResults=false;
+  aiRecognition.onstart=()=>{aiListening=true;btn.textContent='🔴';btn.style.borderColor='#FF3B30';showToast('🎤 请说出指令...')};
+  aiRecognition.onresult=(e)=>{document.getElementById('ai-input').value=e.results[0][0].transcript;processAiCommand()};
+  aiRecognition.onend=()=>{aiListening=false;btn.textContent='🎤';btn.style.borderColor='var(--border)'};
+  aiRecognition.onerror=(e)=>{if(e.error!=='no-speech'&&e.error!=='aborted')showToast('⛔ '+e.error);aiListening=false;btn.textContent='🎤';btn.style.borderColor='var(--border)'};
+  try{aiRecognition.start()}catch(e){showToast('⛔ 启动失败')}
+}
+function processAiCommand(){
+  const input=document.getElementById('ai-input').value.trim();
+  const container=document.getElementById('ai-result');
+  if(!input){showToast('请输入指令');return}
+  // Parse format: "09:00到10:30 周一班 多上一节课" or "14:00到15:30 周二班 多上一节"
+  const regex=/^(\d{1,2}:\d{2})到(\d{1,2}:\d{2})\s*(.+?班)\s*多上一节/;
+  const match=input.match(regex);
+  if(!match){container.innerHTML=`<div style="padding:12px;background:#FFF0F0;border-radius:8px;font-size:13px;color:var(--danger)">❌ 你的要求不够明确，请按格式输入：几点几分到几点几分哪个班多上一节课</div>`;return}
+  const startTime=match[1],endTime=match[2],className=match[3];
+  // Find class by name
+  api('/api/classes/list',{email:currentUser.email}).then(r=>{
+    if(!r.success||!r.classes.length){container.innerHTML='<div style="padding:12px;background:#FFF0F0;border-radius:8px;font-size:13px;color:var(--danger)">❌ 没有找到班级</div>';return}
+    const cls=r.classes.find(c=>c.name===className);
+    if(!cls){container.innerHTML=`<div style="padding:12px;background:#FFF0F0;border-radius:8px;font-size:13px;color:var(--danger)">❌ 未找到"${className}"</div>`;return}
+    // Auto add schedule and note
+    const schedule=cls.schedule||[];
+    // Find next available day - add to the schedule
+    const today=new Date();const days=['周日','周一','周二','周三','周四','周五','周六'];
+    const nextDay=days[(today.getDay()+1)%7]; // Tomorrow
+    schedule.push({day:nextDay,startTime,endTime});
+    api('/api/classes/set-schedule',{classId:cls.id,schedule}).then(r2=>{
+      if(r2.success){
+        container.innerHTML=`<div style="padding:12px;background:#E8F8ED;border-radius:8px;font-size:13px;color:#1E8E3E">
+          ✅ 已安排：${nextDay} ${startTime}-${endTime} ${className} 加课一节<br>
+          请在课程结束后记录课堂内容</div>`;
+        document.getElementById('ai-input').value='';
+        loadClasses()
+      }else container.innerHTML='<div style="padding:12px;background:#FFF0F0;border-radius:8px;font-size:13px">❌ 安排失败</div>'
+    })
+  })
+}
+
+// ===== STUDENT MANAGEMENT =====
+async function loadStudents(){
+  const r=await api('/api/students',{email:currentUser.email});
+  if(r.success)renderStudents(r.students)
+}
+function renderStudents(students){
+  const c=document.getElementById('student-list');
+  if(!students||!students.length){c.innerHTML='<div class="status-msg"><span class="emoji">👆</span>暂无学生</div>';return}
+  const ln={YLE:'YLE',KET:'KET',PET:'PET',FCE:'FCE',CAE:'CAE',CPE:'CPE',IELTS:'雅思',TOEFL:'托福'};
+  let html='';
+  for(const s of students){
+    html+=`<div style="display:flex;align-items:center;justify-content:space-between;padding:10px 14px;background:var(--bg);border-radius:10px;margin-bottom:6px;flex-wrap:wrap;gap:6px">
+      <div><strong>${s.name}</strong><br><span style="font-size:12px;color:var(--text-light)">${s.email}</span></div>
+      <div style="display:flex;align-items:center;gap:6px">
+        <select onchange="updateSM(${s.email}, this.value)" style="padding:4px 8px;font-size:12px;width:auto">
+          ${Object.entries(ln).map(([k,v])=>`<option value="${k}"${s.level===k?' selected':''}>${v}</option>`).join('')}
+        </select>
+        <span class="role-badge" style="font-size:11px">${ln[s.level]||s.level}</span>
+        <button onclick="removeStudent(${s.email})" style="padding:4px 8px;border:none;border-radius:6px;background:#FFF0F0;color:var(--danger);font-size:12px;cursor:pointer">✕</button>
+      </div></div>`
   }
+  c.innerHTML=html
 }
-
-async function removeStudent(email) {
-  if (!confirm('确定要移除该学生吗？')) return;
-  const result = await api('/api/students/remove', { teacherEmail: currentUser.email, studentEmail: email });
-  if (result.success) {
-    showToast('已移除');
-    renderStudents(result.students);
-  }
+async function addStudent(){
+  const e=document.getElementById('stu-email').value.trim(),n=document.getElementById('stu-name').value.trim(),l=document.getElementById('stu-level').value;
+  if(!e){showToast('请输入学生邮箱');return}
+  const r=await api('/api/students/add',{teacherEmail:currentUser.email,studentEmail:e,studentName:n||e.split('@')[0],level:l});
+  if(r.success){showToast('✅ 已添加');renderStudents(r.students);document.getElementById('stu-email').value='';document.getElementById('stu-name').value=''}else showToast(r.error)
 }
-
-async function selectRole(role) {
-  const user = window._pendingUser;
-  if (!user) return;
-  
-  const result = await api('/api/set-role', { email: user.email, role });
-  if (result.success) {
-    showMainApp(result.user);
-    showToast('✅ 已设置为' + {student:'学生',parent:'家长',teacher:'老师'}[role]);
-  } else {
-    showToast(result.error || '设置失败');
-  }
+async function updateSM(email,level){
+  const r=await api('/api/students/update',{teacherEmail:currentUser.email,studentEmail:email,level});
+  if(r.success)showToast('✅ 已更新')
 }
-
-function skipRole() {
-  const user = window._pendingUser;
-  if (user) showMainApp(user);
-}
-
-function handleLogout() {
-  currentUser = null;
-  clearSession();
-  document.getElementById('app-main').classList.remove('show');
-  document.getElementById('role-modal').style.display = 'none';
-  window._pendingUser = null;
-  document.getElementById('auth-login').style.display = '';
-  document.getElementById('login-email').value = '';
-  document.getElementById('login-code').value = '';
-  document.getElementById('user-role-badge').style.display = 'none';
-  document.getElementById('login-error').classList.remove('show');
-  document.querySelectorAll('[id^="code-hint-"]').forEach(el => el.remove());
-  document.getElementById('ex-bottom-bar').classList.remove('show');
-  document.body.classList.remove('has-bottom-bar');
-  showToast('已退出登录');
-}
-
-function showError(el, msg) { el.textContent = msg; el.classList.add('show'); }
-
-// ========== Tab ==========
-function switchTab(name) {
-  document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
-  document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
-  const idxMap = { knowledge: 0, exercise: 1, students: 2 };
-  const idx = idxMap[name] || 0;
-  document.querySelectorAll('.tab-btn').forEach((b, i) => b.classList.toggle('active', i === idx));
-  document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
-  document.getElementById('panel-' + name).classList.add('active');
-  if (name !== 'exercise') {
-    document.getElementById('ex-bottom-bar').classList.remove('show');
-    document.body.classList.remove('has-bottom-bar');
-  }
-}
-
-// ========== Knowledge ==========
-const knowledgeSamples = [
-  { topic: '现在完成时 (Present Perfect)', content: 'I have visited London three times.\nShe has already finished her homework.\nThey haven\'t been to the new museum yet.\nHave you ever eaten Japanese food?\n\n关键词：already, yet, ever, never, just, for, since\n结构：have/has + 过去分词\n\n用法：\n1. 表示过去的经历（不强调具体时间）\n2. 表示从过去持续到现在的状态（for/since）\n3. 表示刚刚完成的动作（just）' },
-  { topic: '被动语态 (Passive Voice)', content: 'The cake was eaten by the dog.\nEnglish is spoken all over the world.\nThe letter has been sent already.\nThe homework must be finished before Friday.\n\n结构：be + 过去分词 (+ by...)\n\n各种时态的被动：\n一般现在：am/is/are + done\n一般过去：was/were + done\n现在完成：have/has been + done\n情态动词：can/must/should + be + done\n\n注意：\n1. 只有及物动词才有被动\n2. 有些动词不用被动（happen, occur, belong to...）' },
-  { topic: '第二条件句 (Second Conditional)', content: 'If I had a million dollars, I would travel around the world.\nIf she studied harder, she would pass the exam.\nWhat would you do if you were the president?\n\n结构：If + 过去式, would + 动词原形\n\n用法：\n1. 表示与现在事实相反的假设\n2. 表示不太可能实现的情况\n3. were 用于所有人称（包括 I/he/she）\n\n对比第一条件句：\nIf it rains (可能), I will stay home.\nIf it rained (不太可能), I would stay home.' }
-];
-let kSampleIdx = 0;
-function loadSampleKnowledge() {
-  kSampleIdx = (kSampleIdx + 1) % knowledgeSamples.length;
-  const s = knowledgeSamples[kSampleIdx];
-  document.getElementById('k-topic').value = s.topic;
-  document.getElementById('k-content').value = s.content;
-  generateKnowledge();
-}
-
-// ========== Exercise Samples ==========
-const exerciseSamples = [
-  { type: 'fill-blank', grammar: '现在完成时 (Present Perfect)', requirement: '用 already / yet / ever / never 各造一个句子', count: 5 },
-  { type: 'sentence-writing', grammar: '被动语态 (Passive Voice)', requirement: '用不同时态的被动语态造句', count: 5 },
-  { type: 'rewrite', grammar: '第二条件句 (Second Conditional)', requirement: '把以下句子改成第二条件句', count: 3 }
-];
-let exSampleIdx = 0;
-function loadSampleExercise() {
-  exSampleIdx = (exSampleIdx + 1) % exerciseSamples.length;
-  const s = exerciseSamples[exSampleIdx];
-  document.getElementById('ex-type').value = s.type;
-  document.getElementById('ex-grammar').value = s.grammar;
-  document.getElementById('ex-requirement').value = s.requirement;
-  document.getElementById('ex-count').value = s.count;
-  generateExercise();
-}
-
-// ========== Generate Knowledge ==========
-async function generateKnowledge() {
-  const topic = document.getElementById('k-topic').value.trim();
-  const content = document.getElementById('k-content').value.trim();
-  if (!topic || !content) {
-    document.getElementById('knowledge-output').innerHTML = '<div class="status-msg"><span class="emoji">⚠️</span>请输入知识点标题和内容</div>';
-    return;
-  }
-  const output = document.getElementById('knowledge-output');
-  output.innerHTML = '<div class="status-msg"><span class="emoji">⏳</span>正在整理中...</div>';
-  setTimeout(() => showKnowledgeFallback(topic, content), 300);
-}
-
-function showKnowledgeResult(html) {
-  document.getElementById('knowledge-output').innerHTML = '<div class="knowledge-grid">' + html + '</div>';
-}
-
-function showKnowledgeFallback(topic, content) {
-  const lines = content.split('\n').filter(l => l.trim());
-  let sections = { '介绍': [] };
-  let cur = '介绍';
-  for (const line of lines) {
-    const t = line.trim();
-    if (/^(用法|结构|注意|关键词|对比|定义)/i.test(t)) {
-      cur = t.replace(/[：:].*/, '').trim();
-      if (!sections[cur]) sections[cur] = [];
-      const rest = t.replace(/^[^：:]*[：:]\s*/, '');
-      if (rest) sections[cur].push(rest);
-    } else if (t) {
-      sections[cur].push(t);
-    }
-  }
-  const tagMap = { 0: { t: 'grammar', l: '语法点' }, 1: { t: 'vocab', l: '词汇' }, 2: { t: 'sentence', l: '句型' }, 3: { t: 'tip', l: '注意事项' } };
-  let cards = [], idx = 0;
-  for (const [secTitle, secLines] of Object.entries(sections)) {
-    if (!secLines.length) continue;
-    const tag = tagMap[idx % 4];
-    const examples = secLines.filter(l => /[.!?]$/.test(l.trim()) && l.trim().length > 5);
-    const desc = secLines.filter(l => !examples.includes(l)).join('<br>');
-    cards.push(`<div class="k-card ${tag.t} fade-up"><span class="k-tag">${tag.l}</span><div class="k-title">${secTitle}</div><div class="k-desc">${desc || '相关内容整理如下'}</div>${examples.length ? '<div class="k-example">' + examples.join('<br>') + '</div>' : ''}</div>`);
-    idx++;
-  }
-  if (!cards.length) {
-    cards.push(`<div class="k-card grammar fade-up"><span class="k-tag">${topic}</span><div class="k-title">核心内容</div><div class="k-example">${lines.join('<br>')}</div></div>`);
-  }
-  showKnowledgeResult(cards.join('\n'));
-}
-
-// ========== Question Banks by Exam Level ==========
-const questionBanks = {
-  YLE: {
-    fill: [
-      { q: 'This __________ a cat.', a: 'is' },
-      { q: 'I __________ seven years old.', a: 'am' },
-      { q: 'She __________ a red apple.', a: 'has/has got/have' },
-      { q: 'The dog __________ very big.', a: 'is' },
-      { q: 'We __________ to school every day.', a: 'go' },
-      { q: 'He can __________ (swim) very fast.', a: 'swim' },
-      { q: 'There __________ two birds in the tree.', a: 'are' },
-      { q: 'I __________ (like) ice cream.', a: 'like' },
-      { q: 'She __________ (play) with her toys now.', a: 'is playing' },
-      { q: 'The book is __________ the table.', a: 'on' },
-      { q: 'They are __________ (go) to the park.', a: 'going' },
-      { q: 'My favorite animal __________ a panda.', a: 'is' },
-      { q: 'I __________ (have) two brothers.', a: 'have' },
-      { q: 'It is raining. Take your __________.', a: 'umbrella' },
-      { q: 'The cat is __________ (sleep) on the chair.', a: 'sleeping' },
-    ],
-    writing: [{ q: 'Look at the picture. Write three sentences about your bedroom.<br>Use: there is / there are / my', a: '(Open-ended) Example: There is a bed. There are two books. My desk is blue.' }],
-    rewrite: [{ q: 'The cat is small.<br>→ The cat __________ not big.', a: 'is' }, { q: 'I have a red pen. → This __________ my red pen.', a: 'is' }],
-  },
-  KET: {
-    fill: [
-      { q: 'I __________ (go) to the cinema yesterday.', a: 'went' },
-      { q: 'She __________ (not/like) coffee.', a: 'doesn\'t like' },
-      { q: '__________ you finish your homework?', a: 'Did' },
-      { q: 'We are going __________ (visit) the museum.', a: 'to visit' },
-      { q: 'He __________ (be) late for school every day.', a: 'is' },
-      { q: 'There __________ (be) some milk in the fridge.', a: 'is' },
-      { q: 'I can __________ (speak) English and Chinese.', a: 'speak' },
-      { q: 'She __________ (buy) a new dress last weekend.', a: 'bought' },
-      { q: 'How much __________ these shoes cost?', a: 'do' },
-      { q: 'They __________ (not/go) to the party last night.', a: 'didn\'t go' },
-      { q: 'My brother is taller __________ me.', a: 'than' },
-      { q: 'I __________ (never/eat) Italian food before.', a: 'have never eaten/haven\'t eaten' },
-      { q: 'You must __________ (be) quiet in the library.', a: 'be' },
-      { q: 'The restaurant is __________ the left of the bank.', a: 'on' },
-      { q: 'We __________ (live) in this city since 2018.', a: 'have lived/have been living' },
-    ],
-    writing: [{ q: 'Write about your daily routine (3-4 sentences).<br>Use: always / usually / sometimes / never', a: '(Open-ended) Example: I usually get up at 7. I always have breakfast. I sometimes walk to school.' }],
-    rewrite: [{ q: 'I walk to school every day. → I __________ to school on foot every day.', a: 'go' }, { q: 'She is a good singer. → She can __________ very well.', a: 'sing' }],
-  },
-  PET: {
-    fill: [
-      { q: 'If it __________ (rain) tomorrow, we will stay home.', a: 'rains' },
-      { q: 'She __________ (study) English for three years.', a: 'has been studying/has studied' },
-      { q: 'The book __________ (write) by J.K. Rowling.', a: 'was written' },
-      { q: 'I enjoy __________ (play) football at weekends.', a: 'playing' },
-      { q: 'He __________ (just/finish) his homework.', a: 'has just finished' },
-      { q: 'This is the __________ (good) restaurant in town.', a: 'best' },
-      { q: 'They __________ (not/see) each other since 2020.', a: 'haven\'t seen' },
-      { q: 'You should __________ (apologize) to her.', a: 'apologize' },
-      { q: 'The train __________ (leave) at 6 PM every day.', a: 'leaves' },
-      { q: 'I don\'t know where she __________ (go).', a: 'went/has gone' },
-      { q: 'We __________ (have) dinner when the phone rang.', a: 'were having' },
-      { q: 'She told me __________ (not/worry) about the exam.', a: 'not to worry' },
-      { q: 'The more you practice, the __________ (good) you get.', a: 'better' },
-      { q: 'He is __________ (tall) than his brother.', a: 'taller' },
-      { q: 'I wish I __________ (can) fly.', a: 'could' },
-    ],
-    writing: [{ q: 'Describe a memorable holiday you have had (4-5 sentences).<br>Use: past tenses / first / then / finally', a: '(Open-ended) Example: Last summer I went to Paris. First, I visited the Eiffel Tower. Then I tried French food. Finally, I bought souvenirs.' }],
-    rewrite: [{ q: 'I started learning English two years ago. I still learn now.<br>→ I __________ English for two years.', a: 'have been learning' }, { q: 'Someone stole my bike. → My bike __________.', a: 'was stolen' }],
-  },
-  FCE: {
-    fill: [
-      { q: 'I __________ (visit) London three times.', a: 'have visited' },
-      { q: 'She __________ (already/finish) her homework.', a: 'has already finished' },
-      { q: 'They __________ (not/be) to the new museum yet.', a: "haven't been" },
-      { q: '__________ you ever __________ (eat) Japanese food?', a: 'Have, eaten' },
-      { q: 'He __________ (just/arrive) from Shanghai.', a: 'has just arrived' },
-      { q: 'We __________ (know) each other for ten years.', a: 'have known' },
-      { q: 'The house __________ (build) in 1920.', a: 'was built' },
-      { q: 'If I __________ (be) you, I would accept the offer.', a: 'were' },
-      { q: 'She regrets not __________ (study) harder.', a: 'having studied/studying' },
-      { q: 'The teacher demanded that we __________ (be) on time.', a: 'be' },
-      { q: 'Not until I got home __________ I realize my mistake.', a: 'did' },
-      { q: '__________ (give) more time, I could do it better.', a: 'Given' },
-      { q: 'I prefer __________ (walk) to taking the bus.', a: 'walking' },
-      { q: 'Hardly __________ we left when it started raining.', a: 'had' },
-      { q: 'She is used to __________ (get) up early.', a: 'getting' },
-    ],
-    writing: [{ q: 'Write an essay discussing the advantages and disadvantages of social media (120-150 words).<br>Use: on the one hand / however / in addition / on balance', a: '(Open-ended) Use linking words, give examples, state your opinion.' }],
-    rewrite: [{ q: 'I haven\'t seen such a beautiful sunset before.<br>→ It\'s the first time I __________ such a beautiful sunset.', a: 'have seen' }, { q: 'People say that exercise is good for health.<br>→ Exercise __________ good for health.', a: 'is said to be' }],
-  },
-  CAE: {
-    fill: [
-      { q: 'The lecture was __________ (interest) but I was __________ (tire).', a: 'interesting, tired' },
-      { q: 'No sooner __________ he arrived than the meeting began.', a: 'had' },
-      { q: 'She __________ (study) for hours before the exam started.', a: 'had been studying' },
-      { q: 'Under no circumstances __________ we allow smoking here.', a: 'should/may/can' },
-      { q: 'The company__________ (found) in 1995 by two engineers.', a: 'was founded' },
-      { q: 'He is believed __________ (work) abroad at the moment.', a: 'to be working' },
-      { q: '__________ (consider) the circumstances, she did very well.', a: 'Considering' },
-      { q: 'I\'d rather you __________ (not/tell) anyone about this.', a: 'didn\'t tell' },
-      { q: 'The artist__________ (influence) by Japanese woodblock prints.', a: 'was influenced' },
-      { q: 'Such __________ the demand that we had to print more copies.', a: 'was' },
-      { q: 'The findings__________ (relate) to the earlier study.', a: 'relate/are related' },
-      { q: 'She has a tendency __________ (exaggerate) things.', a: 'to exaggerate' },
-      { q: 'Were it not for her help, I __________ (fail).', a: 'would have failed' },
-      { q: '__________ (compare) to last year, profits have doubled.', a: 'Compared' },
-      { q: 'The report__________ (make) public next week.', a: 'will be made' },
-    ],
-    writing: [{ q: 'Write a formal letter to the editor expressing your views on climate change policies.<br>Use: advanced vocabulary / formal register / linkers', a: '(Open-ended) Use: I am writing with regard to... / It is widely acknowledged that... / Furthermore... / In conclusion...' }],
-    rewrite: [{ q: 'People think the CEO was involved in the scandal.<br>→ The CEO __________ in the scandal.', a: 'is thought to have been involved' }, { q: 'It was such a complex problem that nobody could solve it.<br>→ So complex __________ that nobody could solve it.', a: 'was the problem' }],
-  },
-  CPE: {
-    fill: [
-      { q: '__________ such the devastation that the town was never rebuilt.', a: 'Was' },
-      { q: 'She is a woman __________ integrity is beyond question.', a: 'whose' },
-      { q: 'Not only __________ he finish the project, but he also won the award.', a: 'did' },
-      { q: 'The implications of the discovery are far-__________.', a: 'reaching' },
-      { q: 'His argument was __________ (controvert) and sparked debate.', a: 'controversial' },
-      { q: 'The government__________ (implement) the new policy gradually.', a: 'is implementing/will implement' },
-      { q: '__________ (give) that it was his first attempt, he performed admirably.', a: 'Given' },
-      { q: 'Had I known earlier, I __________ (act) differently.', a: 'would have acted' },
-      { q: 'The phenomenon is __________ (explain) in terms of quantum physics.', a: 'explained/best explained' },
-      { q: 'She has an uncanny knack for __________ (get) to the heart of the matter.', a: 'getting' },
-      { q: 'It is a truth universally __________ (acknowledge)...', a: 'acknowledged' },
-      { q: 'The author__________ (criticize) for his portrayal of the era.', a: 'was criticized/has been criticized' },
-      { q: '__________ (try) as he might, he could not convince the committee.', a: 'Try' },
-      { q: 'Lest there be any misunderstanding, I __________ (state) my position clearly.', a: 'state/would like to state' },
-      { q: 'The evidence__________ (point) to a different conclusion entirely.', a: 'points' },
-    ],
-    writing: [{ q: 'Write a critical review of a recent film or book you have encountered, discussing its themes, techniques, and overall impact.<br>Use: sophisticated vocabulary / complex structures / academic register', a: '(Open-ended) Demonstrate near-native proficiency, use nuanced expressions, hedging, and complex grammatical structures.' }],
-    rewrite: [{ q: 'It is widely accepted that the situation is unsustainable.<br>→ The situation is __________ unsustainable.', a: 'widely accepted/accepted as/to be' }, { q: 'Nobody could have predicted the outcome of the election.<br>→ The outcome of the election __________.', a: 'could not have been predicted' }],
-  },
-  IELTS: {
-    fill: [
-      { q: '__________ (global) has led to increased cultural exchange.', a: 'Globalisation/Globalization' },
-      { q: 'The graph __________ (illustrate) the changes in population over time.', a: 'illustrates/shows' },
-      { q: '__________ (urban) is a growing trend in developing countries.', a: 'Urbanisation/Urbanization' },
-      { q: 'There are several __________ (advantage) to renewable energy.', a: 'advantages/benefits' },
-      { q: 'The __________ (consume) of fossil fuels must be reduced.', a: 'consumption' },
-      { q: 'One possible __________ (solve) is to invest in public transport.', a: 'solution' },
-      { q: 'This has a significant __________ (affect) on the environment.', a: 'effect/impact' },
-      { q: 'The number of students __________ (increase) steadily since 2000.', a: 'has increased/has been increasing' },
-      { q: 'Many people believe that technology __________ (improve) our quality of life.', a: 'improves/has improved' },
-      { q: '__________ (compare) to last year, unemployment has dropped.', a: 'Compared' },
-      { q: 'It is __________ (argue) that climate change is the biggest threat.', a: 'argued' },
-      { q: 'The __________ (major) of respondents agreed with the proposal.', a: 'majority' },
-      { q: 'There has been a__________ (grow) demand for online education.', a: 'growing/increase in' },
-      { q: '__________ (economy) development often comes at an environmental cost.', a: 'Economic' },
-      { q: 'This essay will __________ (discussion) the causes and effects.', a: 'discuss' },
-    ],
-    writing: [{ q: 'Write about the advantages and disadvantages of online learning for university students (250 words).<br>Use: academic vocabulary / topic sentences / linking words', a: '(IELTS Task 2) Structure: Introduction → Body 1 (advantages) → Body 2 (disadvantages) → Conclusion' }],
-    rewrite: [{ q: 'People say that regular exercise is important for health.<br>→ It __________ that regular exercise is important for health.', a: 'is said' }, { q: 'The government should invest more in public transport.<br>→ More investment in public transport __________ by the government.', a: 'should be made' }],
-  },
-  TOEFL: {
-    fill: [
-      { q: 'According to the passage, the main cause of __________ (global) is...', a: 'global warming' },
-      { q: 'The professor __________ (emphasis) the importance of critical thinking.', a: 'emphasized' },
-      { q: 'In contrast to the reading, the lecture __________ (suggest)...', a: 'suggests' },
-      { q: 'The author provides several __________ (example) to support his claim.', a: 'examples' },
-      { q: '__________ (base) on the evidence, we can conclude that...', a: 'Based' },
-      { q: 'The study __________ (conduct) over a period of five years.', a: 'was conducted' },
-      { q: 'One of the __________ (characterize) of modern art is...', a: 'characteristics' },
-      { q: 'The __________ (signify) of this discovery cannot be overstated.', a: 'significance' },
-      { q: 'Research __________ (indicate) that students benefit from group work.', a: 'indicates' },
-      { q: 'The lecture __________ (challenge) the view presented in the reading.', a: 'challenges' },
-      { q: '__________ (addition) to the main point, the author mentions...', a: 'In addition' },
-      { q: 'The results of the experiment were __________ (significance).', a: 'significant' },
-      { q: 'The professor uses the example of __________ (illustrate) her point.', a: 'to illustrate' },
-      { q: 'There is a __________ (relate) between sleep and academic performance.', a: 'relationship/correlation' },
-      { q: 'The passage __________ (primary) focuses on the economic impacts.', a: 'primarily' },
-    ],
-    writing: [{ q: 'Do you agree or disagree with the following statement?<br>"It is more important for students to study history and literature than to study science and technology."<br>Use specific reasons and examples.', a: '(TOEFL Independent Writing) State your opinion, give 2-3 supporting reasons with examples, address counterargument, conclude.' }],
-    rewrite: [{ q: 'The lecture explains the process of photosynthesis.<br>→ The process of photosynthesis __________ by the lecture.', a: 'is explained' }, { q: 'Some people believe that art is essential, but others disagree.<br>→ While some people believe art is essential, __________.', a: 'others disagree' }],
-  },
-};
-
-// ========== Generate Exercise ==========
-function generateExercise() {
-  const type = document.getElementById('ex-type').value;
-  const level = document.getElementById('ex-level').value;
-  const count = parseInt(document.getElementById('ex-count').value);
-  
-  // Show level badge
-  const badge = document.getElementById('ex-level-badge');
-  const diffNames = { easy:'🟢简单', basic:'🟡基础', intermediate:'🟠进阶', hard:'🔴较难', master:'🟣大师' };
-  const diff = document.getElementById('ex-difficulty').value;
-  const levelNames = { YLE:'YLE', KET:'KET', PET:'PET', FCE:'FCE', CAE:'CAE', CPE:'CPE', IELTS:'IELTS', TOEFL:'TOEFL' };
-  badge.textContent = (diffNames[diff]||'') + ' · ' + (levelNames[level]||'');
-  badge.style.display = 'inline-block';
-  
-  document.getElementById('exercise-output').innerHTML = '<div class="status-msg"><span class="emoji">⏳</span>正在出题中...</div>';
-  setTimeout(() => showExerciseFallback(type, count), 300);
-}
-
-// ========== Difficulty → Level mapping ==========
-const diffLevelMap = {
-  easy: 'YLE',
-  basic: 'PET',
-  intermediate: 'FCE',
-  hard: 'CAE',
-  master: 'CPE',
-};
-
-function onDifficultyChange() {
-  const diff = document.getElementById('ex-difficulty').value;
-  const level = diffLevelMap[diff] || 'FCE';
-  document.getElementById('ex-level').value = level;
-  // Update the badge label too if exercises are generated
-  const badge = document.getElementById('ex-level-badge');
-  if (badge.style.display !== 'none') {
-    const diffNames = { easy:'🟢简单', basic:'🟡基础', intermediate:'🟠进阶', hard:'🔴较难', master:'🟣大师' };
-    badge.textContent = (diffNames[diff]||'') + ' · ' + level;
-  }
-}
-
-function showExerciseResult(html) {
-  document.getElementById('exercise-output').innerHTML = '<div class="exercise-list">' + html + '</div>';
-}
-
-// ========== Student exercise state ==========
-let exState = { questions: [], current: 0, type: '' };
-let recognition = null;
-let isListening = false;
-
-function showExerciseFallback(type, count) {
-  const isTeacher = currentUser && currentUser.role === 'teacher';
-  const isStudent = currentUser && currentUser.role === 'student';
-  const level = document.getElementById('ex-level').value;
-  
-  // Get questions for selected level and type
-  const bank = questionBanks[level];
-  const typeKey = type === 'fill-blank' ? 'fill' : type === 'sentence-writing' ? 'writing' : 'rewrite';
-  let pool = bank[typeKey] || questionBanks.FCE.fill;
-  
-  const label = type === 'fill-blank' ? '填空题' : type === 'sentence-writing' ? '仿写句子' : '句子改写';
-  
-  if (isTeacher) {
-    let html = '';
-    for (let i = 0; i < count; i++) {
-      const p = pool[i % pool.length];
-      html += `<div class="ex-card fade-up"><div><span class="ex-num">\${i+1}</span> <strong>\${label}</strong></div><div class="ex-question">\${p.q.replace(/_/g,'<span class="blank">______</span>')}</div><button class="show-answer-btn" onclick="toggleAnswer(this)">👀 查看答案</button><div class="ex-answer">\${p.a}</div></div>`;
-    }
-    showExerciseResult(html);
-    document.getElementById('ex-bottom-bar').classList.remove('show');
-    document.body.classList.remove('has-bottom-bar');
-  } else {
-    exState.questions = [];
-    for (let i = 0; i < count; i++) {
-      exState.questions.push(pool[i % pool.length]);
-    }
-    exState.current = 0;
-    exState.type = type;
-    showStudentQuestion(0);
-    document.getElementById('ex-bottom-bar').classList.add('show');
-    document.body.classList.add('has-bottom-bar');
-  }
-}
-
-function showStudentQuestion(idx) {
-  if (!exState.questions.length) return;
-  const q = exState.questions[idx];
-  const count = exState.questions.length;
-  const label = exState.type === 'fill-blank' ? '填空题' : exState.type === 'sentence-writing' ? '仿写句子' : '句子改写';
-  
-  const html = `<div class="student-q-wrap"><div class="ex-card fade-up"><div><span class="ex-num">\${idx+1}</span> <strong>\${label}</strong></div><div class="ex-question">\${q.q.replace(/_/g,'<span class="blank">______</span>')}</div><div class="ex-answer show">\${q.a}</div></div></div>`;
-  showExerciseResult(html);
-  
-  document.getElementById('bar-counter').textContent = `第 \${idx+1}/\${count} 题`;
-  document.getElementById('bar-answer').value = '';
-  document.getElementById('bar-answer').className = '';
-  document.getElementById('bar-result').textContent = '';
-  document.getElementById('bar-result').className = 'bar-result';
-  document.getElementById('bar-prev').disabled = idx === 0;
-  document.getElementById('bar-next').disabled = idx === count - 1;
-  document.getElementById('exercise-output').scrollIntoView({ behavior: 'smooth' });
-}
-
-function navQuestion(dir) {
-  const newIdx = exState.current + dir;
-  if (newIdx < 0 || newIdx >= exState.questions.length) return;
-  exState.current = newIdx;
-  showStudentQuestion(newIdx);
-}
-
-function checkBarAnswer() {
-  const input = document.getElementById('bar-answer');
-  const result = document.getElementById('bar-result');
-  const q = exState.questions[exState.current];
-  if (!q) return;
-  
-  const userAns = input.value.trim().toLowerCase();
-  if (!userAns) { input.focus(); return; }
-  
-  const acceptable = q.a.toLowerCase().split('/').map(s => s.trim());
-  const matched = acceptable.some(a => userAns === a || userAns.includes(a) || a.includes(userAns));
-  
-  if (matched) {
-    input.className = 'correct';
-    result.textContent = '✅ 回答正确！';
-    result.className = 'bar-result correct';
-  } else {
-    input.className = 'wrong';
-    result.textContent = `❌ 正确答案：\${q.a}`;
-    result.className = 'bar-result wrong';
-  }
-}
-
-// ========== Voice Input ==========
-function toggleVoice() {
-  const btn = document.getElementById('mic-btn');
-  
-  if (!('webkitSpeechRecognition' in window) && !('SpeechRecognition' in window)) {
-    showToast('⛔ 当前浏览器不支持语音输入，请用Chrome浏览器');
-    return;
-  }
-  
-  if (isListening) {
-    if (recognition) recognition.stop();
-    isListening = false;
-    btn.classList.remove('listening');
-    btn.textContent = '🎤';
-    return;
-  }
-  
-  const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
-  recognition = new SpeechRecognition();
-  recognition.lang = 'en-US';
-  recognition.continuous = false;
-  recognition.interimResults = false;
-  
-  recognition.onstart = () => {
-    isListening = true;
-    btn.classList.add('listening');
-    btn.textContent = '🔴';
-    showToast('🎤 请说出你的答案...');
-  };
-  
-  recognition.onresult = (event) => {
-    const transcript = event.results[0][0].transcript;
-    document.getElementById('bar-answer').value = transcript;
-    showToast('✅ 已识别：' + transcript);
-  };
-  
-  recognition.onerror = (event) => {
-    if (event.error !== 'no-speech' && event.error !== 'aborted') {
-      showToast('⛔ 语音识别失败：' + event.error);
-    }
-    isListening = false;
-    btn.classList.remove('listening');
-    btn.textContent = '🎤';
-  };
-  
-  recognition.onend = () => {
-    isListening = false;
-    btn.classList.remove('listening');
-    btn.textContent = '🎤';
-  };
-  
-  try {
-    recognition.start();
-  } catch (e) {
-    showToast('⛔ 语音启动失败，请允许麦克风权限');
-  }
-}
-
-function toggleAnswer(btn) {
-  const a = btn.nextElementSibling;
-  if (a && a.classList.contains('ex-answer')) {
-    a.classList.toggle('show');
-    btn.textContent = a.classList.contains('show') ? '🙈 隐藏答案' : '👀 查看答案';
-  }
-}
-
-function checkAnswer(idx, correct) {
-  const input = document.getElementById('ans-' + idx);
-  const result = document.getElementById('ex-ans-' + idx);
-  if (!input) return;
-  const userAns = input.value.trim().toLowerCase();
-  if (!userAns) { input.style.borderColor = '#FF3B30'; input.focus(); return; }
-  // Check if answer matches (allow multiple correct answers separated by /)
-  const acceptable = correct.toLowerCase().split('/').map(s => s.trim());
-  const matched = acceptable.some(a => userAns === a || userAns.includes(a) || a.includes(userAns));
-  if (matched) {
-    input.style.borderColor = '#34C759';
-    input.className = 'fill-input correct';
-    result.classList.add('show');
-  } else {
-    input.style.borderColor = '#FF3B30';
-    input.className = 'fill-input wrong';
-    result.classList.add('show');
-  }
+async function removeStudent(email){
+  if(!confirm('确定移除？'))return;
+  const r=await api('/api/students/remove',{teacherEmail:currentUser.email,studentEmail:email});
+  if(r.success){showToast('已移除');renderStudents(r.students)}
 }
 </script>
 </body>
