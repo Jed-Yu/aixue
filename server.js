@@ -227,6 +227,56 @@ app.post('/api/classes/remove-member', (req, res) => {
 });
 
 // ========== 家长添加孩子 ==========
+// ========== 学生管理 ==========
+app.post('/api/students', (req, res) => {
+  const { email } = req.body;
+  const users = loadUsers();
+  const u = users[email];
+  if (!u) return res.json({ success: false, error: '用户不存在' });
+  res.json({ success: true, students: u.students || [] });
+});
+
+app.post('/api/students/add', (req, res) => {
+  const { teacherEmail, studentEmail, studentName, level } = req.body;
+  const levels = ['YLE','KET','PET','FCE','CAE','CPE','IELTS','TOEFL'];
+  if (!levels.includes(level)) return res.json({ success: false, error: '无效的级别' });
+  const users = loadUsers();
+  const t = users[teacherEmail];
+  if (!t) return res.json({ success: false, error: '账号不存在' });
+  if (!t.students) t.students = [];
+  if (t.students.find(s => s.email === studentEmail)) return res.json({ success: false, error: '已存在' });
+  t.students.push({ email: studentEmail, name: studentName||'学生', level });
+  if (users[studentEmail]) users[studentEmail].assignedLevel = level;
+  saveUsers(users);
+  res.json({ success: true, students: t.students });
+});
+
+app.post('/api/students/update', (req, res) => {
+  const { teacherEmail, studentEmail, level } = req.body;
+  if (!['YLE','KET','PET','FCE','CAE','CPE','IELTS','TOEFL'].includes(level)) return res.json({ success: false, error: '无效级别' });
+  const users = loadUsers();
+  const t = users[teacherEmail];
+  if (!t||!t.students) return res.json({ success: false, error: '不存在' });
+  const s = t.students.find(s => s.email === studentEmail);
+  if (!s) return res.json({ success: false, error: '未找到' });
+  s.level = level;
+  if (users[studentEmail]) users[studentEmail].assignedLevel = level;
+  saveUsers(users);
+  res.json({ success: true, students: t.students });
+});
+
+app.post('/api/students/remove', (req, res) => {
+  const { teacherEmail, studentEmail } = req.body;
+  const users = loadUsers();
+  const t = users[teacherEmail];
+  if (!t||!t.students) return res.json({ success: false, error: '不存在' });
+  t.students = t.students.filter(s => s.email !== studentEmail);
+  if (users[studentEmail]) users[studentEmail].assignedLevel = undefined;
+  saveUsers(users);
+  res.json({ success: true, students: t.students });
+});
+
+// ========== 家长添加孩子 ==========
 app.post('/api/parent/add-child', (req, res) => {
   const { parentEmail, childName } = req.body;
   if (!parentEmail || !childName) return res.json({ success: false, error: '参数不完整' });
