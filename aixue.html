@@ -184,12 +184,16 @@ select{appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='ht
     <div class="card" style="text-align:center">
       <div style="font-size:56px;margin-bottom:12px">🤖</div>
       <div class="modal-title">爱学助手</div>
-      <p style="font-size:13px;color:var(--text-light);margin-bottom:4px">格式：<code>09:00到10:30 周一班 多上一节课</code></p>
+      <p style="font-size:13px;color:var(--text-light);margin-bottom:4px">长按输入框录音 · 松手发送</p>
+      <p style="font-size:12px;color:var(--text-light);margin-bottom:12px">格式：<code>09:00到10:30 周一班 多上一节课</code></p>
       <div style="display:flex;gap:8px;max-width:500px;margin:0 auto">
-        <input type="text" id="ai-inp" placeholder="说或输入：14:00到15:30 周二班 多上一节课" style="flex:1">
+        <input type="text" id="ai-inp" placeholder="长按说话，或手动输入指令" style="flex:1"
+          onmousedown="startVoice()" onmouseup="stopVoice()" onmouseleave="stopVoice()"
+          ontouchstart="startVoice()" ontouchend="stopVoice()">
         <button class="btn btn-primary btn-sm" onclick="processAI()">发送</button>
       </div>
-      <div id="ai-out" style="margin-top:16px;text-align:left"></div>
+      <div id="voice-status" style="font-size:13px;margin-top:6px;min-height:20px;color:var(--text-light)">🎤 按住输入框说话</div>
+      <div id="ai-out" style="margin-top:12px;text-align:left"></div>
     </div>
   </div>
 
@@ -369,6 +373,23 @@ function pubHW(cid){
 }
 
 // ===== AI ASSISTANT =====
+let voiceRec=null;let voiceTimer=null;let isPressing=false;
+function startVoice(){
+  if(isPressing)return;isPressing=true;
+  const s=document.getElementById('voice-status');
+  if(!('webkitSpeechRecognition'in window)&&!('SpeechRecognition'in window)){s.textContent='⛔ 请用Chrome浏览器';isPressing=false;return}
+  const SR=window.SpeechRecognition||window.webkitSpeechRecognition;
+  voiceRec=new SR();voiceRec.lang='zh-CN';voiceRec.continuous=false;voiceRec.interimResults=false;
+  voiceRec.onstart=()=>{s.textContent='🔴 录音中... 松手发送';s.style.color='var(--danger)'};
+  voiceRec.onresult=(e)=>{document.getElementById('ai-inp').value=e.results[0][0].transcript;s.textContent='✅ 已识别';s.style.color='var(--success)';setTimeout(()=>processAI(),300)};
+  voiceRec.onerror=(e)=>{if(e.error!=='no-speech'&&e.error!=='aborted')s.textContent='⛔ 识别失败，请手动输入';else s.textContent='🎤 按住输入框说话';s.style.color='var(--text-light)';isPressing=false};
+  voiceRec.onend=()=>{s.textContent='🎤 按住输入框说话';s.style.color='var(--text-light)';isPressing=false};
+  try{voiceRec.start()}catch(e){s.textContent='⛔ 启动失败';s.style.color='var(--text-light)';isPressing=false}
+}
+function stopVoice(){
+  if(voiceRec){try{voiceRec.stop()}catch(e){}}
+  isPressing=false
+}
 function processAI(){
   const inp=document.getElementById('ai-inp').value.trim();const out=document.getElementById('ai-out');
   if(!inp){showToast('输入指令');return}
@@ -379,7 +400,8 @@ function processAI(){
   const d=['周日','周一','周二','周三','周四','周五','周六'];const nd=d[(new Date().getDay()+1)%7];
   if(!cls.schedule)cls.schedule=[];cls.schedule.push({day:nd,start:m[1],end:m[2]});saveClasses();
   out.innerHTML=`<div style="padding:12px;background:#E8F8ED;border-radius:8px;font-size:13px;color:#1E8E3E">✅ 已安排：${nd} ${m[1]}-${m[2]} ${cls.name} 加课一节</div>`;
-  document.getElementById('ai-inp').value='';renderClasses()
+  document.getElementById('ai-inp').value='';renderClasses();
+  document.getElementById('voice-status').textContent='🎤 按住输入框说话'
 }
 </script>
 </body>
