@@ -2,6 +2,9 @@
 <html lang="zh-CN">
 <head>
 <meta charset="UTF-8">
+<meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+<meta http-equiv="Pragma" content="no-cache">
+<meta http-equiv="Expires" content="0">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 <title>英语小题库</title>
 <style>
@@ -207,6 +210,7 @@ select{appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='ht
 
 <script>
 // ===== STATE =====
+console.log('英语小题库 v1.3 - '+new Date().toISOString());
 let role=localStorage.getItem('a_role')||'';
 let roleName=localStorage.getItem('a_name')||'';
 function saveState(){localStorage.setItem('a_role',role);localStorage.setItem('a_name',roleName)}
