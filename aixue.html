@@ -5,70 +5,111 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 <title>英语小题库</title>
 <style>
-:root{--primary:#4F86F7;--primary-light:#E8F0FE;--primary-dark:#3A6FD8;--accent:#FF8C42;--accent-light:#FFF3E8;--success:#34C759;--danger:#FF3B30;--bg:#F5F7FB;--card:#FFF;--text:#2C3E50;--text-light:#7F8C9B;--border:#E8ECF3;--radius:16px;--shadow:0 4px 24px rgba(79,134,247,0.10)}*{margin:0;padding:0;box-sizing:border-box}body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,'PingFang SC','Microsoft YaHei',sans-serif;background:var(--bg);color:var(--text);min-height:100vh}.auth-container{min-height:100vh;display:flex;align-items:center;justify-content:center;padding:24px;background:linear-gradient(135deg,#F5F7FB,#E8F0FE)}.auth-box{background:var(--card);border-radius:24px;box-shadow:0 8px 40px rgba(79,134,247,0.12);padding:40px 32px;width:100%;max-width:400px}.auth-logo{text-align:center;margin-bottom:32px}.auth-logo .emoji{font-size:48px;display:block;margin-bottom:8px}.auth-logo h1{font-size:28px;font-weight:800;background:linear-gradient(135deg,var(--primary),var(--accent));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}.auth-logo p{font-size:14px;color:var(--text-light);margin-top:4px}.auth-form{display:flex;flex-direction:column;gap:16px}.auth-form label{display:block;font-size:14px;font-weight:600;color:var(--text);margin-bottom:6px}.auth-form input{width:100%;padding:14px 16px;border:2px solid var(--border);border-radius:12px;font-size:16px;font-family:inherit;transition:border-color .2s;background:var(--bg);color:var(--text);outline:none}.auth-form input:focus{border-color:var(--primary);background:#fff}.code-row{display:flex;gap:10px}.code-row input{flex:1}.code-btn{flex-shrink:0;padding:14px 18px;border:none;border-radius:12px;font-size:14px;font-weight:600;background:var(--primary-light);color:var(--primary);cursor:pointer;white-space:nowrap}.code-btn:hover{background:#D6E5FF}.code-btn:disabled{background:#E8ECF3;color:var(--text-light);cursor:not-allowed}.auth-btn{padding:14px;border:none;border-radius:12px;font-size:16px;font-weight:700;background:var(--primary);color:#fff;cursor:pointer;width:100%}.auth-btn:hover{background:var(--primary-dark)}.auth-switch{text-align:center;margin-top:20px;font-size:14px;color:var(--text-light)}.auth-switch a{color:var(--primary);font-weight:600;cursor:pointer;text-decoration:none}.auth-error{background:#FFF0F0;border-radius:10px;padding:10px 14px;font-size:14px;color:var(--danger);display:none}.auth-error.show{display:block}.auth-success{background:#E8F8ED;border-radius:10px;padding:10px 14px;font-size:14px;color:#1E8E3E;display:none}.divider{display:flex;align-items:center;gap:12px;color:var(--text-light);font-size:13px;margin:4px 0}.divider::before,.divider::after{content:'';flex:1;height:1px;background:var(--border)}.quick-login{display:flex;gap:8px}.quick-login-btn{flex:1;padding:10px;border:2px solid var(--border);border-radius:10px;background:#fff;cursor:pointer;font-size:13px;color:var(--text-light);text-align:center}.quick-login-btn:hover{border-color:var(--primary);color:var(--primary)}.app-container{display:none;padding:12px;max-width:960px;margin:0 auto}.app-container.show{display:block}.top-bar{display:flex;align-items:center;gap:8px;margin-bottom:12px;padding:10px 16px;background:var(--card);border-radius:var(--radius);box-shadow:var(--shadow)}.top-bar .user-info{display:flex;align-items:center;gap:10px;flex:1}.top-bar .avatar{width:36px;height:36px;border-radius:50%;background:var(--primary-light);color:var(--primary);display:flex;align-items:center;justify-content:center;font-weight:700;font-size:16px}.top-bar .username{font-weight:600;font-size:15px}.top-bar .edit-profile-btn{padding:6px 12px;border:none;border-radius:8px;background:var(--primary-light);color:var(--primary);font-size:12px;font-weight:600;cursor:pointer}.top-bar .logout-btn{padding:6px 12px;border:none;border-radius:8px;background:#FFF0F0;color:var(--danger);font-size:12px;font-weight:600;cursor:pointer}.header{text-align:center;margin-bottom:16px}.logo-text{font-size:26px;font-weight:800;background:linear-gradient(135deg,var(--primary),var(--accent));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}.subtitle{font-size:13px;color:var(--text-light);margin-top:2px}.badge{display:inline-block;background:var(--accent-light);color:var(--accent);font-size:11px;font-weight:600;padding:2px 10px;border-radius:20px;margin-top:4px}.tabs{display:flex;gap:4px;background:var(--card);border-radius:var(--radius);padding:4px;box-shadow:var(--shadow);margin-bottom:12px;overflow-x:auto}.tab-btn{flex-shrink:0;padding:10px 14px;border:none;background:transparent;border-radius:10px;font-size:13px;font-weight:600;color:var(--text-light);cursor:pointer;white-space:nowrap}.tab-btn:hover{color:var(--text)}.tab-btn.active{background:var(--primary);color:#fff;box-shadow:0 2px 8px rgba(79,134,247,0.3)}.panel{display:none}.panel.active{display:block}.card{background:var(--card);border-radius:var(--radius);box-shadow:var(--shadow);padding:16px;margin-bottom:12px}.card-title{font-size:16px;font-weight:700;margin-bottom:12px;display:flex;align-items:center;gap:8px}label{display:block;font-size:13px;font-weight:600;margin-bottom:4px;color:var(--text)}textarea,input,select{width:100%;padding:10px 14px;border:2px solid var(--border);border-radius:10px;font-size:14px;font-family:inherit;transition:border-color .2s;background:var(--bg);color:var(--text);outline:none}textarea:focus,input:focus,select:focus{border-color:var(--primary)}textarea{resize:vertical;min-height:80px}select{appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%237F8C9B' stroke-width='2' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 12px center;cursor:pointer}.btn{padding:10px 20px;border:none;border-radius:10px;font-size:14px;font-weight:700;cursor:pointer;display:inline-flex;align-items:center;gap:6px}.btn-primary{background:var(--primary);color:#fff;box-shadow:0 4px 14px rgba(79,134,247,0.3)}.btn-primary:hover{background:var(--primary-dark)}.btn-secondary{background:var(--primary-light);color:var(--primary)}.btn-secondary:hover{background:#D6E5FF}.btn-danger{background:#FFF0F0;color:var(--danger)}.btn-danger:hover{background:#FFE0E0}.btn-group{display:flex;gap:8px;margin-top:10px;flex-wrap:wrap}.btn-sm{padding:6px 12px;font-size:12px}.ex-list{display:grid;gap:10px;margin-top:12px}.ex-card{background:var(--bg);border-radius:10px;padding:14px;border-left:4px solid var(--accent)}.ex-card .ex-num{display:inline-flex;align-items:center;justify-content:center;width:24px;height:24px;background:var(--accent);color:#fff;border-radius:50%;font-size:12px;font-weight:700;margin-right:6px}.ex-card .ex-q{font-size:14px;line-height:1.6;margin-top:6px}.ex-card .ex-q .blank{display:inline-block;min-width:70px;border-bottom:2px dashed var(--primary);padding:0 4px;color:var(--primary);font-weight:600}.ex-card .ex-ans{display:none;margin-top:8px;padding:8px 12px;background:rgba(52,199,89,0.1);border-radius:8px;font-size:13px;color:#1E8E3E}.ex-card .ex-ans.show{display:block}.show-ans-btn{font-size:12px;color:var(--primary);background:none;border:none;cursor:pointer;padding:4px 0}.status-msg{text-align:center;padding:30px 20px;color:var(--text-light);font-size:14px}.status-msg .emoji{font-size:36px;display:block;margin-bottom:8px}.helper-note{background:var(--primary-light);border-radius:10px;padding:12px 16px;font-size:13px;color:var(--primary-dark);margin-top:12px;display:flex;align-items:flex-start;gap:8px}.role-badge{display:inline-block;margin-left:4px;padding:1px 6px;border-radius:6px;font-size:11px;font-weight:600}.role-badge.student{background:#E8F8ED;color:#1E8E3E}.role-badge.parent{background:#FFF3E8;color:#FF8C42}.role-badge.teacher{background:var(--primary-light);color:var(--primary)}.modal-overlay{position:fixed;inset:0;z-index:999;background:rgba(0,0,0,0.5);display:flex;align-items:center;justify-content:center;padding:20px}.modal-box{background:var(--card);border-radius:20px;padding:28px 24px;max-width:500px;width:100%;max-height:80vh;overflow-y:auto;box-shadow:0 20px 60px rgba(0,0,0,0.2)}.modal-title{font-size:20px;font-weight:800;text-align:center;margin-bottom:16px}.modal-close{float:right;padding:4px 10px;border:none;background:var(--bg);border-radius:8px;cursor:pointer;font-size:16px}.toast{position:fixed;top:20px;left:50%;transform:translateX(-50%);background:var(--text);color:#fff;padding:10px 20px;border-radius:10px;font-size:14px;z-index:2000;opacity:0;transition:opacity .3s;pointer-events:none;max-width:90%;text-align:center}.toast.show{opacity:1}.form-group{margin-bottom:12px}.form-group label{display:block;font-size:13px;font-weight:600;margin-bottom:4px;color:var(--text)}.form-group input,.form-group select,.form-group textarea{width:100%;padding:10px 14px;border:2px solid var(--border);border-radius:10px;font-size:14px;font-family:inherit;background:var(--bg);outline:none}.form-group input:focus,.form-group select:focus,.form-group textarea:focus{border-color:var(--primary)}.class-card{padding:14px;border:2px solid var(--border);border-radius:12px;cursor:pointer;transition:all .2s;margin-bottom:8px}.class-card:hover{border-color:var(--primary)}.class-card .name{font-weight:700;font-size:15px}.class-card .meta{font-size:12px;color:var(--text-light);margin-top:4px}.member-tag{display:inline-block;padding:2px 8px;border-radius:6px;font-size:11px;margin:2px}.member-tag.student{background:#E8F8ED;color:#1E8E3E}.member-tag.parent{background:#FFF3E8;color:#FF8C42}.member-tag.teacher{background:var(--primary-light);color:var(--primary)}.schedule-day{padding:8px 12px;background:var(--bg);border-radius:8px;margin-bottom:6px;font-size:13px}.hw-card{padding:12px;border-left:4px solid var(--primary);background:var(--bg);border-radius:8px;margin-bottom:8px}.hw-card .hw-title{font-weight:600;font-size:14px}.hw-card .hw-meta{font-size:12px;color:var(--text-light);margin-top:4px}.hw-question{padding:12px;background:var(--card);border-radius:8px;margin-bottom:8px;border:1px solid var(--border)}.hw-option{display:block;padding:8px 12px;margin:4px 0;border:2px solid var(--border);border-radius:8px;cursor:pointer;font-size:14px}.hw-option:hover{border-color:var(--primary)}.hw-option.selected{border-color:var(--primary);background:var(--primary-light)}@media(max-width:600px){.auth-box{padding:28px 16px}.card{padding:12px}.tabs{overflow-x:auto}.tab-btn{font-size:12px;padding:8px 10px}}@keyframes fadeUp{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}.fade-up{animation:fadeUp .3s ease-out}.row{display:flex;gap:8px;flex-wrap:wrap}.row>*{flex:1;min-width:120px}
+:root{--primary:#4F86F7;--primary-light:#E8F0FE;--primary-dark:#3A6FD8;--accent:#FF8C42;--accent-light:#FFF3E8;--success:#34C759;--danger:#FF3B30;--bg:#F5F7FB;--card:#FFF;--text:#2C3E50;--text-light:#7F8C9B;--border:#E8ECF3;--radius:16px;--shadow:0 4px 24px rgba(79,134,247,0.10)}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,'PingFang SC','Microsoft YaHei',sans-serif;background:var(--bg);color:var(--text);min-height:100vh}
+
+/* Auth screen */
+.auth-container{min-height:100vh;display:flex;align-items:center;justify-content:center;padding:24px;background:linear-gradient(135deg,#F5F7FB,#E8F0FE)}
+.auth-box{background:var(--card);border-radius:24px;box-shadow:0 8px 40px rgba(79,134,247,0.12);padding:40px 32px;width:100%;max-width:400px;text-align:center}
+.auth-logo{text-align:center;margin-bottom:24px}
+.auth-logo .emoji{font-size:56px;display:block;margin-bottom:8px}
+.auth-logo h1{font-size:32px;font-weight:800;background:linear-gradient(135deg,var(--primary),var(--accent));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.auth-logo p{font-size:14px;color:var(--text-light);margin-top:4px}
+.role-pick{display:flex;flex-direction:column;gap:10px;margin-top:20px}
+.role-pick button{padding:16px;border:2px solid var(--border);border-radius:14px;background:#fff;font-size:16px;font-weight:600;cursor:pointer;transition:all .2s;text-align:left;display:flex;align-items:center;gap:12px}
+.role-pick button:hover{border-color:var(--primary);background:var(--primary-light);transform:translateX(4px)}
+.role-pick button .icon{font-size:28px}
+.role-pick button .desc{font-size:13px;color:var(--text-light);font-weight:400}
+.quick-login{display:flex;gap:8px}
+.quick-login-btn{flex:1;padding:10px;border:2px solid var(--border);border-radius:10px;background:#fff;cursor:pointer;font-size:13px;color:var(--text-light);text-align:center}
+.quick-login-btn:hover{border-color:var(--primary);color:var(--primary)}
+
+/* App */
+.app-container{display:none;padding:12px;max-width:960px;margin:0 auto}
+.app-container.show{display:block}
+.top-bar{display:flex;align-items:center;gap:8px;margin-bottom:12px;padding:10px 16px;background:var(--card);border-radius:var(--radius);box-shadow:var(--shadow)}
+.top-bar .user-info{display:flex;align-items:center;gap:10px;flex:1}
+.top-bar .avatar{width:36px;height:36px;border-radius:50%;background:var(--primary-light);color:var(--primary);display:flex;align-items:center;justify-content:center;font-weight:700;font-size:16px}
+.top-bar .username{font-weight:600;font-size:15px}
+.top-bar .logout-btn{padding:6px 12px;border:none;border-radius:8px;background:var(--primary-light);color:var(--primary);font-size:12px;font-weight:600;cursor:pointer}
+.header{text-align:center;margin-bottom:12px}
+.logo-text{font-size:26px;font-weight:800;background:linear-gradient(135deg,var(--primary),var(--accent));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.subtitle{font-size:13px;color:var(--text-light);margin-top:2px}
+.badge{display:inline-block;background:var(--accent-light);color:var(--accent);font-size:11px;font-weight:600;padding:2px 10px;border-radius:20px;margin-top:4px}
+.tabs{display:flex;gap:4px;background:var(--card);border-radius:var(--radius);padding:4px;box-shadow:var(--shadow);margin-bottom:12px;overflow-x:auto}
+.tab-btn{flex-shrink:0;padding:10px 14px;border:none;background:transparent;border-radius:10px;font-size:13px;font-weight:600;color:var(--text-light);cursor:pointer;white-space:nowrap}
+.tab-btn:hover{color:var(--text)}
+.tab-btn.active{background:var(--primary);color:#fff;box-shadow:0 2px 8px rgba(79,134,247,0.3)}
+.panel{display:none}.panel.active{display:block}
+.card{background:var(--card);border-radius:var(--radius);box-shadow:var(--shadow);padding:16px;margin-bottom:12px}
+.card-title{font-size:16px;font-weight:700;margin-bottom:12px;display:flex;align-items:center;gap:8px}
+label{display:block;font-size:13px;font-weight:600;margin-bottom:4px;color:var(--text)}
+textarea,input,select{width:100%;padding:10px 14px;border:2px solid var(--border);border-radius:10px;font-size:14px;font-family:inherit;transition:border-color .2s;background:var(--bg);color:var(--text);outline:none}
+textarea:focus,input:focus,select:focus{border-color:var(--primary)}
+textarea{resize:vertical;min-height:80px}
+select{appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%237F8C9B' stroke-width='2' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 12px center;cursor:pointer}
+.btn{padding:10px 20px;border:none;border-radius:10px;font-size:14px;font-weight:700;cursor:pointer;display:inline-flex;align-items:center;gap:6px}
+.btn-primary{background:var(--primary);color:#fff;box-shadow:0 4px 14px rgba(79,134,247,0.3)}.btn-primary:hover{background:var(--primary-dark)}
+.btn-secondary{background:var(--primary-light);color:var(--primary)}.btn-secondary:hover{background:#D6E5FF}
+.btn-danger{background:#FFF0F0;color:var(--danger)}.btn-danger:hover{background:#FFE0E0}
+.btn-group{display:flex;gap:8px;margin-top:10px;flex-wrap:wrap}
+.btn-sm{padding:6px 12px;font-size:12px}
+.ex-list{display:grid;gap:10px;margin-top:12px}
+.ex-card{background:var(--bg);border-radius:10px;padding:14px;border-left:4px solid var(--accent)}
+.ex-card .ex-num{display:inline-flex;align-items:center;justify-content:center;width:24px;height:24px;background:var(--accent);color:#fff;border-radius:50%;font-size:12px;font-weight:700;margin-right:6px}
+.ex-card .ex-q{font-size:14px;line-height:1.6;margin-top:6px}
+.ex-card .ex-q .blank{display:inline-block;min-width:70px;border-bottom:2px dashed var(--primary);padding:0 4px;color:var(--primary);font-weight:600}
+.ex-card .ex-ans{display:none;margin-top:8px;padding:8px 12px;background:rgba(52,199,89,0.1);border-radius:8px;font-size:13px;color:#1E8E3E}
+.ex-card .ex-ans.show{display:block}
+.show-ans-btn{font-size:12px;color:var(--primary);background:none;border:none;cursor:pointer;padding:4px 0}
+.status-msg{text-align:center;padding:30px 20px;color:var(--text-light);font-size:14px}
+.status-msg .emoji{font-size:36px;display:block;margin-bottom:8px}
+.helper-note{background:var(--primary-light);border-radius:10px;padding:12px 16px;font-size:13px;color:var(--primary-dark);margin-top:12px;display:flex;align-items:flex-start;gap:8px}
+.role-badge{display:inline-block;margin-left:4px;padding:1px 6px;border-radius:6px;font-size:11px;font-weight:600}
+.role-badge.student{background:#E8F8ED;color:#1E8E3E}.role-badge.parent{background:#FFF3E8;color:#FF8C42}.role-badge.teacher{background:var(--primary-light);color:var(--primary)}
+.modal-overlay{position:fixed;inset:0;z-index:999;background:rgba(0,0,0,0.5);display:flex;align-items:center;justify-content:center;padding:20px}
+.modal-box{background:var(--card);border-radius:20px;padding:28px 24px;max-width:500px;width:100%;max-height:80vh;overflow-y:auto;box-shadow:0 20px 60px rgba(0,0,0,0.2)}
+.modal-title{font-size:20px;font-weight:800;text-align:center;margin-bottom:16px}
+.toast{position:fixed;top:20px;left:50%;transform:translateX(-50%);background:var(--text);color:#fff;padding:10px 20px;border-radius:10px;font-size:14px;z-index:2000;opacity:0;transition:opacity .3s;pointer-events:none;max-width:90%;text-align:center}
+.toast.show{opacity:1}
+.form-group{margin-bottom:12px}.form-group label{display:block;font-size:13px;font-weight:600;margin-bottom:4px;color:var(--text)}
+.form-group input,.form-group select,.form-group textarea{width:100%;padding:10px 14px;border:2px solid var(--border);border-radius:10px;font-size:14px;font-family:inherit;background:var(--bg);outline:none}
+.form-group input:focus,.form-group select:focus,.form-group textarea:focus{border-color:var(--primary)}
+.class-card{padding:14px;border:2px solid var(--border);border-radius:12px;cursor:pointer;transition:all .2s;margin-bottom:8px}
+.class-card:hover{border-color:var(--primary)}.class-card .name{font-weight:700;font-size:15px}.class-card .meta{font-size:12px;color:var(--text-light);margin-top:4px}
+.member-tag{display:inline-block;padding:2px 8px;border-radius:6px;font-size:11px;margin:2px}
+.member-tag.student{background:#E8F8ED;color:#1E8E3E}.member-tag.parent{background:#FFF3E8;color:#FF8C42}
+.schedule-day{padding:8px 12px;background:var(--bg);border-radius:8px;margin-bottom:6px;font-size:13px}
+.hw-card{padding:12px;border-left:4px solid var(--primary);background:var(--bg);border-radius:8px;margin-bottom:8px}
+.hw-card .hw-title{font-weight:600;font-size:14px}.hw-card .hw-meta{font-size:12px;color:var(--text-light);margin-top:4px}
+.row{display:flex;gap:8px;flex-wrap:wrap}.row>*{flex:1;min-width:120px}
+@keyframes fadeUp{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}
+.fade-up{animation:fadeUp .3s ease-out}@media(max-width:600px){.tabs{overflow-x:auto}.tab-btn{font-size:12px;padding:8px 10px}}
 </style>
 </head>
 <body>
 <div id="toast" class="toast"></div>
 
-<!-- ===== AUTH ===== -->
-<div id="auth-login" class="auth-container">
+<!-- ===== 角色选择（代替登录） ===== -->
+<div id="auth-screen" class="auth-container">
   <div class="auth-box fade-up">
-    <div class="auth-logo"><span class="emoji">📚</span><h1>英语小题库</h1><p>YLE · KET · PET · FCE · CAE · CPE · 雅思 · 托福</p></div>
-    <div class="auth-form">
-      <div id="login-error" class="auth-error"></div>
-      <div><label>📧 邮箱</label><input type="email" id="login-email" placeholder="请输入邮箱" autocomplete="email"></div>
-      <div><label>🔑 验证码</label>
-        <div class="code-row">
-          <input type="text" id="login-code" placeholder="6位验证码" maxlength="6" inputmode="numeric">
-          <button class="code-btn" id="login-send-code" onclick="sendCode('login')">获取验证码</button>
-        </div>
-      </div>
-      <button class="auth-btn" onclick="handleLogin()">登 录</button>
-      <div class="divider">⚡ 快速体验</div>
-      <div class="quick-login">
-        <button class="quick-login-btn" onclick="quickLogin('teacher@aixue.com')">👩‍🏫 老师</button>
-        <button class="quick-login-btn" onclick="quickLogin('student@aixue.com')">👦 学生</button>
-        <button class="quick-login-btn" onclick="quickLogin('parent@aixue.com')">👨‍👩‍👧 家长</button>
-      </div>
-      <div class="auth-switch">还没有账号？<a onclick="showAuth('register')">立即注册 →</a></div>
+    <div class="auth-logo">
+      <span class="emoji">📚</span>
+      <h1>英语小题库</h1>
+      <p>YLE · KET · PET · FCE · CAE · CPE · 雅思 · 托福</p>
     </div>
-  </div>
-</div>
-
-<div id="auth-register" class="auth-container" style="display:none">
-  <div class="auth-box fade-up">
-    <div class="auth-logo"><span class="emoji">📚</span><h1>注册英语小题库</h1><p>创建你的账号</p></div>
-    <div class="auth-form">
-      <div id="reg-error" class="auth-error"></div>
-      <div id="reg-success" class="auth-success"></div>
-      <div><label>📧 邮箱</label><input type="email" id="reg-email" placeholder="你的邮箱" autocomplete="email"></div>
-      <div><label>👤 昵称（3-16字）</label><input type="text" id="reg-name" placeholder="昵称将用于被查找" maxlength="16"></div>
-      <div><label>🔒 密码</label><input type="password" id="reg-pwd" placeholder="至少6位" maxlength="20" autocomplete="new-password"></div>
-      <div><label>🔑 验证码</label>
-        <div class="code-row">
-          <input type="text" id="reg-code" placeholder="6位验证码" maxlength="6" inputmode="numeric">
-          <button class="code-btn" id="reg-send-code" onclick="sendCode('register')">获取验证码</button>
-        </div>
-      </div>
-      <button class="auth-btn" onclick="handleRegister()">注 册</button>
-      <div class="auth-switch">已有账号？<a onclick="showAuth('login')">去登录 →</a></div>
+    <p style="font-size:14px;color:var(--text-light);margin-bottom:8px">选择一个身份开始使用</p>
+    <div class="role-pick">
+      <button onclick="setRole('teacher','李老师')"><span class="icon">👩‍🏫</span> <div>老师<div class="desc">管理班级、出题、布置作业</div></div></button>
+      <button onclick="setRole('student','小明同学')"><span class="icon">👦</span> <div>学生<div class="desc">刷题备考，提高英语</div></div></button>
+      <button onclick="setRole('parent','王家长')"><span class="icon">👨‍👩‍👧</span> <div>家长<div class="desc">关注孩子的学习进度</div></div></button>
     </div>
-  </div>
-</div>
-
-<!-- ===== ROLE SELECT MODAL ===== -->
-<div id="role-modal" class="modal-overlay" style="display:none">
-  <div class="modal-box fade-up" style="text-align:center">
-    <div style="font-size:48px;margin-bottom:12px">🎭</div>
-    <div class="modal-title">选择你的身份</div>
-    <p style="font-size:14px;color:var(--text-light);margin-bottom:20px">选一个身份，让平台更好地为你服务</p>
-    <div style="display:flex;flex-direction:column;gap:8px">
-      <div class="class-card" onclick="selectRole('student')"><div class="name">👦 学生</div><div class="meta">刷题备考，提高英语</div></div>
-      <div class="class-card" onclick="selectRole('parent')"><div class="name">👨‍👩‍👧 家长</div><div class="meta">关注孩子的学习进度</div></div>
-      <div class="class-card" onclick="selectRole('teacher')"><div class="name">👩‍🏫 老师</div><div class="meta">管理班级、出题、布置作业</div></div>
+    <div class="quick-login" style="margin-top:16px">
+      <button class="quick-login-btn" onclick="setRole('teacher','李老师')">👩‍🏫 老师</button>
+      <button class="quick-login-btn" onclick="setRole('student','小明同学')">👦 学生</button>
+      <button class="quick-login-btn" onclick="setRole('parent','王家长')">👨‍👩‍👧 家长</button>
     </div>
-    <button class="auth-switch" style="margin-top:12px;border:none;background:none;cursor:pointer" onclick="skipRole()">稍后再说 →</button>
   </div>
 </div>
 
@@ -79,624 +120,266 @@
       <div class="avatar" id="user-avatar">👤</div>
       <div>
         <div class="username" id="user-name">用户</div>
-        <div style="font-size:11px;color:var(--text-light)"><span id="user-email"></span><span id="user-role-badge" class="role-badge" style="display:none"></span></div>
+        <div style="font-size:11px;color:var(--text-light)"><span id="user-role-badge" class="role-badge"></span></div>
       </div>
-      <button class="edit-profile-btn" onclick="showEditProfile()" style="margin-left:auto">✏️ 编辑</button>
     </div>
-    <button class="logout-btn" onclick="handleLogout()">退出</button>
+    <button class="logout-btn" onclick="switchRole()">切换身份</button>
   </div>
-
   <div class="header">
     <div class="logo-text">英语小题库</div>
-    <div class="subtitle">YLE · KET · PET · FCE · CAE · CPE · 雅思 · 托福 — 出题 · 班级 · 作业</div>
-    <div class="badge" id="role-display">🎯 已登录</div>
+    <div class="subtitle">YLE · KET · PET · FCE · CAE · CPE · 雅思 · 托福</div>
   </div>
 
   <div class="tabs" id="main-tabs">
-    <button class="tab-btn active" onclick="switchTab('knowledge')">📝 知识点</button>
-    <button class="tab-btn" onclick="switchTab('exercise')">✍️ 出题</button>
+    <button class="tab-btn active" onclick="switchTab('exercise')">✍️ 出题</button>
+    <button class="tab-btn" onclick="switchTab('knowledge')">📝 知识点</button>
     <button class="tab-btn" id="tab-classes" onclick="switchTab('classes')" style="display:none">🏫 班级</button>
     <button class="tab-btn" id="tab-homework" onclick="switchTab('homework')" style="display:none">📋 作业</button>
     <button class="tab-btn" id="tab-aiassist" onclick="switchTab('aiassist')" style="display:none">🤖 爱学助手</button>
-    <button class="tab-btn" id="tab-students" onclick="switchTab('students')" style="display:none">👥 学生管理</button>
-  </div>
-
-  <!-- ===== KNOWLEDGE ===== -->
-  <div id="panel-knowledge" class="panel active">
-    <div class="card">
-      <div class="card-title">📥 整理知识点</div>
-      <div class="form-group"><label>标题</label><input type="text" id="k-topic" value="现在完成时"></div>
-      <div class="form-group"><label>内容</label><textarea id="k-content" rows="4">I have visited London three times.
-She has already finished her homework.
-They haven't been to the new museum yet.
-
-关键词：already, yet, ever, never, just, for, since
-结构：have/has + 过去分词
-用法：经历 / 持续状态 / 刚刚完成</textarea></div>
-      <div class="btn-group"><button class="btn btn-primary" onclick="generateKnowledge()">✨ 开始整理</button><button class="btn btn-secondary" onclick="loadSampleKnowledge()">📂 示例</button></div>
-    </div>
-    <div class="card"><div class="card-title">📋 整理结果</div><div id="knowledge-output"><div class="status-msg"><span class="emoji">👆</span>输入内容后点击整理</div></div></div>
   </div>
 
   <!-- ===== EXERCISE ===== -->
-  <div id="panel-exercise" class="panel">
+  <div id="panel-exercise" class="panel active">
     <div class="card">
       <div class="card-title">⚙️ 出题设置</div>
-      <div class="form-group"><label>题 型</label>
-        <select id="ex-type"><option value="fill-blank">填空题</option><option value="sentence-writing">仿写句子</option><option value="rewrite">句子改写</option></select>
-      </div>
-      <div class="form-group"><label>🎯 考试级别</label>
-        <select id="ex-level"><option value="YLE">YLE</option><option value="KET">KET</option><option value="PET">PET</option><option value="FCE" selected>FCE</option><option value="CAE">CAE</option><option value="CPE">CPE</option><option value="IELTS">雅思</option><option value="TOEFL">托福</option></select>
-      </div>
-      <div class="form-group"><label>📊 出题数量</label>
-        <select id="ex-count"><option value="3">3题</option><option value="5" selected>5题</option><option value="8">8题</option><option value="10">10题</option></select>
-      </div>
+      <div class="form-group"><label>题 型</label><select id="ex-type"><option value="fill-blank">填空题</option><option value="sentence-writing">仿写句子</option><option value="rewrite">句子改写</option></select></div>
+      <div class="form-group"><label>🎯 考试级别</label><select id="ex-level"><option value="YLE">YLE</option><option value="KET">KET</option><option value="PET">PET</option><option value="FCE" selected>FCE</option><option value="CAE">CAE</option><option value="CPE">CPE</option><option value="IELTS">雅思</option><option value="TOEFL">托福</option></select></div>
+      <div class="form-group"><label>📊 数量</label><select id="ex-count"><option value="3">3题</option><option value="5" selected>5题</option><option value="8">8题</option><option value="10">10题</option></select></div>
       <div class="btn-group"><button class="btn btn-primary" onclick="generateExercise()">✨ 生成题目</button><button class="btn btn-secondary" onclick="loadSampleExercise()">📂 示例</button></div>
     </div>
-    <div class="card"><div class="card-title">📝 练习题 <span id="ex-level-badge" class="role-badge" style="display:none"></span></div><div id="exercise-output"><div class="status-msg"><span class="emoji">👆</span>点击生成题目</div></div></div>
+    <div class="card"><div class="card-title">📝 练习题 <span id="ex-badge" class="role-badge" style="display:none"></span></div><div id="ex-output"><div class="status-msg"><span class="emoji">👆</span>生成题目</div></div></div>
   </div>
 
-  <!-- ===== CLASSES (Teacher) ===== -->
+  <!-- ===== KNOWLEDGE ===== -->
+  <div id="panel-knowledge" class="panel">
+    <div class="card">
+      <div class="card-title">📥 整理知识点</div>
+      <div class="form-group"><label>标题</label><input type="text" id="k-topic" value="现在完成时"></div>
+      <div class="form-group"><label>内容</label><textarea id="k-content" rows="4">I have visited London three times.\nShe has already finished her homework.\n\n关键词：already, yet, ever, never, for, since\n结构：have/has + 过去分词\n用法：经历 / 持续状态 / 刚刚完成</textarea></div>
+      <div class="btn-group"><button class="btn btn-primary" onclick="genK()">✨ 开始整理</button><button class="btn btn-secondary" onclick="sampleK()">📂 示例</button></div>
+    </div>
+    <div class="card"><div class="card-title">📋 结果</div><div id="k-output"><div class="status-msg"><span class="emoji">👆</span>输入内容</div></div></div>
+  </div>
+
+  <!-- ===== CLASSES ===== -->
   <div id="panel-classes" class="panel">
     <div class="card">
       <div class="card-title">🏫 班级管理</div>
-      <div class="row">
-        <input type="text" id="cls-name" placeholder="班级名称（如：周一班）">
-        <select id="cls-level"><option value="YLE">YLE</option><option value="KET">KET</option><option value="PET">PET</option><option value="FCE" selected>FCE</option><option value="CAE">CAE</option><option value="CPE">CPE</option><option value="IELTS">雅思</option><option value="TOEFL">托福</option></select>
-        <button class="btn btn-primary btn-sm" onclick="createClass()">➕ 创建</button>
-      </div>
+      <div class="row"><input type="text" id="cls-name" placeholder="班级名称"><select id="cls-level"><option value="YLE">YLE</option><option value="KET">KET</option><option value="PET">PET</option><option value="FCE" selected>FCE</option><option value="CAE">CAE</option><option value="CPE">CPE</option><option value="IELTS">雅思</option><option value="TOEFL">托福</option></select><button class="btn btn-primary btn-sm" onclick="createClass()">➕ 创建</button></div>
     </div>
-    <div id="class-list"><div class="status-msg"><span class="emoji">👆</span>还没有班级</div></div>
+    <div id="cls-list"><div class="status-msg"><span class="emoji">🏫</span>暂无班级</div></div>
   </div>
 
   <!-- ===== HOMEWORK ===== -->
   <div id="panel-homework" class="panel">
     <div class="card">
       <div class="card-title">📋 作业</div>
-      <p style="font-size:13px;color:var(--text-light);margin-bottom:10px">选择班级查看/发布作业</p>
-      <div class="form-group"><label>选择班级</label><select id="hw-class-select" onchange="loadHomework()"><option value="">请选择班级</option></select></div>
-      <div id="homework-content"><div class="status-msg"><span class="emoji">👆</span>选好班级后查看作业</div></div>
+      <div class="form-group"><label>班级</label><select id="hw-sel" onchange="loadHW()"><option value="">选择班级</option></select></div>
+      <div id="hw-content"><div class="status-msg"><span class="emoji">👆</span>选择班级</div></div>
     </div>
   </div>
 
-  <!-- ===== AI ASSISTANT (Teacher) ===== -->
+  <!-- ===== AI ASSISTANT ===== -->
   <div id="panel-aiassist" class="panel">
     <div class="card" style="text-align:center">
       <div style="font-size:56px;margin-bottom:12px">🤖</div>
       <div class="modal-title">爱学助手</div>
-      <p style="font-size:13px;color:var(--text-light);margin-bottom:4px">告诉我在哪天几点到几点哪个班需要加课</p>
-      <p style="font-size:12px;color:var(--text-light);margin-bottom:16px">格式：<code>09:00到10:30 周一班 多上一节课</code></p>
+      <p style="font-size:13px;color:var(--text-light);margin-bottom:4px">格式：<code>09:00到10:30 周一班 多上一节课</code></p>
       <div style="display:flex;gap:8px;max-width:500px;margin:0 auto">
-        <input type="text" id="ai-input" placeholder="说或输入：14:00到15:30 周二班 多上一节课" style="flex:1">
-        <button class="mic-btn" id="ai-mic" onclick="toggleAiVoice()" style="width:42px;height:42px;border-radius:50%;border:2px solid var(--border);background:#fff;font-size:18px;cursor:pointer;flex-shrink:0">🎤</button>
-        <button class="btn btn-primary btn-sm" onclick="processAiCommand()" style="flex-shrink:0">发送</button>
+        <input type="text" id="ai-inp" placeholder="说或输入：14:00到15:30 周二班 多上一节课" style="flex:1">
+        <button class="btn btn-primary btn-sm" onclick="processAI()">发送</button>
       </div>
-      <div id="ai-result" style="margin-top:16px;text-align:left;max-width:500px;margin-left:auto;margin-right:auto"></div>
+      <div id="ai-out" style="margin-top:16px;text-align:left"></div>
     </div>
   </div>
 
-  <!-- ===== STUDENT MANAGEMENT (Teacher) ===== -->
-  <div id="panel-students" class="panel">
-    <div class="card" style="text-align:center">
-      <div style="font-size:48px;margin-bottom:12px">👥</div>
-      <div class="modal-title">学生管理</div>
-      <p style="font-size:13px;color:var(--text-light);margin-bottom:16px">添加学生并设置学习进度</p>
-      <div class="row" style="max-width:500px;margin:0 auto">
-        <input type="text" id="stu-email" placeholder="学生邮箱" style="flex:2">
-        <input type="text" id="stu-name" placeholder="学生姓名" style="flex:1">
-        <select id="stu-level" style="flex:1"><option value="YLE">YLE</option><option value="KET">KET</option><option value="PET">PET</option><option value="FCE">FCE</option><option value="CAE">CAE</option><option value="CPE">CPE</option><option value="IELTS">雅思</option><option value="TOEFL">托福</option></select>
-        <button class="btn btn-primary btn-sm" onclick="addStudent()">➕ 添加</button>
-      </div>
-      <div id="student-list" style="margin-top:16px;max-width:500px;margin-left:auto;margin-right:auto;text-align:left"><div class="status-msg"><span class="emoji">👆</span>暂无学生</div></div>
-    </div>
-  </div>
-
-  <div class="helper-note"><span style="font-size:18px;flex-shrink:0">💡</span><div><strong>提示：</strong>所有数据保存在服务端。@虾仔 获取帮助</div></div>
+  <div class="helper-note"><span style="font-size:18px;flex-shrink:0">💡</span><div>@虾仔 获取帮助</div></div>
 </div>
 
 <script>
-let currentUser = null;
-const SESSION_KEY = 'eng_quiz_session';
-function getSession(){return localStorage.getItem(SESSION_KEY)}
-function setSession(e){localStorage.setItem(SESSION_KEY,e)}
-function clearSession(){localStorage.removeItem(SESSION_KEY)}
-async function api(path,data){const r=await fetch(path,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(data)});return r.json()}
+// ===== STATE =====
+let role=localStorage.getItem('***')||'';
+let roleName=localStorage.getItem('***')||'';
+function saveState(){localStorage.setItem('***',role);localStorage.setItem('***',roleName)}
+// Classes stored in localStorage
+let classes=JSON.parse(localStorage.getItem('***')||'[]');
+let hwData=JSON.parse(localStorage.getItem('***')||'[]');
+function saveClasses(){localStorage.setItem('***',JSON.stringify(classes))}
+function saveHW(){localStorage.setItem('***',JSON.stringify(hwData))}
+let nextId=Date.now();
+
 let toastTimer=null;
 function showToast(m){const t=document.getElementById('toast');t.textContent=m;t.classList.add('show');clearTimeout(toastTimer);toastTimer=setTimeout(()=>t.classList.remove('show'),2500)}
 
-// ===== AUTH =====
-function showAuth(p){document.getElementById('auth-login').style.display=p==='login'?'':'none';document.getElementById('auth-register').style.display=p==='register'?'':'none';['login-error','reg-error','reg-success'].forEach(i=>document.getElementById(i).classList.remove('show'));document.querySelectorAll('[id^="ch-"]').forEach(e=>e.remove())}
-(async function(){const e=getSession();if(e){const r=await api('/api/check-session',{email:e});if(r.valid&&r.user)enterApp(r.user);else clearSession()}})()
-const codeTimers={};
-async function sendCode(type){
-  const eid=type==='login'?'login-email':'reg-email';
-  const email=document.getElementById(eid).value.trim();
-  if(!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)){showToast('请输入正确邮箱');return}
-  const r=await api('/api/send-code',{email});
-  const btn=document.getElementById(type==='login'?'login-send-code':'reg-send-code');
-  btn.disabled=true;let c=60;btn.textContent=`${c}s`;
-  if(codeTimers[type])clearInterval(codeTimers[type]);
-  codeTimers[type]=setInterval(()=>{c--;if(c<=0){clearInterval(codeTimers[type]);btn.disabled=false;btn.textContent='重新获取'}else btn.textContent=`${c}s`},1000);
-  document.querySelectorAll('[id^="ch-"]').forEach(e=>e.remove());
-  if(r.success){
-    showToast(`📨 已发送到 ${email}`);
-    const msg=document.createElement('div');msg.id='ch-'+type;
-    msg.style.cssText='font-size:13px;color:var(--success);margin-top:8px;padding:10px 14px;background:#E8F8ED;border-radius:8px';
-    msg.textContent='✅ 验证码已发送到 '+email;
-    if(r.demo)msg.textContent+=' 演示码：'+r.code;
-    document.getElementById(eid).closest('.auth-form').appendChild(msg);
-  } else showToast(r.error||'发送失败')
+// ===== ROLE =====
+function setRole(r,nm){
+  role=r;roleName=nm;saveState();
+  document.getElementById('auth-screen').style.display='none';
+  document.getElementById('app-main').classList.add('show');
+  document.getElementById('user-name').textContent=nm;
+  document.getElementById('user-avatar').textContent=nm.charAt(0);
+  const b=document.getElementById('user-role-badge');
+  const lb={teacher:'👩‍🏫老师',student:'👦学生',parent:'👨‍👩‍👧家长'};
+  b.textContent=lb[r]||r;b.className='role-badge '+r;
+  // Show tabs per role
+  const ct=document.getElementById('tab-classes'),ht=document.getElementById('tab-homework'),at=document.getElementById('tab-aiassist');
+  if(r==='teacher'){ct.style.display='';ht.style.display='';at.style.display='';renderClasses()}
+  else{ct.style.display='none';ht.style.display='none';at.style.display='none'}
+  // Auto select first tab
+  document.querySelectorAll('.tab-btn').forEach((b,i)=>b.classList.toggle('active',i===0));
+  document.querySelectorAll('.panel').forEach(p=>p.classList.remove('active'));
+  document.getElementById('panel-exercise').classList.add('active');
+  generateExercise()
 }
-async function handleRegister(){
-  const e=document.getElementById('reg-email').value.trim(),n=document.getElementById('reg-name').value.trim(),p=document.getElementById('reg-pwd').value.trim(),c=document.getElementById('reg-code').value.trim();
-  const er=document.getElementById('reg-error'),su=document.getElementById('reg-success');er.classList.remove('show');su.classList.remove('show');
-  if(!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(e)){er.textContent='请输入正确邮箱';er.classList.add('show');return}
-  if(n.length<3||n.length>16){er.textContent='昵称需3-16个字';er.classList.add('show');return}
-  if(p.length<6){er.textContent='密码至少6位';er.classList.add('show');return}
-  if(!c){er.textContent='请输入验证码';er.classList.add('show');return}
-  const r=await api('/api/register',{email:e,name:n,password:p,code:c});
-  if(r.success){su.textContent='🎉 注册成功！跳转中...';su.classList.add('show');setTimeout(()=>{setSession(e);enterApp(r.user)},1000)}
-  else{er.textContent=r.error;er.classList.add('show')}
-}
-async function handleLogin(){
-  const e=document.getElementById('login-email').value.trim(),c=document.getElementById('login-code').value.trim();
-  const er=document.getElementById('login-error');er.classList.remove('show');
-  if(!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(e)){er.textContent='请输入正确邮箱';er.classList.add('show');return}
-  if(!c){er.textContent='请输入验证码';er.classList.add('show');return}
-  const r=await api('/api/login',{email:e,code:c});
-  if(r.success){setSession(e);enterApp(r.user)}else{er.textContent=r.error;er.classList.add('show')}
-}
-async function quickLogin(email){
-  const r=await api('/api/quick-login',{email});
-  if(r.success){setSession(email);enterApp(r.user)}else showToast('登录失败')
-}
-const diffLevelMap={easy:'YLE',basic:'KET',intermediate:'PET',hard:'FCE',master:'CAE'};
-
-// ===== ENTER/LEAVE APP =====
-function enterApp(user){
-  currentUser=user;
-  document.getElementById('auth-login').style.display='none';document.getElementById('auth-register').style.display='none';
-  if(!user.role){document.getElementById('role-modal').style.display='flex';window._pendingUser=user;return}
-  showMainApp(user)
-}
-function showMainApp(user){
-  currentUser=user;
-  document.getElementById('role-modal').style.display='none';document.getElementById('app-main').classList.add('show');
-  document.getElementById('user-name').textContent=user.name||'用户';document.getElementById('user-email').textContent=user.email;
-  document.getElementById('user-avatar').textContent=user.name?user.name.charAt(0):'👤';
-  const badge=document.getElementById('user-role-badge');
-  const rl={student:'👦学生',parent:'👨‍👩‍👧家长',teacher:'👩‍🏫老师'};
-  if(user.role&&rl[user.role]){badge.textContent=rl[user.role];badge.className='role-badge '+user.role;badge.style.display='inline-block'}else badge.style.display='none';
-  // Role-based tab visibility
-  const st=document.getElementById('students-tab'),ct=document.getElementById('tab-classes'),ht=document.getElementById('tab-homework'),at=document.getElementById('tab-aiassist');
-  if(user.role==='teacher'){st.style.display='';ct.style.display='';ht.style.display='';at.style.display='';loadClasses();loadHomework()} 
-  else if(user.role==='parent'){st.style.display='none';ct.style.display='';ht.style.display='';at.style.display='none';loadClasses()}
-  else{st.style.display='none';ct.style.display='none';ht.style.display='';at.style.display='none';loadHomework()}
-  document.getElementById('role-display').textContent=rl[user.role]||'🎯 已登录';
-  if(user.role==='student'&&user.assignedLevel)document.getElementById('ex-level').value=user.assignedLevel;
-  generateKnowledge()
-}
-function refreshUI(){if(currentUser)showMainApp(currentUser)}
-
-async function selectRole(role){
-  const u=window._pendingUser;if(!u)return;
-  const r=await api('/api/set-role',{email:u.email,role});
-  if(r.success){showMainApp(r.user);showToast('✅ 已设为'+{student:'学生',parent:'家长',teacher:'老师'}[role])}else showToast(r.error||'设置失败')
-}
-function skipRole(){const u=window._pendingUser;if(u)showMainApp(u)}
-function handleLogout(){
-  currentUser=null;clearSession();
-  document.getElementById('app-main').classList.remove('show');document.getElementById('role-modal').style.display='none';window._pendingUser=null;
-  document.getElementById('auth-login').style.display='';document.getElementById('login-email').value='';document.getElementById('login-code').value='';
-  document.querySelectorAll('[id^="ch-"]').forEach(e=>e.remove());showToast('已退出')
-}
-function showError(el,m){el.textContent=m;el.classList.add('show')}
-
-// ===== EDIT PROFILE =====
-function showEditProfile(){
-  const m=document.getElementById('profile-modal');
-  if(!m){
-    const d=document.createElement('div');d.id='profile-modal';d.className='modal-overlay';d.style.display='flex';
-    d.innerHTML=`
-      <div class="modal-box">
-        <div class="modal-title">✏️ 编辑个人信息</div>
-        <div class="form-group"><label>昵称（3-16字，不可重复）</label><input type="text" id="edit-name" value="${currentUser.name||''}" maxlength="16"></div>
-        <div id="edit-error" style="color:var(--danger);font-size:13px;margin-bottom:8px;display:none"></div>
-        <div class="btn-group"><button class="btn btn-primary" onclick="saveProfile()">💾 保存</button><button class="btn btn-secondary" onclick="this.closest('.modal-overlay').remove()">取消</button></div>
-      </div>`;
-    document.body.appendChild(d);
-    document.getElementById('edit-name').focus();
-    document.getElementById('edit-name').select()
-  }
-}
-async function saveProfile(){
-  const name=document.getElementById('edit-name').value.trim();
-  const err=document.getElementById('edit-error');
-  if(name.length<3||name.length>16){err.textContent='昵称需3-16个字';err.style.display='block';return}
-  const r=await api('/api/profile/update',{email:currentUser.email,name});
-  if(r.success){currentUser=r.user;document.getElementById('user-name').textContent=name;document.getElementById('profile-modal').remove();showToast('✅ 已更新')}
-  else{err.textContent=r.error;err.style.display='block'}
+function switchRole(){
+  role='';roleName='';localStorage.removeItem('***');localStorage.removeItem('***');
+  document.getElementById('app-main').classList.remove('show');
+  document.getElementById('auth-screen').style.display=''
 }
 
 // ===== TAB =====
-function switchTab(name){
-  const idxMap={knowledge:0,exercise:1,classes:2,homework:3,aiassist:4,students:5};
-  const idx=idxMap[name]||0;
-  document.querySelectorAll('.tab-btn').forEach((b,i)=>b.classList.toggle('active',i===idx));
+function switchTab(n){
+  const m={exercise:0,knowledge:1,classes:2,homework:3,aiassist:4};
+  const i=m[n]||0;
+  document.querySelectorAll('.tab-btn').forEach((b,j)=>b.classList.toggle('active',j===i));
   document.querySelectorAll('.panel').forEach(p=>p.classList.remove('active'));
-  document.getElementById('panel-'+name).classList.add('active')
-}
-
-// ===== KNOWLEDGE =====
-const kSamples=[{topic:'现在完成时',content:'I have visited London three times.\nShe has already finished her homework.\nThey have not been to the museum yet.\n\n关键词：already, yet, ever, never, for, since\n结构：have/has + 过去分词\n用法：经历 / 持续 / 刚刚'},{topic:'被动语态',content:'The cake was eaten by the dog.\nEnglish is spoken worldwide.\nThe letter has been sent.\n\n结构：be + 过去分词\n各种时态：一般现在/过去/完成/情态动词'}];
-let kIdx=0;
-function loadSampleKnowledge(){kIdx=(kIdx+1)%kSamples.length;const s=kSamples[kIdx];document.getElementById('k-topic').value=s.topic;document.getElementById('k-content').value=s.content;generateKnowledge()}
-async function generateKnowledge(){
-  const t=document.getElementById('k-topic').value.trim(),c=document.getElementById('k-content').value.trim();
-  if(!t||!c){document.getElementById('knowledge-output').innerHTML='<div class="status-msg"><span class="emoji">⚠️</span>请输入内容</div>';return}
-  document.getElementById('knowledge-output').innerHTML='<div class="status-msg"><span class="emoji">⏳</span>整理中...</div>';
-  setTimeout(()=>showKF(t,c),200)
-}
-function showKF(t,c){
-  const lines=c.split('\n').filter(l=>l.trim());let secs={'介绍':[]},cur='介绍';
-  for(const l of lines){const s=l.trim();if(/^(用法|结构|注意|关键词)/i.test(s)){cur=s.replace(/[：:].*/,'').trim();if(!secs[cur])secs[cur]=[];const r=s.replace(/^[^：:]*[：:]\s*/,'');if(r)secs[cur].push(r)}else if(s)secs[cur].push(s)}
-  const tm={0:{t:'grammar',l:'语法点'},1:{t:'vocab',l:'词汇'},2:{t:'sentence',l:'句型'},3:{t:'tip',l:'注意事项'}};let cards=[],i=0;
-  for(const[st,sl]of Object.entries(secs)){if(!sl.length)continue;const tag=tm[i%4];const ex=sl.filter(l=>/[.!?]$/.test(l.trim())&&l.trim().length>5);const d=sl.filter(l=>!ex.includes(l)).join('<br>');cards.push('<div class="ex-card fade-up" style="border-left-color:var(--primary)"><span style="font-size:12px;font-weight:600;background:var(--primary-light);color:var(--primary);padding:2px 8px;border-radius:6px">'+tag.l+'</span><div style="font-weight:700;margin-top:6px">'+st+'</div><div style="font-size:13px;color:var(--text-light);margin-top:4px;line-height:1.5">'+(d||'相关内容')+'</div>'+(ex.length?'<div style="margin-top:8px;padding:8px 12px;background:rgba(255,255,255,0.7);border-radius:6px;font-size:13px">'+ex.join('<br>')+'</div>':'')+'</div>');i++}
-  if(!cards.length)cards.push('<div class="ex-card fade-up" style="border-left-color:var(--primary)"><div style="font-weight:700">'+t+'</div><div style="margin-top:6px">'+lines.join('<br>')+'</div></div>');
-  document.getElementById('knowledge-output').innerHTML='<div style="display:grid;gap:10px">'+cards.join('\n')+'</div>'
+  document.getElementById('panel-'+n).classList.add('active');
+  if(n==='classes')renderClasses();
+  if(n==='homework'){updateHWSel();loadHW()}
 }
 
 // ===== EXERCISE =====
 const qBanks={
-  YLE:[{q:'This __ a cat.',a:'is'},{q:'I __ seven years old.',a:'am'},{q:'She has a red __.',a:'apple'},{q:'The dog is very __.',a:'big'},{q:'We __ to school.',a:'go'},{q:'He can __ fast.',a:'swim'},{q:'There __ two birds.',a:'are'},{q:'I __ ice cream.',a:'like'},{q:'She __ playing now.',a:'is'},{q:'The book is __ the table.',a:'on'}],
-  KET:[{q:'I __ (go) to the cinema yesterday.',a:'went'},{q:'She __ (not/like) coffee.',a:"doesn't like"},{q:'__ you finish homework?',a:'Did'},{q:'We are going __ (visit) the museum.',a:'to visit'},{q:'There __ some milk.',a:'is'},{q:'She __ a new dress last week.',a:'bought'},{q:'How much __ these shoes?',a:'do'},{q:'My brother is taller __ me.',a:'than'},{q:'You must __ quiet.',a:'be'},{q:'We __ (live) here since 2018.',a:'have lived'}],
-  PET:[{q:'If it __ (rain), we will stay home.',a:'rains'},{q:'She __ English for 3 years.',a:'has studied/has been studying'},{q:'The book __ (write) by Rowling.',a:'was written'},{q:'I enjoy __ (play) football.',a:'playing'},{q:'This is the __ (good) restaurant.',a:'best'},{q:'They __ (not/see) each other since 2020.',a:"haven't seen"},{q:'The train __ (leave) at 6pm.',a:'leaves'},{q:'We __ (have) dinner when the phone rang.',a:'were having'},{q:'She told me not __ (worry).',a:'to worry'},{q:'The more you practice, the __ (good) you get.',a:'better'}],
-  FCE:[{q:'I __ (visit) London three times.',a:'have visited'},{q:'She __ (already/finish) homework.',a:'has already finished'},{q:'They __ (not/be) to the new museum.',a:"haven't been"},{q:'__ you ever __ (eat) Japanese food?',a:'Have,eaten'},{q:'The house __ (build) in 1920.',a:'was built'},{q:'If I __ (be) you, I would accept.',a:'were'},{q:'She regrets not __ (study) harder.',a:'studying/having studied'},{q:'Hardly __ we left when it rained.',a:'had'},{q:'She is used to __ (get) up early.',a:'getting'},{q:'The teacher demanded we __ (be) on time.',a:'be'}],
-  CAE:[{q:'No sooner __ he arrived than the meeting began.',a:'had'},{q:'She __ (study) for hours before the exam.',a:'had been studying'},{q:'Under no circumstances __ we allow this.',a:'should/may/can'},{q:'The company __ (found) in 1995.',a:'was founded'},{q:"I'd rather you __ (not/tell) anyone.",a:"didn't tell"},{q:'Such __ the demand that we printed more.',a:'was'},{q:'Were it not for her, I __ (fail).',a:'would have failed'},{q:'__ (compare) to last year, profits doubled.',a:'Compared'},{q:'The report __ (make) public next week.',a:'will be made'},{q:'He is believed __ (work) abroad.',a:'to be working'}],
-  CPE:[{q:'__ such the devastation that the town was never rebuilt.',a:'Was'},{q:'She is a woman __ integrity is beyond question.',a:'whose'},{q:'Not only __ he finish, but he won.',a:'did'},{q:'The implications are far-__.',a:'reaching'},{q:'__ (give) it was his first try, he did well.',a:'Given'},{q:'Had I known, I __ (act) differently.',a:'would have acted'},{q:'She has a knack for __ (get) to the heart.',a:'getting'},{q:'Lest there be misunderstanding, I __ state my position.',a:'would like to/will'},{q:'The evidence __ (point) to a different conclusion.',a:'points'},{q:'Try __ he might, he could not convince them.',a:'as'}],
-  IELTS:[{q:'__ (global) has led to increased cultural exchange.',a:'Globalisation/Globalization'},{q:'The graph __ (illustrate) the changes.',a:'illustrates/shows'},{q:'There are several __ (advantage) to renewable energy.',a:'advantages/benefits'},{q:'The __ (consume) of fossil fuels must be reduced.',a:'consumption'},{q:'This has a significant __ (affect) on the environment.',a:'effect/impact'},{q:'The number __ (increase) steadily since 2000.',a:'has increased'},{q:'It is __ (argue) that climate change is a threat.',a:'argued'},{q:'The __ (major) of respondents agreed.',a:'majority'},{q:'__ (compare) to last year, unemployment dropped.',a:'Compared'},{q:'This essay will __ (discussion) the causes.',a:'discuss'}],
-  TOEFL:[{q:'According to the passage, the main cause of __ is...',a:'global warming'},{q:'The professor __ (emphasis) the importance.',a:'emphasized'},{q:'In contrast, the lecture __ (suggest)...',a:'suggests'},{q:'The author provides several __ (example).',a:'examples'},{q:'__ (base) on the evidence, we can conclude...',a:'Based'},{q:'The study __ (conduct) over five years.',a:'was conducted'},{q:'The __ (signify) of this discovery is huge.',a:'significance'},{q:'Research __ (indicate) that group work helps.',a:'indicates'},{q:'The lecture __ (challenge) the reading view.',a:'challenges'},{q:'The results were __ (significance).',a:'significant'}],
+  YLE:[{q:'This __ a cat.',a:'is'},{q:'I __ seven.',a:'am'},{q:'She has a red __.',a:'apple'},{q:'We __ to school.',a:'go'},{q:'There __ two birds.',a:'are'},{q:'I __ ice cream.',a:'like'},{q:'The dog __ big.',a:'is'},{q:'She __ playing.',a:'is'},{q:'The book is __ the table.',a:'on'},{q:'He can __ fast.',a:'swim'}],
+  KET:[{q:'I __ (go) yesterday.',a:'went'},{q:'She __ (not/like) coffee.',a:"doesn't like"},{q:'__ you finish?',a:'Did'},{q:'We are going __ (visit).',a:'to visit'},{q:'There __ some milk.',a:'is'},{q:'She __ a new dress.',a:'bought'},{q:'My brother is taller __ me.',a:'than'},{q:'You must __ quiet.',a:'be'},{q:'We __ here since 2018.',a:'have lived'},{q:'How much __ these?',a:'do'}],
+  PET:[{q:'If it __ (rain), we stay home.',a:'rains'},{q:'She __ English for 3y.',a:'has studied'},{q:'The book __ (write) by Rowling.',a:'was written'},{q:'I enjoy __ (play) football.',a:'playing'},{q:'This is the __ (good).',a:'best'},{q:'They __ (not/see) since 2020.',a:"haven't seen"},{q:'The train __ at 6pm.',a:'leaves'},{q:'We __ dinner when it rang.',a:'were having'},{q:'The more you practice, the __ (good).',a:'better'},{q:'I __ (never/be) to London.',a:'have never been'}],
+  FCE:[{q:'I __ (visit) London 3 times.',a:'have visited'},{q:'She __ (already/finish).',a:'has already finished'},{q:'__ you ever __ (eat) sushi?',a:'Have,eaten'},{q:'The house __ (build) in 1920.',a:'was built'},{q:'If I __ (be) you...',a:'were'},{q:'She regrets not __ (study).',a:'studying'},{q:'Hardly __ we left when it rained.',a:'had'},{q:'She is used to __ (get) up.',a:'getting'},{q:'The teacher demanded we __ on time.',a:'be'},{q:'I wish I __ (can) fly.',a:'could'}],
+  CAE:[{q:'No sooner __ he arrived...',a:'had'},{q:'Under no circumstances __ we allow this.',a:'should'},{q:'The company __ (found) in 1995.',a:'was founded'},{q:"I'd rather you __ (not/tell).",a:"didn't tell"},{q:'Were it not for her, I __ (fail).',a:'would have failed'},{q:'__ (compare) to last year...',a:'Compared'},{q:'The report __ next week.',a:'will be made'},{q:'He is believed __ (work) abroad.',a:'to be working'},{q:'Such __ the demand that...',a:'was'},{q:'The artist __ by Japanese art.',a:'was influenced'}],
+  CPE:[{q:'__ such the devastation...',a:'Was'},{q:'Not only __ he finish, but he won.',a:'did'},{q:'__ (give) it was his first try...',a:'Given'},{q:'Had I known, I __ (act).',a:'would have acted'},{q:'Lest there be misunderstanding...',a:'would'},{q:'The evidence __ to a conclusion.',a:'points'},{q:'Try __ he might, he could not.',a:'as'},{q:'She has a knack for __ (get).',a:'getting'},{q:'The implications are far-__.',a:'reaching'},{q:'She is a woman __ integrity...',a:'whose'}],
+  IELTS:[{q:'__ (global) has increased.',a:'Globalisation'},{q:'The graph __ the changes.',a:'illustrates'},{q:'There are many __ (advantage).',a:'advantages'},{q:'The __ of fossil fuels...',a:'consumption'},{q:'This has a significant __.',a:'effect'},{q:'The number __ since 2000.',a:'has increased'},{q:'It is __ (argue) that...',a:'argued'},{q:'The __ of respondents agreed.',a:'majority'},{q:'__ to last year...',a:'Compared'},{q:'This essay will __ the causes.',a:'discuss'}],
+  TOEFL:[{q:'The professor __ the importance.',a:'emphasized'},{q:'In contrast, the lecture __...',a:'suggests'},{q:'The author gives several __.',a:'examples'},{q:'__ on the evidence...',a:'Based'},{q:'The study __ over five years.',a:'was conducted'},{q:'The __ of this discovery...',a:'significance'},{q:'Research __ that group work helps.',a:'indicates'},{q:'The lecture __ the reading.',a:'challenges'},{q:'The results were __.',a:'significant'},{q:'There is a __ between them.',a:'relationship'}],
 };
-const exSamples=[{type:'fill-blank',level:'FCE',count:5}];let exIdx=0;
-function loadSampleExercise(){const s=exSamples[exIdx%exSamples.length];exIdx++;document.getElementById('ex-type').value=s.type;document.getElementById('ex-level').value=s.level;document.getElementById('ex-count').value=s.count;generateExercise()}
 function generateExercise(){
-  const type=document.getElementById('ex-type').value,level=document.getElementById('ex-level').value,count=parseInt(document.getElementById('ex-count').value);
-  document.getElementById('ex-level-badge').textContent='🎯 '+level;document.getElementById('ex-level-badge').style.display='inline-block';
-  document.getElementById('exercise-output').innerHTML='<div class="status-msg"><span class="emoji">⏳</span>出题中...</div>';
-  setTimeout(()=>showEF(type,level,count),200)
-}
-function showEF(type,level,count){
-  const isT=currentUser&&currentUser.role==='teacher';
-  const pool=qBanks[level]||qBanks.FCE;
-  const label=type==='fill-blank'?'填空题':type==='sentence-writing'?'仿写句子':'句子改写';
+  const t=document.getElementById('ex-type').value,l=document.getElementById('ex-level').value,c=parseInt(document.getElementById('ex-count').value);
+  const isT=role==='teacher';const pool=qBanks[l]||qBanks.FCE;const lb=t==='fill-blank'?'填空题':t==='sentence-writing'?'仿写句子':'句子改写';
+  document.getElementById('ex-badge').textContent='🎯 '+l;document.getElementById('ex-badge').style.display='inline-block';
   let html='';
-  for(let i=0;i<count;i++){
-    const p=pool[i%pool.length];
-    const q=p.q.replace(/_+/g,'<span class="blank">______</span>');
-    if(isT)html+=`<div class="ex-card fade-up"><div><span class="ex-num">${i+1}</span><strong>${label}</strong></div><div class="ex-q">${q}</div><button class="show-ans-btn" onclick="this.nextElementSibling.classList.toggle('show');this.textContent=this.nextElementSibling.classList.contains('show')?'🙈隐藏':'👀查看'">👀 查看答案</button><div class="ex-ans">${p.a}</div></div>`;
-    else html+=`<div class="ex-card fade-up"><div><span class="ex-num">${i+1}</span><strong>${label}</strong></div><div class="ex-q">${q}</div></div>`;
-  }
-  document.getElementById('exercise-output').innerHTML='<div class="ex-list">'+html+'</div>'
+  for(let i=0;i<c;i++){const p=pool[i%pool.length];const q=p.q.replace(/_+/g,'<span class="blank">______</span>');html+=`<div class="ex-card fade-up"><div><span class="ex-num">${i+1}</span><strong>${lb}</strong></div><div class="ex-q">${q}</div>${isT?`<button class="show-ans-btn" onclick="this.nextElementSibling.classList.toggle('show');this.textContent=this.nextElementSibling.classList.contains('show')?'🙈隐藏':'👀查看'">👀 查看答案</button><div class="ex-ans">${p.a}</div>`:''}</div>`}
+  document.getElementById('ex-output').innerHTML='<div class="ex-list">'+html+'</div>'
+}
+function loadSampleExercise(){generateExercise()}
+
+// ===== KNOWLEDGE =====
+const kS=[{topic:'现在完成时',content:'I have visited London.\nShe has finished her homework.\n关键词：already, yet, for, since\n结构：have/has + 过去分词\n用法：经历 / 持续'},{topic:'被动语态',content:'The cake was eaten.\nEnglish is spoken worldwide.\n结构：be + 过去分词\n时态：一般现在/过去/完成'}];
+let kIdx=0;
+function sampleK(){kIdx=(kIdx+1)%kS.length;const s=kS[kIdx];document.getElementById('k-topic').value=s.topic;document.getElementById('k-content').value=s.content;genK()}
+function genK(){
+  const t=document.getElementById('k-topic').value.trim(),c=document.getElementById('k-content').value.trim();
+  if(!t||!c){document.getElementById('k-output').innerHTML='<div class="status-msg"><span class="emoji">⚠️</span>输入内容</div>';return}
+  const ls=c.split('\n').filter(l=>l.trim());let sec={'介绍':[]},cu='介绍';
+  for(const l of ls){const s=l.trim();if(/^(用法|结构|注意|关键词)/i.test(s)){cu=s.replace(/[：:].*/,'').trim();if(!sec[cu])sec[cu]=[];const r=s.replace(/^[^：:]*[：:]\s*/,'');if(r)sec[cu].push(r)}else if(s)sec[cu].push(s)}
+  let html='',i=0;const tl={0:{t:'语法点'},1:{t:'词汇'},2:{t:'句型'},3:{t:'注意事项'}};
+  for(const[st,sl]of Object.entries(sec)){if(!sl.length)continue;const ex=sl.filter(l=>/[.!?]$/.test(l.trim())&&l.trim().length>5);const d=sl.filter(l=>!ex.includes(l)).join('<br>');html+=`<div class="ex-card" style="border-left-color:var(--primary)"><span style="font-size:12px;font-weight:600;background:var(--primary-light);color:var(--primary);padding:2px 8px;border-radius:6px">${tl[i%4].t}</span><div style="font-weight:700;margin-top:6px">${st}</div><div style="font-size:13px;color:var(--text-light);margin-top:4px">${d||st}</div>${ex.length?`<div style="margin-top:8px;padding:8px 12px;background:rgba(255,255,255,0.7);border-radius:6px;font-size:13px">${ex.join('<br>')}</div>`:''}</div>`;i++}
+  if(!html)html=`<div class="ex-card" style="border-left-color:var(--primary)"><div style="font-weight:700">${t}</div>${ls.join('<br>')}</div>`;
+  document.getElementById('k-output').innerHTML='<div style="display:grid;gap:10px">'+html+'</div>'
 }
 
-// ===== CLASS MANAGEMENT =====
-async function createClass(){
-  const name=document.getElementById('cls-name').value.trim(),level=document.getElementById('cls-level').value;
-  if(!name){showToast('请输入班级名称');return}
-  const r=await api('/api/classes/create',{teacherEmail:currentUser.email,name,examLevel:level});
-  if(r.success){showToast('✅ 班级已创建');document.getElementById('cls-name').value='';loadClasses()}else showToast(r.error)
+// ===== CLASSES =====
+function createClass(){
+  const n=document.getElementById('cls-name').value.trim(),lv=document.getElementById('cls-level').value;
+  if(!n){showToast('输入班级名称');return}
+  classes.push({id:nextId++,name:n,level:lv,teacherRole:role,members:[],schedule:[],logs:[]});saveClasses();
+  document.getElementById('cls-name').value='';showToast('✅ 已创建');renderClasses()
 }
-async function loadClasses(){
-  if(!currentUser)return;
-  const r=await api('/api/classes/list',{email:currentUser.email});
-  if(!r.success)return;
-  renderClasses(r.classes);
-  // Update homework class selector
-  const sel=document.getElementById('hw-class-select');
-  sel.innerHTML='<option value="">请选择班级</option>';
-  for(const c of r.classes)sel.innerHTML+=`<option value="${c.id}">${c.name} (${c.examLevel})</option>`
-}
-function renderClasses(classes){
-  const container=document.getElementById('class-list');
-  if(!classes.length){container.innerHTML='<div class="status-msg"><span class="emoji">👆</span>还没有班级</div>';return}
+function renderClasses(){
+  const c=document.getElementById('cls-list');
+  if(!classes.length){c.innerHTML='<div class="status-msg"><span class="emoji">🏫</span>暂无班级</div>';return}
   let html='';
-  for(const c of classes){
-    const isTeacher=currentUser&&c.teacherEmail===currentUser.email;
-    html+=`<div class="class-card fade-up">
-      <div style="display:flex;justify-content:space-between;align-items:start;flex-wrap:wrap;gap:8px">
-        <div><div class="name">${c.name}</div><div class="meta">🎯 ${c.examLevel} ${isTeacher?'· 我的班级':''}</div></div>
-        <div style="display:flex;gap:4px">
-          ${isTeacher?`<button class="btn btn-secondary btn-sm" onclick="showClassDetail('${c.id}')">📋 详情</button><button class="btn btn-secondary btn-sm" onclick="showClassSchedule('${c.id}')">📅 课表</button><button class="btn btn-secondary btn-sm" onclick="showAddMember('${c.id}')">➕ 成员</button><button class="btn btn-danger btn-sm" onclick="deleteClass('${c.id}')">✕</button>`:`<button class="btn btn-secondary btn-sm" onclick="showClassDetail('${c.id}')">📋 查看</button>`}
-        </div>
-      </div>
-      <div style="margin-top:8px;font-size:12px;color:var(--text-light)">
-        成员: ${(c.members||[]).length}人
-        ${c.schedule&&c.schedule.length?`| ${c.schedule.map(s=>s.day+' '+s.startTime+'-'+s.endTime).join(' / ')}`:''}
-      </div>
-      ${c.members&&c.members.length?`<div style="margin-top:6px">${c.members.map(m=>`<span class="member-tag ${m.memberRole||'student'}">${m.name}</span>`).join('')}</div>`:''}
+  for(const cls of classes){
+    const isT=role==='teacher';
+    html+=`<div class="class-card fade-up"><div style="display:flex;justify-content:space-between;align-items:start;flex-wrap:wrap;gap:8px"><div><div class="name">${cls.name}</div><div class="meta">🎯 ${cls.level} · ${(cls.members||[]).length}人</div></div><div style="display:flex;gap:4px">
+      ${isT?`<button class="btn btn-secondary btn-sm" onclick="showCD('${cls.id}')">📋</button><button class="btn btn-secondary btn-sm" onclick="showCS('${cls.id}')">📅</button><button class="btn btn-danger btn-sm" onclick="delClass('${cls.id}')">✕</button>`:`<button class="btn btn-secondary btn-sm" onclick="showCD('${cls.id}')">📋</button>`}
+    </div></div>
+    ${cls.schedule&&cls.schedule.length?`<div style="margin-top:6px;font-size:12px;color:var(--text-light)">📅 ${cls.schedule.map(s=>s.day+' '+s.start+'-'+s.end).join(' / ')}</div>`:''}
+    ${cls.members&&cls.members.length?`<div style="margin-top:6px">${cls.members.map(m=>`<span class="member-tag ${m.r||'student'}">${m.n}</span>`).join('')}</div>`:''}
     </div>`
-  }
-  container.innerHTML=html
-}
-async function deleteClass(id){
-  if(!confirm('确定删除该班级？'))return;
-  const r=await api('/api/classes/delete',{classId:id});
-  if(r.success){showToast('已删除');loadClasses()}
-}
-function showAddMember(classId){
-  const d=document.createElement('div');d.className='modal-overlay';d.style.display='flex';
-  d.innerHTML=`<div class="modal-box">
-    <div class="modal-title">添加成员</div>
-    <div class="form-group"><label>用户昵称</label><input type="text" id="add-name" placeholder="输入用户昵称搜索"></div>
-    <div class="form-group"><label>身份</label><select id="add-role"><option value="student">学生</option><option value="parent">家长</option></select></div>
-    <div id="add-result" style="font-size:13px;margin-top:8px"></div>
-    <div class="btn-group"><button class="btn btn-primary" onclick="doAddMember('${classId}')">添加</button><button class="btn btn-secondary" onclick="this.closest('.modal-overlay').remove()">取消</button></div>
-  </div>`;
-  document.body.appendChild(d)
-}
-async function doAddMember(classId){
-  const name=document.getElementById('add-name').value.trim(),role=document.getElementById('add-role').value;
-  if(!name){showToast('请输入昵称');return}
-  const r=await api('/api/classes/add-member',{classId,userName:name,role});
-  if(r.success){document.getElementById('add-result').textContent='✅ 已添加';loadClasses();setTimeout(()=>document.querySelector('.modal-overlay').remove(),800)}
-  else document.getElementById('add-result').textContent='❌ '+r.error
-}
-function showClassDetail(classId){
-  const d=document.createElement('div');d.className='modal-overlay';d.style.display='flex';
-  d.innerHTML=`<div class="modal-box"><div class="modal-title">⏳ 加载中...</div></div>`;document.body.appendChild(d);
-  api('/api/classes/detail',{classId}).then(r=>{
-    if(!r.success){d.innerHTML=`<div class="modal-box"><div class="modal-title">❌ 加载失败</div><div class="btn-group"><button class="btn btn-secondary" onclick="this.closest('.modal-overlay').remove()">关闭</button></div></div>`;return}
-    const c=r.class,hw=r.homework||[];
-    d.innerHTML=`<div class="modal-box"><div class="modal-title">${c.name}</div>
-      <p style="font-size:13px;color:var(--text-light);margin-bottom:12px">🎯 ${c.examLevel} | 成员 ${(c.members||[]).length}人</p>
-      ${c.schedule&&c.schedule.length?`<div style="margin-bottom:12px"><strong>📅 上课时间：</strong>${c.schedule.map(s=>`<div class="schedule-day">${s.day} ${s.startTime}-${s.endTime}</div>`).join('')}</div>`:''}
-      ${c.members&&c.members.length?`<div style="margin-bottom:12px"><strong>👥 成员：</strong>${c.members.map(m=>`<span class="member-tag ${m.memberRole||'student'}">${m.name}${currentUser.role==='teacher'?` <span style="cursor:pointer;color:var(--danger)" onclick="removeMember('${classId}','${m.email}')">✕</span>`:''}</span>`).join(' ')}</div>`:'<p style="font-size:13px;color:var(--text-light)">暂无成员</p>'}
-      ${hw.length?`<div style="margin-top:12px"><strong>📋 作业：</strong>${hw.slice(0,5).map(h=>`<div class="hw-card"><div class="hw-title">${h.title}</div><div class="hw-meta">${h.type} | ${h.dueDate||'无截止'}</div></div>`).join('')}</div>`:''}
-      ${c.classLogs&&c.classLogs.length?`<div style="margin-top:12px"><strong>📝 课堂记录：</strong>${c.classLogs.slice(-5).reverse().map(l=>`<div class="schedule-day">${l.date} ${l.time}${l.cancelled?' ❌取消':''}<br>${l.content||''}${l.progress?' | 进度：'+l.progress:''}</div>`).join('')}</div>`:''}
-      <div class="btn-group"><button class="btn btn-secondary" onclick="this.closest('.modal-overlay').remove()">关闭</button></div></div>`
-  })
-}
-async function removeMember(classId,email){
-  if(!confirm('确定移除？'))return;
-  const r=await api('/api/classes/remove-member',{classId,userEmail:email});
-  if(r.success){showToast('已移除');loadClasses();document.querySelector('.modal-overlay').remove()}else showToast(r.error)
-}
-function showClassSchedule(classId){
-  const d=document.createElement('div');d.className='modal-overlay';d.style.display='flex';
-  d.innerHTML=`<div class="modal-box">
-    <div class="modal-title">📅 设置上课时间</div>
-    <div id="schedule-entries">
-      <div class="schedule-entry row" style="margin-bottom:8px">
-        <select class="s-day" style="flex:1"><option>周一</option><option>周二</option><option>周三</option><option>周四</option><option>周五</option><option>周六</option><option>周日</option></select>
-        <input type="time" class="s-start" value="09:00" style="flex:1">
-        <input type="time" class="s-end" value="10:30" style="flex:1">
-      </div>
-    </div>
-    <button class="btn btn-secondary btn-sm" onclick="addScheduleRow()" style="margin-bottom:12px">➕ 添加时段</button>
-    <div class="btn-group"><button class="btn btn-primary" onclick="saveSchedule('${classId}')">💾 保存</button><button class="btn btn-secondary" onclick="this.closest('.modal-overlay').remove()">取消</button></div>
-  </div>`;
-  document.body.appendChild(d)
-}
-function addScheduleRow(){
-  const e=document.getElementById('schedule-entries');
-  e.innerHTML+=`<div class="schedule-entry row" style="margin-bottom:8px"><select class="s-day" style="flex:1"><option>周一</option><option>周二</option><option>周三</option><option>周四</option><option>周五</option><option>周六</option><option>周日</option></select><input type="time" class="s-start" value="14:00" style="flex:1"><input type="time" class="s-end" value="15:30" style="flex:1"></div>`
-}
-async function saveSchedule(classId){
-  const entries=document.querySelectorAll('.schedule-entry');
-  const schedule=[];
-  for(const e of entries){
-    const day=e.querySelector('.s-day').value,start=e.querySelector('.s-start').value,end=e.querySelector('.s-end').value;
-    if(day&&start&&end)schedule.push({day,startTime:start,endTime:end})
-  }
-  const r=await api('/api/classes/set-schedule',{classId,schedule});
-  if(r.success){showToast('✅ 已保存');document.querySelector('.modal-overlay').remove();loadClasses()}
-}
-// Class notes (after class)
-function showClassNote(classId){
-  const d=document.createElement('div');d.className='modal-overlay';d.style.display='flex';
-  d.innerHTML=`<div class="modal-box"><div class="modal-title">📝 课堂记录</div>
-    <div class="form-group"><label>学习内容</label><textarea id="note-content" rows="2" placeholder="今天学了什么"></textarea></div>
-    <div class="form-group"><label>学习进度</label><input type="text" id="note-progress" placeholder="完成到哪了"></div>
-    <div class="btn-group">
-      <button class="btn btn-primary" onclick="saveClassNote('${classId}')">💾 保存</button>
-      <button class="btn btn-danger" onclick="cancelClass('${classId}')">❌ 课堂取消</button>
-      <button class="btn btn-secondary" onclick="this.closest('.modal-overlay').remove()">关闭</button>
-    </div></div>`;
-  document.body.appendChild(d)
-}
-async function saveClassNote(classId){
-  const c=document.getElementById('note-content').value.trim(),p=document.getElementById('note-progress').value.trim();
-  const r=await api('/api/classes/add-note',{classId,content:c,progress:p,cancelled:false});
-  if(r.success){showToast('✅ 已记录');document.querySelector('.modal-overlay').remove();showToast('🎉 课堂记录已保存！')}
-}
-async function cancelClass(classId){
-  if(!confirm('确定标记为课堂取消？'))return;
-  const r=await api('/api/classes/add-note',{classId,content:'',progress:'',cancelled:true});
-  if(r.success){showToast('已标记取消');document.querySelector('.modal-overlay').remove();loadClasses()}
-}
-
-// ===== HOMEWORK =====
-async function loadHomework(){
-  const classId=document.getElementById('hw-class-select').value;
-  const container=document.getElementById('homework-content');
-  if(!classId){container.innerHTML='<div class="status-msg"><span class="emoji">👆</span>选好班级</div>';return}
-  const r=await api('/api/homework/list',{classId});
-  if(!r.success)return;
-  const isTeacher=currentUser&&currentUser.role==='teacher';
-  let html=(isTeacher?`<button class="btn btn-primary btn-sm" onclick="showCreateHW('${classId}')" style="margin-bottom:12px">📝 发布作业</button>`:'')+'<div id="hw-list">';
-  if(!r.homework.length)html+='<div class="status-msg"><span class="emoji">📋</span>暂无作业</div>';
-  else for(const h of r.homework){
-    const typeLabel={choice:'选择题',sentence-fill:'填句题','true-false':'判断题','fill-blank':'填词题'}[h.type]||h.type;
-    html+=`<div class="hw-card"><div class="hw-title">${h.title}</div><div class="hw-meta">${typeLabel} | 共${h.questions.length}题 | ${h.dueDate?('截止：'+h.dueDate):''}</div>`
-    if(isTeacher)html+=`<button class="show-ans-btn" onclick="showHWPreview('${h.id}')">👀 查看题目</button>`;
-    html+='</div>'
-  }
-  html+='</div>';
-  container.innerHTML=html
-}
-function showCreateHW(classId){
-  const d=document.createElement('div');d.className='modal-overlay';d.style.display='flex';
-  d.innerHTML=`<div class="modal-box" style="max-width:600px"><div class="modal-title">📝 发布作业</div>
-    <div class="form-group"><label>标题</label><input type="text" id="hw-title" placeholder="作业标题"></div>
-    <div class="form-group"><label>题型</label>
-      <select id="hw-type" onchange="updateHWTypeUI()">
-        <option value="choice">选择题</option>
-        <option value="fill-blank">填词题</option>
-        <option value="true-false">判断题</option>
-        <option value="sentence-fill">填句题</option>
-      </select></div>
-    <div class="form-group"><label>截止日期</label><input type="date" id="hw-due"></div>
-    <div id="hw-questions-container">
-      <div class="hw-question" id="hw-q-0">
-        <input type="text" class="hw-q-text" placeholder="题目内容" style="margin-bottom:6px">
-        <div class="hw-options">
-          <label><input type="radio" name="hw-ans-0" value="0"> <input type="text" class="hw-opt" placeholder="选项A" style="width:80%"></label>
-          <label><input type="radio" name="hw-ans-0" value="1"> <input type="text" class="hw-opt" placeholder="选项B" style="width:80%"></label>
-          <label><input type="radio" name="hw-ans-0" value="2"> <input type="text" class="hw-opt" placeholder="选项C" style="width:80%"></label>
-          <label><input type="radio" name="hw-ans-0" value="3"> <input type="text" class="hw-opt" placeholder="选项D" style="width:80%"></label>
-        </div>
-      </div>
-    </div>
-    <button class="btn btn-secondary btn-sm" onclick="addHWQuestion()">➕ 添加题目</button>
-    <div class="btn-group" style="margin-top:12px"><button class="btn btn-primary" onclick="doCreateHW('${classId}')">📝 发布</button><button class="btn btn-secondary" onclick="this.closest('.modal-overlay').remove()">取消</button></div></div>`;
-  document.body.appendChild(d)
-}
-function updateHWTypeUI(){
-  const type=document.getElementById('hw-type').value;
-  document.querySelectorAll('#hw-questions-container .hw-question').forEach((q,i)=>{
-    const opts=q.querySelector('.hw-options');
-    if(type==='true-false'){opts.innerHTML='<label><input type="radio" name="hw-ans-'+i+'" value="true"> True</label><label><input type="radio" name="hw-ans-'+i+'" value="false"> False</label>'}
-    else if(type==='fill-blank'||type==='sentence-fill'){opts.innerHTML='<input type="text" class="hw-ans-text" placeholder="正确答案" style="width:60%">'}
-    else{opts.innerHTML='<label><input type="radio" name="hw-ans-'+i+'" value="0"> <input type="text" class="hw-opt" placeholder="选项A" style="width:80%"></label><label><input type="radio" name="hw-ans-'+i+'" value="1"> <input type="text" class="hw-opt" placeholder="选项B" style="width:80%"></label><label><input type="radio" name="hw-ans-'+i+'" value="2"> <input type="text" class="hw-opt" placeholder="选项C" style="width:80%"></label><label><input type="radio" name="hw-ans-'+i+'" value="3"> <input type="text" class="hw-opt" placeholder="选项D" style="width:80%"></label>'}
-  })
-}
-let hwQCount=1;
-function addHWQuestion(){
-  const type=document.getElementById('hw-type').value;
-  const i=hwQCount++;
-  const c=document.getElementById('hw-questions-container');
-  let optsHtml='';
-  if(type==='true-false')optsHtml='<label><input type="radio" name="hw-ans-'+i+'" value="true"> True</label><label><input type="radio" name="hw-ans-'+i+'" value="false"> False</label>';
-  else if(type==='fill-blank'||type==='sentence-fill')optsHtml='<input type="text" class="hw-ans-text" placeholder="正确答案" style="width:60%">';
-  else optsHtml='<label><input type="radio" name="hw-ans-'+i+'" value="0"> <input type="text" class="hw-opt" placeholder="选项A" style="width:80%"></label><label><input type="radio" name="hw-ans-'+i+'" value="1"> <input type="text" class="hw-opt" placeholder="选项B" style="width:80%"></label><label><input type="radio" name="hw-ans-'+i+'" value="2"> <input type="text" class="hw-opt" placeholder="选项C" style="width:80%"></label><label><input type="radio" name="hw-ans-'+i+'" value="3"> <input type="text" class="hw-opt" placeholder="选项D" style="width:80%"></label>';
-  const div=document.createElement('div');div.className='hw-question';div.id='hw-q-'+i;
-  div.innerHTML='<input type="text" class="hw-q-text" placeholder="题目内容" style="margin-bottom:6px"><div class="hw-options">'+optsHtml+'</div><button class="show-ans-btn" onclick="this.parentElement.remove()">✕ 删除</button>';
-  c.appendChild(div)
-}
-async function doCreateHW(classId){
-  const title=document.getElementById('hw-title').value.trim(),type=document.getElementById('hw-type').value,due=document.getElementById('hw-due').value;
-  if(!title){showToast('请输入标题');return}
-  const questions=[];let valid=true;
-  document.querySelectorAll('#hw-questions-container .hw-question').forEach(q=>{
-    const text=q.querySelector('.hw-q-text')?.value.trim();
-    if(!text)return;
-    let answer='';const opts=[];
-    if(type==='choice'){q.querySelectorAll('.hw-opt').forEach(o=>opts.push(o.value.trim()));const sel=q.querySelector('input[type=radio]:checked');if(sel)answer=opts[parseInt(sel.value)]||''}
-    else if(type==='true-false'){const sel=q.querySelector('input[type=radio]:checked');if(sel)answer=sel.value}
-    else{answer=q.querySelector('.hw-ans-text')?.value.trim()||''}
-    if(text&&answer)questions.push({q:text,options:opts,answer})
-  });
-  if(!questions.length){showToast('请添加至少一题');return}
-  const r=await api('/api/homework/create',{classId,teacherEmail:currentUser.email,title,type,questions,dueDate:due});
-  if(r.success){showToast('✅ 作业已发布');document.querySelector('.modal-overlay').remove();loadHomework()}
-  else showToast(r.error)
-}
-function showHWPreview(id){
-  api('/api/homework/list',{classId:'_all'}).then(r=>{
-    if(!r.success)return;
-    // Find the specific homework
-  })
-  // Simple fallback: just show what we have
-  const cards=document.querySelectorAll('.hw-card');
-  for(const c of cards)if(c.querySelector('.hw-title')&&c.querySelector('.show-ans-btn')===event.target){
-    const detail=c.querySelector('.hw-meta')?.textContent||'';
-    showToast('查看作业详情 (功能开发中)')
-  }
-}
-
-// ===== AI ASSISTANT =====
-let aiListening=false;let aiRecognition=null;
-function toggleAiVoice(){
-  const btn=document.getElementById('ai-mic');
-  if(!('webkitSpeechRecognition'in window)&&!('SpeechRecognition'in window)){showToast('请用Chrome浏览器');return}
-  if(aiListening){if(aiRecognition)aiRecognition.stop();aiListening=false;btn.textContent='🎤';btn.style.borderColor='var(--border)';return}
-  const SR=window.SpeechRecognition||window.webkitSpeechRecognition;
-  aiRecognition=new SR();aiRecognition.lang='zh-CN';aiRecognition.continuous=false;aiRecognition.interimResults=false;
-  aiRecognition.onstart=()=>{aiListening=true;btn.textContent='🔴';btn.style.borderColor='#FF3B30';showToast('🎤 请说出指令...')};
-  aiRecognition.onresult=(e)=>{document.getElementById('ai-input').value=e.results[0][0].transcript;processAiCommand()};
-  aiRecognition.onend=()=>{aiListening=false;btn.textContent='🎤';btn.style.borderColor='var(--border)'};
-  aiRecognition.onerror=(e)=>{if(e.error!=='no-speech'&&e.error!=='aborted')showToast('⛔ '+e.error);aiListening=false;btn.textContent='🎤';btn.style.borderColor='var(--border)'};
-  try{aiRecognition.start()}catch(e){showToast('⛔ 启动失败')}
-}
-function processAiCommand(){
-  const input=document.getElementById('ai-input').value.trim();
-  const container=document.getElementById('ai-result');
-  if(!input){showToast('请输入指令');return}
-  // Parse format: "09:00到10:30 周一班 多上一节课" or "14:00到15:30 周二班 多上一节"
-  const regex=/^(\d{1,2}:\d{2})到(\d{1,2}:\d{2})\s*(.+?班)\s*多上一节/;
-  const match=input.match(regex);
-  if(!match){container.innerHTML=`<div style="padding:12px;background:#FFF0F0;border-radius:8px;font-size:13px;color:var(--danger)">❌ 你的要求不够明确，请按格式输入：几点几分到几点几分哪个班多上一节课</div>`;return}
-  const startTime=match[1],endTime=match[2],className=match[3];
-  // Find class by name
-  api('/api/classes/list',{email:currentUser.email}).then(r=>{
-    if(!r.success||!r.classes.length){container.innerHTML='<div style="padding:12px;background:#FFF0F0;border-radius:8px;font-size:13px;color:var(--danger)">❌ 没有找到班级</div>';return}
-    const cls=r.classes.find(c=>c.name===className);
-    if(!cls){container.innerHTML=`<div style="padding:12px;background:#FFF0F0;border-radius:8px;font-size:13px;color:var(--danger)">❌ 未找到"${className}"</div>`;return}
-    // Auto add schedule and note
-    const schedule=cls.schedule||[];
-    // Find next available day - add to the schedule
-    const today=new Date();const days=['周日','周一','周二','周三','周四','周五','周六'];
-    const nextDay=days[(today.getDay()+1)%7]; // Tomorrow
-    schedule.push({day:nextDay,startTime,endTime});
-    api('/api/classes/set-schedule',{classId:cls.id,schedule}).then(r2=>{
-      if(r2.success){
-        container.innerHTML=`<div style="padding:12px;background:#E8F8ED;border-radius:8px;font-size:13px;color:#1E8E3E">
-          ✅ 已安排：${nextDay} ${startTime}-${endTime} ${className} 加课一节<br>
-          请在课程结束后记录课堂内容</div>`;
-        document.getElementById('ai-input').value='';
-        loadClasses()
-      }else container.innerHTML='<div style="padding:12px;background:#FFF0F0;border-radius:8px;font-size:13px">❌ 安排失败</div>'
-    })
-  })
-}
-
-// ===== STUDENT MANAGEMENT =====
-async function loadStudents(){
-  const r=await api('/api/students',{email:currentUser.email});
-  if(r.success)renderStudents(r.students)
-}
-function renderStudents(students){
-  const c=document.getElementById('student-list');
-  if(!students||!students.length){c.innerHTML='<div class="status-msg"><span class="emoji">👆</span>暂无学生</div>';return}
-  const ln={YLE:'YLE',KET:'KET',PET:'PET',FCE:'FCE',CAE:'CAE',CPE:'CPE',IELTS:'雅思',TOEFL:'托福'};
-  let html='';
-  for(const s of students){
-    html+=`<div style="display:flex;align-items:center;justify-content:space-between;padding:10px 14px;background:var(--bg);border-radius:10px;margin-bottom:6px;flex-wrap:wrap;gap:6px">
-      <div><strong>${s.name}</strong><br><span style="font-size:12px;color:var(--text-light)">${s.email}</span></div>
-      <div style="display:flex;align-items:center;gap:6px">
-        <select onchange="updateSM(${s.email}, this.value)" style="padding:4px 8px;font-size:12px;width:auto">
-          ${Object.entries(ln).map(([k,v])=>`<option value="${k}"${s.level===k?' selected':''}>${v}</option>`).join('')}
-        </select>
-        <span class="role-badge" style="font-size:11px">${ln[s.level]||s.level}</span>
-        <button onclick="removeStudent(${s.email})" style="padding:4px 8px;border:none;border-radius:6px;background:#FFF0F0;color:var(--danger);font-size:12px;cursor:pointer">✕</button>
-      </div></div>`
   }
   c.innerHTML=html
 }
-async function addStudent(){
-  const e=document.getElementById('stu-email').value.trim(),n=document.getElementById('stu-name').value.trim(),l=document.getElementById('stu-level').value;
-  if(!e){showToast('请输入学生邮箱');return}
-  const r=await api('/api/students/add',{teacherEmail:currentUser.email,studentEmail:e,studentName:n||e.split('@')[0],level:l});
-  if(r.success){showToast('✅ 已添加');renderStudents(r.students);document.getElementById('stu-email').value='';document.getElementById('stu-name').value=''}else showToast(r.error)
+function delClass(id){if(!confirm('确定删除？'))return;classes=classes.filter(c=>c.id!=id);saveClasses();renderClasses();showToast('已删除')}
+function showCD(id){
+  const cls=classes.find(c=>c.id==id);if(!cls)return;
+  const d=document.createElement('div');d.className='modal-overlay';d.style.display='flex';
+  const hw=hwData.filter(h=>h.cid==id);
+  d.innerHTML=`<div class="modal-box"><div class="modal-title">${cls.name}</div>
+    <p style="font-size:13px;color:var(--text-light);margin-bottom:12px">🎯 ${cls.level} · ${(cls.members||[]).length}人</p>
+    ${cls.schedule&&cls.schedule.length?`<div><strong>📅 上课：</strong>${cls.schedule.map(s=>`<div class="schedule-day">${s.day} ${s.start}-${s.end}</div>`).join('')}</div>`:''}
+    ${cls.members&&cls.members.length?`<div style="margin-top:8px"><strong>👥 成员：</strong>${cls.members.map(m=>`<span class="member-tag ${m.r||'student'}">${m.n}</span>`).join(' ')}</div>`:'<p style="font-size:13px;color:var(--text-light)">暂无成员</p>'}
+    ${hw.length?`<div style="margin-top:8px"><strong>📋 作业：</strong>${hw.slice(-3).reverse().map(h=>`<div class="hw-card"><div class="hw-title">${h.title}</div><div class="hw-meta">${h.type}</div></div>`).join('')}</div>`:''}
+    <div class="btn-group"><button class="btn btn-secondary" onclick="this.closest('.modal-overlay').remove()">关闭</button></div></div>`;
+  document.body.appendChild(d)
 }
-async function updateSM(email,level){
-  const r=await api('/api/students/update',{teacherEmail:currentUser.email,studentEmail:email,level});
-  if(r.success)showToast('✅ 已更新')
+function showCS(id){
+  const d=document.createElement('div');d.className='modal-overlay';d.style.display='flex';
+  d.innerHTML=`<div class="modal-box"><div class="modal-title">📅 上课时间</div><div id="se">
+    <div class="row" style="margin-bottom:6px"><select class="sd" style="flex:1"><option>周一</option><option>周二</option><option>周三</option><option>周四</option><option>周五</option><option>周六</option><option>周日</option></select><input type="time" class="st" value="09:00" style="flex:1"><input type="time" class="et" value="10:30" style="flex:1"></div></div>
+    <button class="btn btn-secondary btn-sm" onclick="addSR()">➕ 添加</button>
+    <div class="btn-group"><button class="btn btn-primary" onclick="saveSched('${id}')">💾 保存</button><button class="btn btn-secondary" onclick="this.closest('.modal-overlay').remove()">取消</button></div></div>`;
+  document.body.appendChild(d)
 }
-async function removeStudent(email){
-  if(!confirm('确定移除？'))return;
-  const r=await api('/api/students/remove',{teacherEmail:currentUser.email,studentEmail:email});
-  if(r.success){showToast('已移除');renderStudents(r.students)}
+function addSR(){const e=document.getElementById('se');e.innerHTML+=`<div class="row" style="margin-bottom:6px"><select class="sd" style="flex:1"><option>周一</option><option>周二</option><option>周三</option><option>周四</option><option>周五</option><option>周六</option><option>周日</option></select><input type="time" class="st" value="14:00" style="flex:1"><input type="time" class="et" value="15:30" style="flex:1"></div>`}
+function saveSched(id){
+  const cls=classes.find(c=>c.id==id);if(!cls)return;
+  const schedule=[];document.querySelectorAll('#se .row').forEach(r=>{const d=r.querySelector('.sd').value,s=r.querySelector('.st').value,e=r.querySelector('.et').value;if(d&&s&&e)schedule.push({day:d,start:s,end:e})});
+  cls.schedule=schedule;saveClasses();showToast('✅ 已保存');document.querySelector('.modal-overlay').remove();renderClasses()
+}
+
+// ===== HOMEWORK =====
+function updateHWSel(){
+  const s=document.getElementById('hw-sel');s.innerHTML='<option value="">选择班级</option>';
+  for(const c of classes)s.innerHTML+=`<option value="${c.id}">${c.name}</option>`
+}
+function loadHW(){
+  const cid=document.getElementById('hw-sel').value;const co=document.getElementById('hw-content');
+  if(!cid){co.innerHTML='<div class="status-msg"><span class="emoji">👆</span>选择班级</div>';return}
+  const isT=role==='teacher';const list=hwData.filter(h=>h.cid==cid);
+  let html=(isT?`<button class="btn btn-primary btn-sm" onclick="showCHW('${cid}')" style="margin-bottom:10px">📝 发布作业</button>`:'');
+  if(!list.length)html+='<div class="status-msg"><span class="emoji">📋</span>暂无作业</div>';
+  else for(const h of list){const tl={choice:'选择题',fill:'填词题',tf:'判断题',sf:'填句题'}[h.type]||h.type;html+=`<div class="hw-card"><div class="hw-title">${h.title}</div><div class="hw-meta">${tl} · ${h.qs.length}题</div></div>`}
+  co.innerHTML=html+'</div>'
+}
+function showCHW(cid){
+  const d=document.createElement('div');d.className='modal-overlay';d.style.display='flex';let i=0;
+  d.innerHTML=`<div class="modal-box" style="max-width:600px">
+    <div class="modal-title">📝 发布作业</div>
+    <div class="form-group"><label>标题</label><input type="text" id="hw-title"></div>
+    <div class="form-group"><label>题型</label><select id="hw-type"><option value="fill">填词题</option><option value="choice">选择题</option><option value="tf">判断题</option><option value="sf">填句题</option></select></div>
+    <div id="hw-qs"><div class="hw-question"><input type="text" class="hq" placeholder="题目" style="margin-bottom:4px"><input type="text" class="ha" placeholder="答案" style="width:60%"></div></div>
+    <button class="btn btn-secondary btn-sm" onclick="addHQ()">➕ 添加</button>
+    <div class="btn-group"><button class="btn btn-primary" onclick="pubHW('${cid}')">📝 发布</button><button class="btn btn-secondary" onclick="this.closest('.modal-overlay').remove()">取消</button></div></div>`;
+  document.body.appendChild(d)
+}
+function addHQ(){const c=document.getElementById('hw-qs');c.innerHTML+=`<div class="hw-question"><input type="text" class="hq" placeholder="题目" style="margin-bottom:4px"><input type="text" class="ha" placeholder="答案" style="width:60%"></div>`}
+function pubHW(cid){
+  const title=document.getElementById('hw-title').value.trim(),type=document.getElementById('hw-type').value;
+  if(!title){showToast('输入标题');return}
+  const qs=[];document.querySelectorAll('#hw-qs .hw-question').forEach(el=>{const q=el.querySelector('.hq')?.value.trim(),a=el.querySelector('.ha')?.value.trim();if(q&&a)qs.push({q,a})});
+  if(!qs.length){showToast('添加至少一题');return}
+  hwData.push({id:nextId++,cid,title,type,qs,due:''});saveHW();showToast('✅ 已发布');document.querySelector('.modal-overlay').remove();loadHW()
+}
+
+// ===== AI ASSISTANT =====
+function processAI(){
+  const inp=document.getElementById('ai-inp').value.trim();const out=document.getElementById('ai-out');
+  if(!inp){showToast('输入指令');return}
+  const m=inp.match(/^(\d{1,2}:\d{2})到(\d{1,2}:\d{2})\s*(.+?班)\s*多上一节/);
+  if(!m){out.innerHTML=`<div style="padding:12px;background:#FFF0F0;border-radius:8px;font-size:13px;color:var(--danger)">❌ 格式不对，请按：09:00到10:30 周一班 多上一节课</div>`;return}
+  const cls=classes.find(c=>c.name===m[3].trim());
+  if(!cls){out.innerHTML=`<div style="padding:12px;background:#FFF0F0;border-radius:8px;font-size:13px;color:var(--danger)">❌ 未找到"${m[3]}"</div>`;return}
+  const d=['周日','周一','周二','周三','周四','周五','周六'];const nd=d[(new Date().getDay()+1)%7];
+  if(!cls.schedule)cls.schedule=[];cls.schedule.push({day:nd,start:m[1],end:m[2]});saveClasses();
+  out.innerHTML=`<div style="padding:12px;background:#E8F8ED;border-radius:8px;font-size:13px;color:#1E8E3E">✅ 已安排：${nd} ${m[1]}-${m[2]} ${cls.name} 加课一节</div>`;
+  document.getElementById('ai-inp').value='';renderClasses()
 }
 </script>
 </body>
