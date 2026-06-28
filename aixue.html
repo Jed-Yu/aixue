@@ -273,15 +273,36 @@ function generateExercise(){
   const t=document.getElementById('ex-type').value,l=document.getElementById('ex-level').value,c=parseInt(document.getElementById('ex-count').value);
   const isT=role==='teacher';const pool=qBanks[l]||qBanks.FCE;const lb=t==='fill-blank'?'填空题':t==='sentence-writing'?'仿写句子':'句子改写';
   document.getElementById('ex-badge').textContent='🎯 '+l;document.getElementById('ex-badge').style.display='inline-block';
-  // Build questions array
   const qs=[];
   for(let i=0;i<c;i++){const p=pool[i%pool.length];qs.push({q:p.q,a:p.a})}
   setLastGenerated(qs);
   // Render
-  let html='';
-  for(let i=0;i<qs.length;i++){const p=qs[i];const q=p.q.replace(/_+/g,'<span class="blank">______</span>');html+=`<div class="ex-card fade-up"><div><span class="ex-num">${i+1}</span><strong>${lb}</strong></div><div class="ex-q">${q}</div>${isT?`<button class="show-ans-btn" onclick="this.nextElementSibling.classList.toggle('show');this.textContent=this.nextElementSibling.classList.contains('show')?'🙈隐藏':'👀查看'">👀 查看答案</button><div class="ex-ans">${p.a}</div>`:''}</div>`}
-  html+=isT?`<div class="btn-group" style="margin-top:12px"><button class="btn btn-primary" onclick="showAssignDialog()">📝 布置给班级</button></div>`:'';
+  let html='';const sid='sub-'+(Date.now())+'x';
+  for(let i=0;i<qs.length;i++){const p=qs[i];const q=p.q.replace(/_+/g,'<span class="blank">______</span>');
+    html+=`<div class="ex-card fade-up"><div><span class="ex-num">${i+1}</span><strong>${lb}</strong></div><div class="ex-q">${q}</div>`;
+    if(isT)html+=`<button class="show-ans-btn" onclick="this.nextElementSibling.classList.toggle('show');this.textContent=this.nextElementSibling.classList.contains('show')?'🙈隐藏':'👀查看'">👀 查看答案</button><div class="ex-ans">${p.a}</div>`;
+    else html+=`<div style="margin-top:8px"><input type="text" class="ex-ans-inp" data-idx="${i}" placeholder="输入答案..." style="width:100%;padding:10px 14px;border:2px solid var(--border);border-radius:10px;font-size:14px;outline:none" autocomplete="off"></div>`;
+    html+=`</div>`
+  }
+  if(!isT)html+=`<div class="btn-group" style="margin-top:8px"><button class="btn btn-primary" id="${sid}" onclick="studentSubmit('${sid}')">📤 提交</button></div>`;
+  if(isT)html+=`<div class="btn-group" style="margin-top:12px"><button class="btn btn-primary" onclick="showAssignDialog()">📝 布置给班级</button></div>`;
   document.getElementById('ex-output').innerHTML='<div class="ex-list">'+html+'</div>'
+}
+function studentSubmit(sid){
+  const l=document.getElementById('ex-level').value,t=document.getElementById('ex-type').value;
+  const inputs=document.querySelectorAll('.ex-ans-inp');
+  if(!inputs.length||!lastGeneratedQs){showToast('请先生成题目');return}
+  const answers=[];let correct=0;
+  inputs.forEach((inp,i)=>{
+    const ans=inp.value.trim();answers.push(ans);
+    if(lastGeneratedQs[i]&&lastGeneratedQs[i].a&&ans.toLowerCase()===lastGeneratedQs[i].a.toLowerCase())correct++
+  });
+  if(!answers.some(a=>a)){showToast('至少答一题再提交');return}
+  const sub=JSON.parse(localStorage.getItem('a_sub')||'[]');
+  sub.push({studentName:roleName,level:l,type:t,questions:lastGeneratedQs,answers,score:correct,total:lastGeneratedQs.length,accuracy:Math.round(correct/lastGeneratedQs.length*100)+'%',submittedAt:new Date().toISOString().split('T')[0]+' '+new Date().toTimeString().split(' ')[0]});
+  localStorage.setItem('a_sub',JSON.stringify(sub));
+  showToast('✅ 已提交！得分：'+correct+'/'+lastGeneratedQs.length);
+  generateExercise() // Regenerate to reset
 }
 function loadSampleExercise(){generateExercise()}
 
