@@ -167,10 +167,22 @@ app.post('/api/register', async (req, res) => {
     return res.json({ success: false, error: '该邮箱已注册，请直接登录' });
   }
 
-  users[email] = { email, name, password, createdAt: Date.now() };
+  // Check if teacher assigned a level for this student
+  const allUsers = loadUsers();
+  let assignedLevel = '';
+  for (const key of Object.keys(allUsers)) {
+    const u = allUsers[key];
+    if (u.students && u.students.find(s => s.email === email)) {
+      const student = u.students.find(s => s.email === email);
+      assignedLevel = student.level || '';
+      break;
+    }
+  }
+
+  users[email] = { email, name, password, assignedLevel, createdAt: Date.now() };
   saveUsers(users);
 
-  res.json({ success: true, user: { email, name } });
+  res.json({ success: true, user: { email, name, role: '', assignedLevel } });
 });
 
 // 登录（验证码登录）
@@ -196,7 +208,7 @@ app.post('/api/login', async (req, res) => {
   delete CODES[email];
 
   const u = users[email];
-  res.json({ success: true, user: { email, name: u.name, role: u.role || '' } });
+  res.json({ success: true, user: { email, name: u.name, role: u.role || '', assignedLevel: u.assignedLevel || '' } });
 });
 
 // 设置身份
@@ -235,7 +247,7 @@ app.post('/api/quick-login', (req, res) => {
   }
 
   const u = users[email];
-  res.json({ success: true, user: { email, name: u.name, role: u.role || '' } });
+  res.json({ success: true, user: { email, name: u.name, role: u.role || '', assignedLevel: u.assignedLevel || '' } });
 });
 
 // 检查登录状态
@@ -245,10 +257,87 @@ app.post('/api/check-session', (req, res) => {
 
   const users = loadUsers();
   const u = users[email];
-  res.json({ valid: !!u, user: u ? { email, name: u.name, role: u.role || '' } : null });
+  res.json({ valid: !!u, user: u ? { email, name: u.name, role: u.role || '', assignedLevel: u.assignedLevel || '' } : null });
 });
 
-// 静态文件
+// ========== 学生管理（老师/家长功能） ==========
+
+// 获取学生列表
+app.post('/api/students', (req, res) => {
+  const { email } = req.body;
+  const users = loadUsers();
+  const u = users[email];
+  if (!u) return res.json({ success: false, error: '用户不存在' });
+  const students = u.students || [];
+  res.json({ success: true, students });
+});
+
+// 添加学生
+app.post('/api/students/add', (req, res) => {
+  const { teacherEmail, studentEmail, studentName, level } = req.body;
+  const levels = ['YLE','KET','PET','FCE','CAE','CPE','IELTS','TOEFL'];
+  if (!levels.includes(level)) return res.json({ success: false, error: '无效的考试级别' });
+
+  const users = loadUsers();
+  const teacher = users[teacherEmail];
+  if (!teacher) return res.json({ success: false, error: '老师账号不存在' });
+
+  if (!teacher.students) teacher.students = [];
+  // Check if already added
+  if (teacher.students.find(s => s.email === studentEmail)) {
+    return res.json({ success: false, error: '该学生已在列表中' });
+  }
+
+  teacher.students.push({ email: studentEmail, name: studentName || '学生', level });
+  
+  // Also set assignedLevel on the student account if it exists
+  if (users[studentEmail]) {
+    users[studentEmail].assignedLevel = level;
+  }
+  
+  saveUsers(users);
+  res.json({ success: true, students: teacher.students });
+});
+
+// 更新学生级别
+app.post('/api/students/update', (req, res) => {
+  const { teacherEmail, studentEmail, level } = req.body;
+  const levels = ['YLE','KET','PET','FCE','CAE','CPE','IELTS','TOEFL'];
+  if (!levels.includes(level)) return res.json({ success: false, error: '无效的考试级别' });
+
+  const users = loadUsers();
+  const teacher = users[teacherEmail];
+  if (!teacher || !teacher.students) return res.json({ success: false, error: '老师或学生列表不存在' });
+
+  const student = teacher.students.find(s => s.email === studentEmail);
+  if (!student) return res.json({ success: false, error: '未找到该学生' });
+  
+  student.level = level;
+  if (users[studentEmail]) {
+    users[studentEmail].assignedLevel = level;
+  }
+  
+  saveUsers(users);
+  res.json({ success: true, students: teacher.students });
+});
+
+// 删除学生
+app.post('/api/students/remove', (req, res) => {
+  const { teacherEmail, studentEmail } = req.body;
+  const users = loadUsers();
+  const teacher = users[teacherEmail];
+  if (!teacher || !teacher.students) return res.json({ success: false, error: '老师或学生列表不存在' });
+  
+  teacher.students = teacher.students.filter(s => s.email !== studentEmail);
+  if (users[studentEmail]) {
+    users[studentEmail].assignedLevel = undefined;
+  }
+  
+  saveUsers(users);
+  res.json({ success: true, students: teacher.students });
+});
+
+// ========== 静态文件 ==========
 app.use(express.static(path.join(__dirname)));
 
 // 启动

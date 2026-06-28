@@ -478,9 +478,10 @@
     <div class="badge">🎯 FCE 备考专用</div>
   </div>
 
-  <div class="tabs">
+  <div class="tabs" id="main-tabs">
     <button class="tab-btn active" onclick="switchTab('knowledge')"><span class="icon">📝</span> 整理知识点</button>
     <button class="tab-btn" onclick="switchTab('exercise')"><span class="icon">✍️</span> 出题练习</button>
+    <button class="tab-btn" id="students-tab" onclick="switchTab('students')" style="display:none;"><span class="icon">👥</span> 学生管理</button>
   </div>
 
   <div id="panel-knowledge" class="panel active">
@@ -574,6 +575,35 @@ Have you ever eaten Japanese food?
       <button class="bar-check-btn" onclick="checkBarAnswer()">✅ 检查</button>
     </div>
     <div class="bar-result" id="bar-result"></div>
+  </div>
+
+  <!-- ===== Student Management Panel (Teacher/Parent) ===== -->
+  <div id="panel-students" class="panel">
+    <div class="card" style="text-align:center;padding:40px 20px">
+      <div style="font-size:56px;margin-bottom:16px">👥</div>
+      <h2 style="font-size:20px;font-weight:700;margin-bottom:8px">学生管理</h2>
+      <p style="color:var(--text-light);font-size:14px;margin-bottom:24px">添加学生并设置学习进度（考试级别）</p>
+
+      <div style="display:flex;gap:10px;flex-wrap:wrap;max-width:500px;margin:0 auto">
+        <input type="email" id="stu-email" placeholder="学生邮箱" style="flex:2;min-width:150px">
+        <input type="text" id="stu-name" placeholder="学生姓名" style="flex:1;min-width:100px">
+        <select id="stu-level" style="flex:1;min-width:100px">
+          <option value="YLE">YLE</option>
+          <option value="KET">KET</option>
+          <option value="PET">PET</option>
+          <option value="FCE" selected>FCE</option>
+          <option value="CAE">CAE</option>
+          <option value="CPE">CPE</option>
+          <option value="IELTS">IELTS</option>
+          <option value="TOEFL">TOEFL</option>
+        </select>
+        <button class="btn btn-primary" onclick="addStudent()" style="flex-shrink:0">➕ 添加</button>
+      </div>
+
+      <div id="student-list" style="margin-top:24px;max-width:500px;margin-left:auto;margin-right:auto;text-align:left">
+        <div class="status-msg"><span class="emoji">👆</span>还没有添加学生，在上方添加吧</div>
+      </div>
+    </div>
   </div>
 
   <div class="helper-note">
@@ -772,7 +802,95 @@ function showMainApp(user) {
     badge.style.display = 'none';
   }
 
+  // Show student management tab for teacher/parent
+  const stuTab = document.getElementById('students-tab');
+  if (user.role === 'teacher' || user.role === 'parent') {
+    stuTab.style.display = '';
+    loadStudents();
+  } else {
+    stuTab.style.display = 'none';
+  }
+  
+  // Auto-set exercise level if assigned by teacher
+  if (user.role === 'student' && user.assignedLevel) {
+    document.getElementById('ex-level').value = user.assignedLevel;
+  }
+
   generateKnowledge();
+}
+
+async function loadStudents() {
+  const result = await api('/api/students', { email: currentUser.email });
+  if (result.success) renderStudents(result.students);
+}
+
+function renderStudents(students) {
+  const container = document.getElementById('student-list');
+  if (!students || !students.length) {
+    container.innerHTML = '<div class="status-msg"><span class="emoji">👆</span>还没有添加学生，在上方添加吧</div>';
+    return;
+  }
+  const levelNames = { YLE:'🟢 YLE', KET:'🔵 KET', PET:'🟡 PET', FCE:'🟠 FCE', CAE:'🔴 CAE', CPE:'🟣 CPE', IELTS:'📘 IELTS', TOEFL:'📙 TOEFL' };
+  let html = '<div style="display:flex;flex-direction:column;gap:10px">';
+  for (const s of students) {
+    html += `<div style="display:flex;align-items:center;justify-content:space-between;padding:12px 16px;background:var(--bg);border-radius:12px;gap:10px;flex-wrap:wrap">
+      <div><strong>\${s.name}</strong><br><span style="font-size:13px;color:var(--text-light)">\${s.email}</span></div>
+      <div style="display:flex;align-items:center;gap:8px">
+        <select onchange="updateStudentLevel('\${s.email}', this.value)" style="padding:6px 10px;font-size:13px;width:auto">
+          <option value="YLE" \${s.level==='YLE'?'selected':''}>YLE</option>
+          <option value="KET" \${s.level==='KET'?'selected':''}>KET</option>
+          <option value="PET" \${s.level==='PET'?'selected':''}>PET</option>
+          <option value="FCE" \${s.level==='FCE'?'selected':''}>FCE</option>
+          <option value="CAE" \${s.level==='CAE'?'selected':''}>CAE</option>
+          <option value="CPE" \${s.level==='CPE'?'selected':''}>CPE</option>
+          <option value="IELTS" \${s.level==='IELTS'?'selected':''}>IELTS</option>
+          <option value="TOEFL" \${s.level==='TOEFL'?'selected':''}>TOEFL</option>
+        </select>
+        <span style="font-size:13px;font-weight:600">\${levelNames[s.level]}</span>
+        <button onclick="removeStudent('\${s.email}')" style="padding:6px 12px;border:none;border-radius:8px;background:#FFF0F0;color:#FF3B30;font-size:13px;cursor:pointer">✕</button>
+      </div>
+    </div>`;
+  }
+  html += '</div>';
+  container.innerHTML = html;
+}
+
+async function addStudent() {
+  const email = document.getElementById('stu-email').value.trim();
+  const name = document.getElementById('stu-name').value.trim();
+  const level = document.getElementById('stu-level').value;
+  if (!email) { showToast('请输入学生邮箱'); return; }
+  
+  const result = await api('/api/students/add', {
+    teacherEmail: currentUser.email,
+    studentEmail: email,
+    studentName: name || email.split('@')[0],
+    level
+  });
+  if (result.success) {
+    showToast('✅ 已添加学生：' + email);
+    renderStudents(result.students);
+    document.getElementById('stu-email').value = '';
+    document.getElementById('stu-name').value = '';
+  } else {
+    showToast(result.error || '添加失败');
+  }
+}
+
+async function updateStudentLevel(email, level) {
+  const result = await api('/api/students/update', { teacherEmail: currentUser.email, studentEmail: email, level });
+  if (result.success) {
+    showToast('✅ 已更新学习进度');
+  }
+}
+
+async function removeStudent(email) {
+  if (!confirm('确定要移除该学生吗？')) return;
+  const result = await api('/api/students/remove', { teacherEmail: currentUser.email, studentEmail: email });
+  if (result.success) {
+    showToast('已移除');
+    renderStudents(result.students);
+  }
 }
 
 async function selectRole(role) {
@@ -816,10 +934,11 @@ function showError(el, msg) { el.textContent = msg; el.classList.add('show'); }
 function switchTab(name) {
   document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
   document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
-  const idx = name === 'knowledge' ? 0 : 1;
-  document.querySelectorAll('.tab-btn')[idx].classList.add('active');
+  const idxMap = { knowledge: 0, exercise: 1, students: 2 };
+  const idx = idxMap[name] || 0;
+  document.querySelectorAll('.tab-btn').forEach((b, i) => b.classList.toggle('active', i === idx));
+  document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
   document.getElementById('panel-' + name).classList.add('active');
-  // Hide bottom bar when switching away from exercise
   if (name !== 'exercise') {
     document.getElementById('ex-bottom-bar').classList.remove('show');
     document.body.classList.remove('has-bottom-bar');
