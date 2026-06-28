@@ -188,6 +188,92 @@
     transition: all .2s;
   }
   .check-btn:hover { opacity: 0.9; }
+  .ex-bottom-bar {
+    position: fixed; bottom: 0; left: 0; right: 0;
+    height: 33vh; max-height: 280px;
+    background: var(--card); border-top: 2px solid var(--border);
+    box-shadow: 0 -4px 20px rgba(0,0,0,0.08);
+    padding: 16px 20px;
+    display: none; flex-direction: column;
+    z-index: 100;
+    border-radius: 20px 20px 0 0;
+  }
+  .ex-bottom-bar.show { display: flex; }
+  .ex-bottom-bar .bar-top {
+    display: flex; justify-content: space-between; align-items: center;
+    margin-bottom: 10px;
+  }
+  .ex-bottom-bar .bar-counter {
+    font-size: 14px; font-weight: 600; color: var(--text-light);
+  }
+  .ex-bottom-bar .bar-nav {
+    display: flex; gap: 8px;
+  }
+  .ex-bottom-bar .bar-nav button {
+    padding: 6px 14px; border: 2px solid var(--border); border-radius: 10px;
+    background: #fff; font-size: 13px; font-weight: 600;
+    color: var(--text); cursor: pointer; transition: all .2s;
+  }
+  .ex-bottom-bar .bar-nav button:hover { border-color: var(--primary); color: var(--primary); }
+  .ex-bottom-bar .bar-nav button:disabled { opacity: 0.3; cursor: not-allowed; }
+  .ex-bottom-bar .bar-input-row {
+    display: flex; gap: 10px; align-items: center;
+    flex: 1;
+  }
+  .ex-bottom-bar .bar-input-row input {
+    flex: 1; padding: 14px 16px;
+    border: 2px solid var(--border); border-radius: 12px;
+    font-size: 16px; font-family: inherit; outline: none;
+    background: var(--bg);
+    transition: border-color .2s;
+  }
+  .ex-bottom-bar .bar-input-row input:focus { border-color: var(--primary); background: #fff; }
+  .ex-bottom-bar .bar-input-row input.correct { border-color: #34C759; background: #E8F8ED; }
+  .ex-bottom-bar .bar-input-row input.wrong { border-color: #FF3B30; background: #FFF0F0; }
+  .mic-btn {
+    width: 46px; height: 46px; border-radius: 50%;
+    border: 2px solid var(--border); background: #fff;
+    font-size: 20px; cursor: pointer;
+    display: flex; align-items: center; justify-content: center;
+    transition: all .2s; flex-shrink: 0;
+  }
+  .mic-btn:hover { border-color: var(--primary); }
+  .mic-btn.listening {
+    border-color: #FF3B30; background: #FFF0F0;
+    animation: pulse 1s infinite;
+  }
+  @keyframes pulse {
+    0% { box-shadow: 0 0 0 0 rgba(255,59,48,0.3); }
+    50% { box-shadow: 0 0 0 8px rgba(255,59,48,0); }
+    100% { box-shadow: 0 0 0 0 rgba(255,59,48,0); }
+  }
+  .bar-check-btn {
+    padding: 14px 24px; border: none; border-radius: 12px;
+    background: var(--primary); color: #fff;
+    font-size: 15px; font-weight: 700; cursor: pointer;
+    transition: all .2s; white-space: nowrap;
+    box-shadow: 0 4px 12px rgba(79,134,247,0.3);
+  }
+  .bar-check-btn:hover { background: var(--primary-dark); transform: translateY(-1px); }
+  .bar-check-btn:active { transform: translateY(0); }
+  .ex-bottom-bar .bar-result {
+    font-size: 13px; margin-top: 6px; text-align: center;
+    min-height: 20px;
+  }
+  .bar-result.correct { color: #34C759; }
+  .bar-result.wrong { color: #FF3B30; }
+  /* Adjust main content for bottom bar */
+  body.has-bottom-bar #panel-exercise .exercise-list {
+    padding-bottom: 33vh;
+  }
+  /* Student question card in center */
+  .student-q-wrap {
+    text-align: center; padding: 20px 0;
+  }
+  .student-q-wrap .ex-card {
+    display: inline-block; text-align: left;
+    max-width: 100%; width: 100%;
+  }
   .ex-card .ex-question .blank { display: inline-block; min-width: 80px; border-bottom: 2px dashed var(--primary); padding: 0 4px; color: var(--primary); font-weight: 600; }
   .ex-card .ex-answer { margin-top: 10px; padding: 10px 14px; background: rgba(52,199,89,0.1); border-radius: 8px; font-size: 14px; color: #1E8E3E; display: none; }
   .ex-card .ex-answer.show { display: block; }
@@ -424,7 +510,7 @@ Have you ever eaten Japanese food?
   </div>
 
   <div id="panel-exercise" class="panel">
-    <div class="card">
+    <div class="card" id="ex-settings-card">
       <div class="card-title">⚙️ 出题设置</div>
       <label for="ex-type">题 型</label>
       <select id="ex-type">
@@ -454,6 +540,23 @@ Have you ever eaten Japanese food?
         <div class="status-msg"><span class="emoji">👆</span>设置好之后点击「生成题目」</div>
       </div>
     </div>
+  </div>
+
+  <!-- ===== Student Bottom Bar ===== -->
+  <div id="ex-bottom-bar" class="ex-bottom-bar">
+    <div class="bar-top">
+      <span class="bar-counter" id="bar-counter">第 1/5 题</span>
+      <div class="bar-nav">
+        <button id="bar-prev" onclick="navQuestion(-1)">← 上一题</button>
+        <button id="bar-next" onclick="navQuestion(1)">下一题 →</button>
+      </div>
+    </div>
+    <div class="bar-input-row">
+      <input type="text" id="bar-answer" placeholder="输入你的答案..." autocomplete="off">
+      <button class="mic-btn" id="mic-btn" onclick="toggleVoice()" title="语音输入">🎤</button>
+      <button class="bar-check-btn" onclick="checkBarAnswer()">✅ 检查</button>
+    </div>
+    <div class="bar-result" id="bar-result"></div>
   </div>
 
   <div class="helper-note">
@@ -685,6 +788,8 @@ function handleLogout() {
   document.getElementById('user-role-badge').style.display = 'none';
   document.getElementById('login-error').classList.remove('show');
   document.querySelectorAll('[id^="code-hint-"]').forEach(el => el.remove());
+  document.getElementById('ex-bottom-bar').classList.remove('show');
+  document.body.classList.remove('has-bottom-bar');
   showToast('已退出登录');
 }
 
@@ -697,6 +802,11 @@ function switchTab(name) {
   const idx = name === 'knowledge' ? 0 : 1;
   document.querySelectorAll('.tab-btn')[idx].classList.add('active');
   document.getElementById('panel-' + name).classList.add('active');
+  // Hide bottom bar when switching away from exercise
+  if (name !== 'exercise') {
+    document.getElementById('ex-bottom-bar').classList.remove('show');
+    document.body.classList.remove('has-bottom-bar');
+  }
 }
 
 // ========== Knowledge ==========
@@ -796,6 +906,11 @@ function showExerciseResult(html) {
   document.getElementById('exercise-output').innerHTML = '<div class="exercise-list">' + html + '</div>';
 }
 
+// ========== Student exercise state ==========
+let exState = { questions: [], current: 0, type: '' };
+let recognition = null;
+let isListening = false;
+
 function showExerciseFallback(type, count) {
   const isTeacher = currentUser && currentUser.role === 'teacher';
   const isStudent = currentUser && currentUser.role === 'student';
@@ -821,18 +936,143 @@ function showExerciseFallback(type, count) {
   ];
   let pool = type === 'fill-blank' ? pp : type === 'sentence-writing' ? writing : rewrite;
   const label = type === 'fill-blank' ? '填空题' : type === 'sentence-writing' ? '仿写句子' : '句子改写';
-  let html = '';
-  for (let i = 0; i < count; i++) {
-    const p = pool[i % pool.length];
-    if (isTeacher) {
+  if (isTeacher) {
+    // Teacher: show all questions with answer toggle
+    let html = '';
+    for (let i = 0; i < count; i++) {
+      const p = pool[i % pool.length];
       html += `<div class="ex-card fade-up"><div><span class="ex-num">${i+1}</span> <strong>${label}</strong></div><div class="ex-question">${p.q.replace(/_{2,}/g,'<span class="blank">______</span>')}</div><button class="show-answer-btn" onclick="toggleAnswer(this)">👀 查看答案</button><div class="ex-answer">${p.a}</div></div>`;
-    } else {
-      // Student mode: fillable input + check
-      const escA = p.a.replace(/'/g, "\\'");
-      html += `<div class="ex-card fade-up"><div><span class="ex-num">${i+1}</span> <strong>${label}</strong></div><div class="ex-question">${p.q.replace(/_{2,}/g,'<input class="fill-input" id="ans-' + i + '" type="text" placeholder="填答案..." autocomplete="off">')}</div><div style="margin-top:8px;display:flex;gap:8px;flex-wrap:wrap"><button class="check-btn" onclick="checkAnswer(' + i + ', \'' + escA + '\')">✅ 检查</button><button class="show-answer-btn" onclick="document.getElementById(\'ex-ans-' + i + '\').classList.toggle('show')">👀 看答案</button></div><div class="ex-answer" id="ex-ans-' + i + '">${p.a}</div></div>`;
     }
+    showExerciseResult(html);
+    document.getElementById('ex-bottom-bar').classList.remove('show');
+    document.body.classList.remove('has-bottom-bar');
+  } else {
+    // Student: store questions, show one at a time with bottom bar
+    exState.questions = [];
+    for (let i = 0; i < count; i++) {
+      exState.questions.push(pool[i % pool.length]);
+    }
+    exState.current = 0;
+    exState.type = type;
+    showStudentQuestion(0);
+    document.getElementById('ex-bottom-bar').classList.add('show');
+    document.body.classList.add('has-bottom-bar');
   }
+}
+
+function showStudentQuestion(idx) {
+  if (!exState.questions.length) return;
+  const q = exState.questions[idx];
+  const count = exState.questions.length;
+  const label = exState.type === 'fill-blank' ? '填空题' : exState.type === 'sentence-writing' ? '仿写句子' : '句子改写';
+  
+  // Show question in the output area
+  const html = `<div class="student-q-wrap"><div class="ex-card fade-up"><div><span class="ex-num">${idx+1}</span> <strong>${label}</strong></div><div class="ex-question">${q.q.replace(/_{2,}/g,'<span class="blank">______</span>')}</div><div class="ex-answer show">${q.a}</div></div></div>`;
   showExerciseResult(html);
+  
+  // Update bottom bar
+  document.getElementById('bar-counter').textContent = `第 ${idx+1}/${count} 题`;
+  document.getElementById('bar-answer').value = '';
+  document.getElementById('bar-answer').className = '';
+  document.getElementById('bar-result').textContent = '';
+  document.getElementById('bar-result').className = 'bar-result';
+  document.getElementById('bar-prev').disabled = idx === 0;
+  document.getElementById('bar-next').disabled = idx === count - 1;
+  
+  // Scroll to top of exercises
+  document.getElementById('exercise-output').scrollIntoView({ behavior: 'smooth' });
+}
+
+function navQuestion(dir) {
+  const newIdx = exState.current + dir;
+  if (newIdx < 0 || newIdx >= exState.questions.length) return;
+  exState.current = newIdx;
+  showStudentQuestion(newIdx);
+}
+
+function checkBarAnswer() {
+  const input = document.getElementById('bar-answer');
+  const result = document.getElementById('bar-result');
+  const q = exState.questions[exState.current];
+  if (!q) return;
+  
+  const userAns = input.value.trim().toLowerCase();
+  if (!userAns) {
+    input.style.borderColor = '#FF3B30';
+    input.focus();
+    return;
+  }
+  
+  const acceptable = q.a.toLowerCase().split('/').map(s => s.trim());
+  const matched = acceptable.some(a => userAns === a || userAns.includes(a) || a.includes(userAns));
+  
+  if (matched) {
+    input.className = 'correct';
+    result.textContent = '✅ 回答正确！太棒了！';
+    result.className = 'bar-result correct';
+  } else {
+    input.className = 'wrong';
+    result.textContent = `❌ 正确答案：${q.a}`;
+    result.className = 'bar-result wrong';
+  }
+}
+
+// ========== Voice Input ==========
+function toggleVoice() {
+  const btn = document.getElementById('mic-btn');
+  
+  if (!('webkitSpeechRecognition' in window) && !('SpeechRecognition' in window)) {
+    showToast('⛔ 当前浏览器不支持语音输入，请用Chrome浏览器');
+    return;
+  }
+  
+  if (isListening) {
+    if (recognition) recognition.stop();
+    isListening = false;
+    btn.classList.remove('listening');
+    btn.textContent = '🎤';
+    return;
+  }
+  
+  const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+  recognition = new SpeechRecognition();
+  recognition.lang = 'en-US';
+  recognition.continuous = false;
+  recognition.interimResults = false;
+  
+  recognition.onstart = () => {
+    isListening = true;
+    btn.classList.add('listening');
+    btn.textContent = '🔴';
+    showToast('🎤 请说出你的答案...');
+  };
+  
+  recognition.onresult = (event) => {
+    const transcript = event.results[0][0].transcript;
+    document.getElementById('bar-answer').value = transcript;
+    showToast('✅ 已识别：' + transcript);
+  };
+  
+  recognition.onerror = (event) => {
+    if (event.error !== 'no-speech' && event.error !== 'aborted') {
+      showToast('⛔ 语音识别失败：' + event.error);
+    }
+    isListening = false;
+    btn.classList.remove('listening');
+    btn.textContent = '🎤';
+  };
+  
+  recognition.onend = () => {
+    isListening = false;
+    btn.classList.remove('listening');
+    btn.textContent = '🎤';
+  };
+  
+  try {
+    recognition.start();
+  } catch (e) {
+    showToast('⛔ 语音启动失败，请允许麦克风权限');
+  }
 }
 
 function toggleAnswer(btn) {
