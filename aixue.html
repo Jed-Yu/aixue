@@ -1,0 +1,819 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>爱学 · FCE英语学习助手</title>
+<style>
+  :root {
+    --primary: #4F86F7;
+    --primary-light: #E8F0FE;
+    --primary-dark: #3A6FD8;
+    --accent: #FF8C42;
+    --accent-light: #FFF3E8;
+    --success: #34C759;
+    --danger: #FF3B30;
+    --bg: #F5F7FB;
+    --card: #FFFFFF;
+    --text: #2C3E50;
+    --text-light: #7F8C9B;
+    --border: #E8ECF3;
+    --radius: 16px;
+    --shadow: 0 4px 24px rgba(79,134,247,0.10);
+  }
+  * { margin:0; padding:0; box-sizing:border-box; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'PingFang SC', 'Microsoft YaHei', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+  }
+  .auth-container {
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 24px;
+    background: linear-gradient(135deg, #F5F7FB 0%, #E8F0FE 100%);
+  }
+  .auth-box {
+    background: var(--card);
+    border-radius: 24px;
+    box-shadow: 0 8px 40px rgba(79,134,247,0.12);
+    padding: 40px 32px;
+    width: 100%;
+    max-width: 400px;
+  }
+  .auth-logo { text-align: center; margin-bottom: 32px; }
+  .auth-logo .emoji { font-size: 48px; display: block; margin-bottom: 8px; }
+  .auth-logo h1 {
+    font-size: 28px;
+    font-weight: 800;
+    background: linear-gradient(135deg, var(--primary), var(--accent));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+  .auth-logo p { font-size: 14px; color: var(--text-light); margin-top: 4px; }
+  .auth-form { display: flex; flex-direction: column; gap: 16px; }
+  .auth-form .field { position: relative; }
+  .auth-form label { display: block; font-size: 14px; font-weight: 600; color: var(--text); margin-bottom: 6px; }
+  .auth-form input {
+    width: 100%; padding: 14px 16px;
+    border: 2px solid var(--border);
+    border-radius: 12px; font-size: 16px; font-family: inherit;
+    transition: border-color .2s; background: var(--bg); color: var(--text); outline: none;
+  }
+  .auth-form input:focus { border-color: var(--primary); background: #fff; }
+  .auth-form input::placeholder { color: #B0B8C8; }
+  .code-row { display: flex; gap: 10px; }
+  .code-row input { flex: 1; }
+  .code-btn {
+    flex-shrink: 0; padding: 14px 18px; border: none; border-radius: 12px;
+    font-size: 14px; font-weight: 600; background: var(--primary-light);
+    color: var(--primary); cursor: pointer; white-space: nowrap; transition: all .2s;
+  }
+  .code-btn:hover { background: #D6E5FF; }
+  .code-btn:disabled { background: #E8ECF3; color: var(--text-light); cursor: not-allowed; }
+  .auth-btn {
+    padding: 14px; border: none; border-radius: 12px; font-size: 16px; font-weight: 700;
+    background: var(--primary); color: #fff; cursor: pointer; transition: all .25s;
+    box-shadow: 0 4px 14px rgba(79,134,247,0.3); width: 100%;
+  }
+  .auth-btn:hover { background: var(--primary-dark); transform: translateY(-1px); }
+  .auth-btn:active { transform: translateY(0); }
+  .auth-switch { text-align: center; margin-top: 20px; font-size: 14px; color: var(--text-light); }
+  .auth-switch a { color: var(--primary); font-weight: 600; cursor: pointer; text-decoration: none; }
+  .auth-switch a:hover { text-decoration: underline; }
+  .auth-error { background: #FFF0F0; border-radius: 10px; padding: 10px 14px; font-size: 14px; color: var(--danger); display: none; }
+  .auth-error.show { display: block; }
+  .auth-success { background: #E8F8ED; border-radius: 10px; padding: 10px 14px; font-size: 14px; color: #1E8E3E; display: none; }
+  .auth-success.show { display: block; }
+  .divider { display: flex; align-items: center; gap: 12px; color: var(--text-light); font-size: 13px; margin: 4px 0; }
+  .divider::before, .divider::after { content: ''; flex: 1; height: 1px; background: var(--border); }
+  .quick-login { display: flex; gap: 8px; flex-wrap: wrap; }
+  .quick-login-btn {
+    flex: 1; min-width: 80px; padding: 10px; border: 2px solid var(--border);
+    border-radius: 10px; background: #fff; cursor: pointer; font-size: 13px;
+    color: var(--text-light); transition: all .2s; text-align: center;
+  }
+  .quick-login-btn:hover { border-color: var(--primary); color: var(--primary); }
+  .app-container { display: none; padding: 20px; max-width: 860px; margin: 0 auto; }
+  .app-container.show { display: block; }
+  .top-bar {
+    display: flex; align-items: center; justify-content: space-between;
+    margin-bottom: 20px; padding: 12px 20px; background: var(--card);
+    border-radius: var(--radius); box-shadow: var(--shadow);
+  }
+  .top-bar .user-info { display: flex; align-items: center; gap: 10px; }
+  .top-bar .avatar {
+    width: 36px; height: 36px; border-radius: 50%; background: var(--primary-light);
+    color: var(--primary); display: flex; align-items: center; justify-content: center;
+    font-weight: 700; font-size: 16px;
+  }
+  .top-bar .username { font-weight: 600; font-size: 15px; }
+  .top-bar .logout-btn {
+    padding: 8px 16px; border: none; border-radius: 8px;
+    background: #FFF0F0; color: var(--danger); font-size: 13px; font-weight: 600; cursor: pointer;
+  }
+  .top-bar .logout-btn:hover { background: #FFE0E0; }
+  .header { text-align: center; margin-bottom: 24px; }
+  .logo-text {
+    font-size: 32px; font-weight: 800;
+    background: linear-gradient(135deg, var(--primary), var(--accent));
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+  }
+  .subtitle { font-size: 15px; color: var(--text-light); margin-top: 4px; }
+  .badge { display: inline-block; background: var(--accent-light); color: var(--accent); font-size: 13px; font-weight: 600; padding: 3px 12px; border-radius: 20px; margin-top: 6px; }
+  .tabs { display: flex; gap: 4px; background: var(--card); border-radius: var(--radius); padding: 4px; box-shadow: var(--shadow); margin-bottom: 20px; }
+  .tab-btn { flex: 1; padding: 12px 20px; border: none; background: transparent; border-radius: 12px; font-size: 15px; font-weight: 600; color: var(--text-light); cursor: pointer; transition: all .25s; }
+  .tab-btn:hover { color: var(--text); }
+  .tab-btn.active { background: var(--primary); color: #fff; box-shadow: 0 2px 8px rgba(79,134,247,0.3); }
+  .tab-btn .icon { margin-right: 6px; }
+  .panel { display: none; }
+  .panel.active { display: block; }
+  .card { background: var(--card); border-radius: var(--radius); box-shadow: var(--shadow); padding: 24px; margin-bottom: 20px; }
+  .card-title { font-size: 17px; font-weight: 700; margin-bottom: 16px; display: flex; align-items: center; gap: 8px; }
+  label { display: block; font-size: 14px; font-weight: 600; margin-bottom: 6px; color: var(--text); }
+  textarea, input, select {
+    width: 100%; padding: 12px 16px; border: 2px solid var(--border); border-radius: 12px;
+    font-size: 15px; font-family: inherit; transition: border-color .2s;
+    background: var(--bg); color: var(--text); outline: none;
+  }
+  textarea:focus, input:focus, select:focus { border-color: var(--primary); }
+  textarea { resize: vertical; min-height: 100px; }
+  select {
+    appearance: none;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%237F8C9B' stroke-width='2' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");
+    background-repeat: no-repeat; background-position: right 14px center; cursor: pointer;
+  }
+  .btn { padding: 12px 28px; border: none; border-radius: 12px; font-size: 15px; font-weight: 700; cursor: pointer; transition: all .25s; display: inline-flex; align-items: center; gap: 6px; }
+  .btn-primary { background: var(--primary); color: #fff; box-shadow: 0 4px 14px rgba(79,134,247,0.3); }
+  .btn-primary:hover { background: var(--primary-dark); transform: translateY(-1px); }
+  .btn-secondary { background: var(--primary-light); color: var(--primary); }
+  .btn-secondary:hover { background: #D6E5FF; }
+  .btn-group { display: flex; gap: 10px; margin-top: 14px; flex-wrap: wrap; }
+  .knowledge-grid { display: grid; gap: 14px; margin-top: 16px; }
+  .k-card { background: var(--bg); border-radius: 12px; padding: 18px; border-left: 4px solid var(--primary); }
+  .k-card.grammar { border-left-color: var(--primary); }
+  .k-card.vocab { border-left-color: var(--accent); }
+  .k-card.sentence { border-left-color: var(--success); }
+  .k-card.tip { border-left-color: #AF52DE; }
+  .k-card .k-tag { display: inline-block; font-size: 12px; font-weight: 600; padding: 2px 10px; border-radius: 10px; margin-bottom: 8px; }
+  .k-card.grammar .k-tag { background: var(--primary-light); color: var(--primary); }
+  .k-card.vocab .k-tag { background: var(--accent-light); color: var(--accent); }
+  .k-card.sentence .k-tag { background: #E8F8ED; color: #1E8E3E; }
+  .k-card.tip .k-tag { background: #F0E8FF; color: #AF52DE; }
+  .k-card .k-title { font-size: 16px; font-weight: 700; margin-bottom: 6px; }
+  .k-card .k-desc { font-size: 14px; color: var(--text-light); line-height: 1.6; }
+  .k-card .k-example { margin-top: 10px; padding: 10px 14px; background: rgba(255,255,255,0.7); border-radius: 8px; font-size: 14px; line-height: 1.6; }
+  .exercise-list { margin-top: 16px; }
+  .ex-card { background: var(--bg); border-radius: 12px; padding: 18px; margin-bottom: 12px; border-left: 4px solid var(--accent); }
+  .ex-card .ex-num { display: inline-flex; align-items: center; justify-content: center; width: 28px; height: 28px; background: var(--accent); color: #fff; border-radius: 50%; font-size: 13px; font-weight: 700; margin-right: 8px; }
+  .ex-card .ex-question { font-size: 15px; line-height: 1.7; margin-top: 8px; }
+  .ex-card .ex-question .blank { display: inline-block; min-width: 80px; border-bottom: 2px dashed var(--primary); padding: 0 4px; color: var(--primary); font-weight: 600; }
+  .ex-card .ex-answer { margin-top: 10px; padding: 10px 14px; background: rgba(52,199,89,0.1); border-radius: 8px; font-size: 14px; color: #1E8E3E; display: none; }
+  .ex-card .ex-answer.show { display: block; }
+  .ex-card .ex-answer::before { content: "✅ 答案："; font-weight: 600; }
+  .show-answer-btn { margin-top: 8px; font-size: 13px; color: var(--primary); background: none; border: none; cursor: pointer; padding: 4px 0; }
+  .status-msg { text-align: center; padding: 40px 20px; color: var(--text-light); font-size: 15px; }
+  .status-msg .emoji { font-size: 40px; display: block; margin-bottom: 12px; }
+  .helper-note { background: var(--primary-light); border-radius: 12px; padding: 14px 18px; font-size: 14px; color: var(--primary-dark); margin-top: 16px; display: flex; align-items: flex-start; gap: 10px; }
+  @media (max-width: 600px) {
+    .app-container { padding: 12px; } .auth-box { padding: 28px 20px; } .card { padding: 16px; }
+    .logo-text { font-size: 26px; } .tab-btn { font-size: 13px; padding: 10px 12px; }
+    .btn { width: 100%; justify-content: center; } .k-card { padding: 14px; }
+    .quick-login-btn { font-size: 12px; padding: 8px 6px; min-width: 60px; }
+  .role-badge {
+    display: inline-block; margin-left: 6px; padding: 1px 8px;
+    border-radius: 8px; font-size: 11px; font-weight: 600;
+  }
+  .role-badge.student { background: #E8F8ED; color: #1E8E3E; }
+  .role-badge.parent { background: #FFF3E8; color: #FF8C42; }
+  .role-badge.teacher { background: var(--primary-light); color: var(--primary); }
+  }
+  @keyframes fadeUp { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: translateY(0); } }
+  .fade-up { animation: fadeUp .4s ease-out; }
+  .toast {
+    position: fixed; top: 20px; left: 50%; transform: translateX(-50%);
+    background: var(--text); color: #fff; padding: 12px 24px; border-radius: 12px;
+    font-size: 14px; font-weight: 500; z-index: 1000; opacity: 0;
+    transition: opacity .3s; pointer-events: none; max-width: 90%; text-align: center;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.2);
+  }
+  .toast.show { opacity: 1; }
+</style>
+</head>
+<body>
+
+<div id="toast" class="toast"></div>
+
+<!-- ===== LOGIN ===== -->
+<div id="auth-login" class="auth-container">
+  <div class="auth-box fade-up">
+    <div class="auth-logo">
+      <span class="emoji">📚</span>
+      <h1>爱学</h1>
+      <p>FCE 英语学习助手</p>
+    </div>
+    <div class="auth-form">
+      <div id="login-error" class="auth-error"></div>
+      <div class="field">
+        <label>📧 邮箱</label>
+        <input type="email" id="login-email" placeholder="请输入邮箱地址" autocomplete="email">
+      </div>
+      <div class="field">
+        <label>🔑 验证码</label>
+        <div class="code-row">
+          <input type="text" id="login-code" placeholder="6位验证码" maxlength="6" inputmode="numeric">
+          <button class="code-btn" id="login-send-code" onclick="sendCode('login')">获取验证码</button>
+        </div>
+      </div>
+      <button class="auth-btn" id="login-btn" onclick="handleLogin()">登 录</button>
+      <div class="divider">⚡ 快速体验</div>
+      <div class="quick-login">
+        <button class="quick-login-btn" onclick="quickLogin('teacher@aixue.com')">👩‍🏫 老师</button>
+        <button class="quick-login-btn" onclick="quickLogin('student@aixue.com')">👦 学生</button>
+        <button class="quick-login-btn" onclick="quickLogin('demo@aixue.com')">🧪 试用</button>
+      </div>
+      <div class="auth-switch">
+        还没有账号？<a onclick="showAuth('register')">立即注册 →</a>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ===== REGISTER ===== -->
+<div id="auth-register" class="auth-container" style="display:none;">
+  <div class="auth-box fade-up">
+    <div class="auth-logo">
+      <span class="emoji">📚</span>
+      <h1>注册爱学</h1>
+      <p>创建你的学习账号</p>
+    </div>
+    <div class="auth-form">
+      <div id="reg-error" class="auth-error"></div>
+      <div id="reg-success" class="auth-success"></div>
+      <div class="field">
+        <label>📧 邮箱</label>
+        <input type="email" id="reg-email" placeholder="你的邮箱地址" autocomplete="email">
+      </div>
+      <div class="field">
+        <label>👤 昵称</label>
+        <input type="text" id="reg-name" placeholder="怎么称呼你？" maxlength="20">
+      </div>
+      <div class="field">
+        <label>🔒 设置密码</label>
+        <input type="password" id="reg-pwd" placeholder="至少6位密码" maxlength="20" autocomplete="new-password">
+      </div>
+      <div class="field">
+        <label>🔑 验证码</label>
+        <div class="code-row">
+          <input type="text" id="reg-code" placeholder="6位验证码" maxlength="6" inputmode="numeric">
+          <button class="code-btn" id="reg-send-code" onclick="sendCode('register')">获取验证码</button>
+        </div>
+      </div>
+      <button class="auth-btn" onclick="handleRegister()">注 册</button>
+      <div class="auth-switch">
+        已有账号？<a onclick="showAuth('login')">去登录 →</a>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ===== ROLE SELECTION MODAL ===== -->
+<div id="role-modal" class="modal-overlay" style="display:none;">
+  <div class="modal-box fade-up">
+    <div class="modal-emoji">🎭</div>
+    <h2 class="modal-title">选择你的身份</h2>
+    <p class="modal-desc">选一个身份，让爱学更好地为你服务</p>
+    <div class="role-options">
+      <div class="role-card" onclick="selectRole('student')">
+        <div class="role-icon">👦</div>
+        <div class="role-name">学生</div>
+        <div class="role-desc">学习FCE，刷题备考</div>
+      </div>
+      <div class="role-card" onclick="selectRole('parent')">
+        <div class="role-icon">👨‍👩‍👧</div>
+        <div class="role-name">家长</div>
+        <div class="role-desc">关注孩子的学习进度</div>
+      </div>
+      <div class="role-card" onclick="selectRole('teacher')">
+        <div class="role-icon">👩‍🏫</div>
+        <div class="role-name">老师</div>
+        <div class="role-desc">出题、整理知识点、管理学生</div>
+      </div>
+    </div>
+    <button class="modal-skip-btn" onclick="skipRole()">稍后再说 →</button>
+  </div>
+</div>
+
+<style>
+.modal-overlay {
+  position: fixed; inset: 0; z-index: 999;
+  background: rgba(0,0,0,0.5);
+  display: flex; align-items: center; justify-content: center;
+  padding: 24px;
+}
+.modal-box {
+  background: var(--card); border-radius: 24px;
+  padding: 40px 32px 28px; max-width: 440px; width: 100%;
+  text-align: center;
+  box-shadow: 0 20px 60px rgba(0,0,0,0.2);
+}
+.modal-emoji { font-size: 48px; margin-bottom: 12px; }
+.modal-title { font-size: 22px; font-weight: 800; color: var(--text); margin-bottom: 4px; }
+.modal-desc { font-size: 14px; color: var(--text-light); margin-bottom: 24px; }
+.role-options { display: flex; flex-direction: column; gap: 10px; }
+.role-card {
+  display: flex; align-items: center; gap: 14px;
+  padding: 16px; border-radius: 14px;
+  border: 2px solid var(--border);
+  cursor: pointer; transition: all .2s;
+  text-align: left;
+}
+.role-card:hover {
+  border-color: var(--primary);
+  background: var(--primary-light);
+  transform: translateX(4px);
+}
+.role-card .role-icon { font-size: 32px; flex-shrink: 0; }
+.role-card .role-name { font-size: 16px; font-weight: 700; color: var(--text); }
+.role-card .role-desc { font-size: 13px; color: var(--text-light); }
+.modal-skip-btn {
+  margin-top: 20px; padding: 8px 20px;
+  border: none; background: transparent;
+  color: var(--text-light); font-size: 14px; cursor: pointer;
+}
+.modal-skip-btn:hover { color: var(--text); }
+</style>
+
+<!-- ===== MAIN APP ===== -->
+<div id="app-main" class="app-container">
+  <div class="top-bar">
+    <div class="user-info">
+      <div class="avatar" id="user-avatar">👤</div>
+      <div>
+        <div class="username" id="user-name">用户</div>
+        <div style="font-size:12px;color:var(--text-light)">
+          <span id="user-email"></span>
+          <span id="user-role-badge" class="role-badge" style="display:none;"></span>
+        </div>
+      </div>
+    </div>
+    <button class="logout-btn" onclick="handleLogout()">退出登录</button>
+  </div>
+
+  <div class="header">
+    <div class="logo-text">爱学 · AiXue</div>
+    <div class="subtitle">FCE 英语学习小助手 — 整理知识点 · 出练习题</div>
+    <div class="badge">🎯 FCE 备考专用</div>
+  </div>
+
+  <div class="tabs">
+    <button class="tab-btn active" onclick="switchTab('knowledge')"><span class="icon">📝</span> 整理知识点</button>
+    <button class="tab-btn" onclick="switchTab('exercise')"><span class="icon">✍️</span> 出题练习</button>
+  </div>
+
+  <div id="panel-knowledge" class="panel active">
+    <div class="card">
+      <div class="card-title">📥 输入内容</div>
+      <label for="k-topic">知识点标题</label>
+      <input type="text" id="k-topic" placeholder="例如：现在完成时、被动语态、短语动词..." value="现在完成时 (Present Perfect)">
+      <label for="k-content" style="margin-top:14px;">详细内容 / 笔记</label>
+      <textarea id="k-content" placeholder="把你学到的内容或笔记粘贴在这里...">I have visited London three times.
+She has already finished her homework.
+They haven't been to the new museum yet.
+Have you ever eaten Japanese food?
+
+关键词：already, yet, ever, never, just, for, since
+结构：have/has + 过去分词
+
+用法：
+1. 表示过去的经历（不强调具体时间）
+2. 表示从过去持续到现在的状态（for/since）
+3. 表示刚刚完成的动作（just）</textarea>
+      <div class="btn-group">
+        <button class="btn btn-primary" onclick="generateKnowledge()">✨ 开始整理</button>
+        <button class="btn btn-secondary" onclick="loadSampleKnowledge()">📂 换一个示例</button>
+      </div>
+    </div>
+    <div class="card" id="knowledge-result">
+      <div class="card-title">📋 整理结果</div>
+      <div id="knowledge-output">
+        <div class="status-msg"><span class="emoji">👆</span>输入内容后点击「开始整理」</div>
+      </div>
+    </div>
+  </div>
+
+  <div id="panel-exercise" class="panel">
+    <div class="card">
+      <div class="card-title">⚙️ 出题设置</div>
+      <label for="ex-type">题 型</label>
+      <select id="ex-type">
+        <option value="fill-blank">填空题 (Fill in the blank)</option>
+        <option value="sentence-writing">仿写句子 (Sentence writing)</option>
+        <option value="rewrite">句子改写 (Sentence rewriting)</option>
+      </select>
+      <label for="ex-grammar" style="margin-top:14px;">语法 / 知识点</label>
+      <input type="text" id="ex-grammar" placeholder="例如：现在完成时、被动语态、条件句..." value="现在完成时 (Present Perfect)">
+      <label for="ex-requirement" style="margin-top:14px;">具体要求（可选）</label>
+      <textarea id="ex-requirement" placeholder="比如：用 already/yet 各造2句、用 for/since 填空等..." rows="3"></textarea>
+      <label for="ex-count" style="margin-top:14px;">出题数量</label>
+      <select id="ex-count">
+        <option value="3">3 题</option>
+        <option value="5" selected>5 题</option>
+        <option value="8">8 题</option>
+        <option value="10">10 题</option>
+      </select>
+      <div class="btn-group">
+        <button class="btn btn-primary" onclick="generateExercise()">✨ 生成题目</button>
+        <button class="btn btn-secondary" onclick="loadSampleExercise()">📂 换一个示例</button>
+      </div>
+    </div>
+    <div class="card" id="exercise-result">
+      <div class="card-title">📝 练习题</div>
+      <div id="exercise-output">
+        <div class="status-msg"><span class="emoji">👆</span>设置好之后点击「生成题目」</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="helper-note">
+    <span style="font-size:20px;flex-shrink:0;">💡</span>
+    <div>
+      <strong>提示：</strong>所有数据保存在服务端，换个设备登录同一账号即可继续学习。<br>
+      演示模式下验证码直接显示在页面上。配置 SMTP 后可发送真实邮件。<br>
+      需要更多帮助，在群里 @虾仔 就好 🦐
+    </div>
+  </div>
+</div>
+
+<script>
+// ========== Session ==========
+const SESSION_KEY = 'aixue_session_email';
+
+function getSession() { return localStorage.getItem(SESSION_KEY); }
+function setSession(email) { localStorage.setItem(SESSION_KEY, email); }
+function clearSession() { localStorage.removeItem(SESSION_KEY); }
+
+async function api(path, data) {
+  const resp = await fetch(path, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(data),
+  });
+  return resp.json();
+}
+
+// ========== Toast ==========
+let toastTimer = null;
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => t.classList.remove('show'), 3000);
+}
+
+// ========== Auth Routing ==========
+function showAuth(page) {
+  document.getElementById('auth-login').style.display = page === 'login' ? '' : 'none';
+  document.getElementById('auth-register').style.display = page === 'register' ? '' : 'none';
+  ['login-error','reg-error','reg-success'].forEach(id => document.getElementById(id).classList.remove('show'));
+  document.querySelectorAll('[id^="code-hint-"]').forEach(el => el.remove());
+}
+
+// Check session on load
+(async function() {
+  const email = getSession();
+  if (email) {
+    const result = await api('/api/check-session', { email });
+    if (result.valid && result.user) {
+      enterApp(result.user);
+    } else {
+      clearSession();
+    }
+  }
+})();
+
+// ========== Send Code ==========
+const codeTimers = {};
+async function sendCode(type) {
+  const emailId = type === 'login' ? 'login-email' : 'reg-email';
+  const email = document.getElementById(emailId).value.trim();
+  if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+    showToast('请输入正确的邮箱地址');
+    return;
+  }
+
+  const result = await api('/api/send-code', { email });
+  const btn = document.getElementById(type === 'login' ? 'login-send-code' : 'reg-send-code');
+
+  // Cooldown
+  btn.disabled = true;
+  let countdown = 60;
+  btn.textContent = `${countdown}s`;
+  if (codeTimers[type]) clearInterval(codeTimers[type]);
+  codeTimers[type] = setInterval(() => {
+    countdown--;
+    if (countdown <= 0) {
+      clearInterval(codeTimers[type]);
+      btn.disabled = false;
+      btn.textContent = '重新获取';
+    } else {
+      btn.textContent = `${countdown}s`;
+    }
+  }, 1000);
+
+  // Remove old hints
+  document.querySelectorAll('[id^="code-hint-"]').forEach(el => el.remove());
+
+  if (result.success) {
+    showToast(`📨 验证码已发送到 ${email}`);
+    if (result.demo) {
+      const hint = document.createElement('div');
+      hint.id = 'code-hint-' + type;
+      hint.style.cssText = 'font-size:12px;color:var(--success);margin-top:4px;';
+      hint.textContent = `📨 演示验证码：${result.code}（服务器未配置SMTP，此码直接可用）`;
+      document.getElementById(emailId).closest('.field').after(hint);
+    }
+  } else {
+    showToast(result.error || '发送失败，请重试');
+  }
+}
+
+// ========== Register ==========
+async function handleRegister() {
+  const email = document.getElementById('reg-email').value.trim();
+  const name = document.getElementById('reg-name').value.trim();
+  const pwd = document.getElementById('reg-pwd').value.trim();
+  const code = document.getElementById('reg-code').value.trim();
+  const errEl = document.getElementById('reg-error');
+  const sucEl = document.getElementById('reg-success');
+  errEl.classList.remove('show');
+  sucEl.classList.remove('show');
+
+  if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) { showError(errEl, '请输入正确的邮箱'); return; }
+  if (!name) { showError(errEl, '请输入昵称'); return; }
+  if (pwd.length < 6) { showError(errEl, '密码至少6位'); return; }
+  if (!code) { showError(errEl, '请输入验证码'); return; }
+
+  const result = await api('/api/register', { email, name, password: pwd, code });
+  if (result.success) {
+    sucEl.textContent = '🎉 注册成功！正在跳转...';
+    sucEl.classList.add('show');
+    setTimeout(() => { setSession(email); enterApp(result.user); }, 1000);
+  } else {
+    showError(errEl, result.error);
+  }
+}
+
+// ========== Login ==========
+async function handleLogin() {
+  const email = document.getElementById('login-email').value.trim();
+  const code = document.getElementById('login-code').value.trim();
+  const errEl = document.getElementById('login-error');
+  errEl.classList.remove('show');
+
+  if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) { showError(errEl, '请输入正确的邮箱'); return; }
+  if (!code) { showError(errEl, '请输入验证码'); return; }
+
+  const result = await api('/api/login', { email, code });
+  if (result.success) {
+    setSession(email);
+    enterApp(result.user);
+  } else {
+    showError(errEl, result.error);
+  }
+}
+
+// ========== Quick Login ==========
+async function quickLogin(email) {
+  const result = await api('/api/quick-login', { email });
+  if (result.success) {
+    setSession(email);
+    enterApp(result.user);
+  } else {
+    showToast('快速登录失败，请重试');
+  }
+}
+
+// ========== Enter / Leave App ==========
+function enterApp(user) {
+  document.getElementById('auth-login').style.display = 'none';
+  document.getElementById('auth-register').style.display = 'none';
+  document.getElementById('app-main').classList.remove('show');
+
+  // Show role selection if no role set
+  if (!user.role) {
+    document.getElementById('role-modal').style.display = 'flex';
+    window._pendingUser = user;
+    return;
+  }
+
+  showMainApp(user);
+}
+
+function showMainApp(user) {
+  document.getElementById('role-modal').style.display = 'none';
+  document.getElementById('app-main').classList.add('show');
+  document.getElementById('user-name').textContent = user.name || '用户';
+  document.getElementById('user-email').textContent = user.email;
+  document.getElementById('user-avatar').textContent = user.name ? user.name.charAt(0) : '👤';
+
+  // Show role badge
+  const badge = document.getElementById('user-role-badge');
+  const roleLabels = { student: '👦 学生', parent: '👨‍👩‍👧 家长', teacher: '👩‍🏫 老师' };
+  if (user.role && roleLabels[user.role]) {
+    badge.textContent = roleLabels[user.role];
+    badge.className = 'role-badge ' + user.role;
+    badge.style.display = 'inline-block';
+  } else {
+    badge.style.display = 'none';
+  }
+
+  generateKnowledge();
+}
+
+async function selectRole(role) {
+  const user = window._pendingUser;
+  if (!user) return;
+  
+  const result = await api('/api/set-role', { email: user.email, role });
+  if (result.success) {
+    showMainApp(result.user);
+    showToast('✅ 已设置为' + {student:'学生',parent:'家长',teacher:'老师'}[role]);
+  } else {
+    showToast(result.error || '设置失败');
+  }
+}
+
+function skipRole() {
+  const user = window._pendingUser;
+  if (user) showMainApp(user);
+}
+
+function handleLogout() {
+  clearSession();
+  document.getElementById('app-main').classList.remove('show');
+  document.getElementById('role-modal').style.display = 'none';
+  window._pendingUser = null;
+  document.getElementById('auth-login').style.display = '';
+  document.getElementById('login-email').value = '';
+  document.getElementById('login-code').value = '';
+  document.getElementById('user-role-badge').style.display = 'none';
+  document.getElementById('login-error').classList.remove('show');
+  document.querySelectorAll('[id^="code-hint-"]').forEach(el => el.remove());
+  showToast('已退出登录');
+}
+
+function showError(el, msg) { el.textContent = msg; el.classList.add('show'); }
+
+// ========== Tab ==========
+function switchTab(name) {
+  document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+  document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
+  const idx = name === 'knowledge' ? 0 : 1;
+  document.querySelectorAll('.tab-btn')[idx].classList.add('active');
+  document.getElementById('panel-' + name).classList.add('active');
+}
+
+// ========== Knowledge ==========
+const knowledgeSamples = [
+  { topic: '现在完成时 (Present Perfect)', content: 'I have visited London three times.\nShe has already finished her homework.\nThey haven\'t been to the new museum yet.\nHave you ever eaten Japanese food?\n\n关键词：already, yet, ever, never, just, for, since\n结构：have/has + 过去分词\n\n用法：\n1. 表示过去的经历（不强调具体时间）\n2. 表示从过去持续到现在的状态（for/since）\n3. 表示刚刚完成的动作（just）' },
+  { topic: '被动语态 (Passive Voice)', content: 'The cake was eaten by the dog.\nEnglish is spoken all over the world.\nThe letter has been sent already.\nThe homework must be finished before Friday.\n\n结构：be + 过去分词 (+ by...)\n\n各种时态的被动：\n一般现在：am/is/are + done\n一般过去：was/were + done\n现在完成：have/has been + done\n情态动词：can/must/should + be + done\n\n注意：\n1. 只有及物动词才有被动\n2. 有些动词不用被动（happen, occur, belong to...）' },
+  { topic: '第二条件句 (Second Conditional)', content: 'If I had a million dollars, I would travel around the world.\nIf she studied harder, she would pass the exam.\nWhat would you do if you were the president?\n\n结构：If + 过去式, would + 动词原形\n\n用法：\n1. 表示与现在事实相反的假设\n2. 表示不太可能实现的情况\n3. were 用于所有人称（包括 I/he/she）\n\n对比第一条件句：\nIf it rains (可能), I will stay home.\nIf it rained (不太可能), I would stay home.' }
+];
+let kSampleIdx = 0;
+function loadSampleKnowledge() {
+  kSampleIdx = (kSampleIdx + 1) % knowledgeSamples.length;
+  const s = knowledgeSamples[kSampleIdx];
+  document.getElementById('k-topic').value = s.topic;
+  document.getElementById('k-content').value = s.content;
+  generateKnowledge();
+}
+
+// ========== Exercise Samples ==========
+const exerciseSamples = [
+  { type: 'fill-blank', grammar: '现在完成时 (Present Perfect)', requirement: '用 already / yet / ever / never 各造一个句子', count: 5 },
+  { type: 'sentence-writing', grammar: '被动语态 (Passive Voice)', requirement: '用不同时态的被动语态造句', count: 5 },
+  { type: 'rewrite', grammar: '第二条件句 (Second Conditional)', requirement: '把以下句子改成第二条件句', count: 3 }
+];
+let exSampleIdx = 0;
+function loadSampleExercise() {
+  exSampleIdx = (exSampleIdx + 1) % exerciseSamples.length;
+  const s = exerciseSamples[exSampleIdx];
+  document.getElementById('ex-type').value = s.type;
+  document.getElementById('ex-grammar').value = s.grammar;
+  document.getElementById('ex-requirement').value = s.requirement;
+  document.getElementById('ex-count').value = s.count;
+  generateExercise();
+}
+
+// ========== Generate Knowledge ==========
+async function generateKnowledge() {
+  const topic = document.getElementById('k-topic').value.trim();
+  const content = document.getElementById('k-content').value.trim();
+  if (!topic || !content) {
+    document.getElementById('knowledge-output').innerHTML = '<div class="status-msg"><span class="emoji">⚠️</span>请输入知识点标题和内容</div>';
+    return;
+  }
+  const output = document.getElementById('knowledge-output');
+  output.innerHTML = '<div class="status-msg"><span class="emoji">⏳</span>正在整理中...</div>';
+  setTimeout(() => showKnowledgeFallback(topic, content), 300);
+}
+
+function showKnowledgeResult(html) {
+  document.getElementById('knowledge-output').innerHTML = '<div class="knowledge-grid">' + html + '</div>';
+}
+
+function showKnowledgeFallback(topic, content) {
+  const lines = content.split('\n').filter(l => l.trim());
+  let sections = { '介绍': [] };
+  let cur = '介绍';
+  for (const line of lines) {
+    const t = line.trim();
+    if (/^(用法|结构|注意|关键词|对比|定义)/i.test(t)) {
+      cur = t.replace(/[：:].*/, '').trim();
+      if (!sections[cur]) sections[cur] = [];
+      const rest = t.replace(/^[^：:]*[：:]\s*/, '');
+      if (rest) sections[cur].push(rest);
+    } else if (t) {
+      sections[cur].push(t);
+    }
+  }
+  const tagMap = { 0: { t: 'grammar', l: '语法点' }, 1: { t: 'vocab', l: '词汇' }, 2: { t: 'sentence', l: '句型' }, 3: { t: 'tip', l: '注意事项' } };
+  let cards = [], idx = 0;
+  for (const [secTitle, secLines] of Object.entries(sections)) {
+    if (!secLines.length) continue;
+    const tag = tagMap[idx % 4];
+    const examples = secLines.filter(l => /[.!?]$/.test(l.trim()) && l.trim().length > 5);
+    const desc = secLines.filter(l => !examples.includes(l)).join('<br>');
+    cards.push(`<div class="k-card ${tag.t} fade-up"><span class="k-tag">${tag.l}</span><div class="k-title">${secTitle}</div><div class="k-desc">${desc || '相关内容整理如下'}</div>${examples.length ? '<div class="k-example">' + examples.join('<br>') + '</div>' : ''}</div>`);
+    idx++;
+  }
+  if (!cards.length) {
+    cards.push(`<div class="k-card grammar fade-up"><span class="k-tag">${topic}</span><div class="k-title">核心内容</div><div class="k-example">${lines.join('<br>')}</div></div>`);
+  }
+  showKnowledgeResult(cards.join('\n'));
+}
+
+// ========== Generate Exercise ==========
+async function generateExercise() {
+  const type = document.getElementById('ex-type').value;
+  const grammar = document.getElementById('ex-grammar').value.trim();
+  const count = parseInt(document.getElementById('ex-count').value);
+  if (!grammar) {
+    document.getElementById('exercise-output').innerHTML = '<div class="status-msg"><span class="emoji">⚠️</span>请输入语法/知识点名称</div>';
+    return;
+  }
+  document.getElementById('exercise-output').innerHTML = '<div class="status-msg"><span class="emoji">⏳</span>正在出题中...</div>';
+  setTimeout(() => showExerciseFallback(type, count), 300);
+}
+
+function showExerciseResult(html) {
+  document.getElementById('exercise-output').innerHTML = '<div class="exercise-list">' + html + '</div>';
+}
+
+function showExerciseFallback(type, count) {
+  const pp = [
+    { q: 'I __________ (visit) London three times.', a: 'have visited' },
+    { q: 'She __________ (already/finish) her homework.', a: 'has already finished' },
+    { q: 'They __________ (not/be) to the new museum yet.', a: "haven't been" },
+    { q: '__________ you ever __________ (eat) Japanese food?', a: 'Have, eaten' },
+    { q: 'He __________ (just/arrive) from Shanghai.', a: 'has just arrived' },
+    { q: 'We __________ (know) each other for ten years.', a: 'have known' },
+    { q: 'I __________ (never/see) such a beautiful sunset.', a: 'have never seen' },
+    { q: '__________ she __________ (find) her keys yet?', a: 'Has, found' },
+    { q: 'How long __________ you __________ (have) this phone?', a: 'have, had' },
+    { q: 'My parents __________ (live) in this city since 2010.', a: 'have lived' },
+  ];
+  const writing = [
+    { q: 'Example: I have been to Japan twice.<br><br>Write about:<br>1. A country you have visited<br>2. Something you have already done today<br>3. Something you have never done but want to try', a: '(Open-ended) e.g. I have visited France. / I have already had breakfast.' },
+  ];
+  const rewrite = [
+    { q: 'I started learning English two years ago. I still learn English now.<br>→ I __________ English __________ two years.', a: 'have been learning, for' },
+    { q: 'She bought the house last year. She still lives there.<br>→ She __________ in the house __________ last year.', a: 'has lived, since' },
+    { q: 'This is the first time I have seen such a whale.<br>→ I __________ never __________ such a whale before.', a: 'have, seen' },
+  ];
+  let pool = type === 'fill-blank' ? pp : type === 'sentence-writing' ? writing : rewrite;
+  const label = type === 'fill-blank' ? '填空题' : type === 'sentence-writing' ? '仿写句子' : '句子改写';
+  let html = '';
+  for (let i = 0; i < count; i++) {
+    const p = pool[i % pool.length];
+    html += `<div class="ex-card fade-up"><div><span class="ex-num">${i+1}</span> <strong>${label}</strong></div><div class="ex-question">${p.q.replace(/_{2,}/g,'<span class="blank">______</span>')}</div><button class="show-answer-btn" onclick="toggleAnswer(this)">👀 查看答案</button><div class="ex-answer">${p.a}</div></div>`;
+  }
+  showExerciseResult(html);
+}
+
+function toggleAnswer(btn) {
+  const a = btn.nextElementSibling;
+  if (a && a.classList.contains('ex-answer')) {
+    a.classList.toggle('show');
+    btn.textContent = a.classList.contains('show') ? '🙈 隐藏答案' : '👀 查看答案';
+  }
+}
+</script>
+</body>
+</html>
