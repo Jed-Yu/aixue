@@ -207,14 +207,14 @@ select{appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='ht
 
 <script>
 // ===== STATE =====
-let role=localStorage.getItem('***')||'';
-let roleName=localStorage.getItem('***')||'';
-function saveState(){localStorage.setItem('***',role);localStorage.setItem('***',roleName)}
+let role=localStorage.getItem('a_role')||'';
+let roleName=localStorage.getItem('a_name')||'';
+function saveState(){localStorage.setItem('a_role',role);localStorage.setItem('a_name',roleName)}
 // Classes stored in localStorage
-let classes=JSON.parse(localStorage.getItem('***')||'[]');
-let hwData=JSON.parse(localStorage.getItem('***')||'[]');
-function saveClasses(){localStorage.setItem('***',JSON.stringify(classes))}
-function saveHW(){localStorage.setItem('***',JSON.stringify(hwData))}
+let classes=JSON.parse(localStorage.getItem('a_cls')||'[]');
+let hwData=JSON.parse(localStorage.getItem('a_hw')||'[]');
+function saveClasses(){localStorage.setItem('a_cls',JSON.stringify(classes))}
+function saveHW(){localStorage.setItem('a_hw',JSON.stringify(hwData))}
 let nextId=Date.now();
 
 let toastTimer=null;
@@ -241,7 +241,7 @@ function setRole(r,nm){
   generateExercise()
 }
 function switchRole(){
-  role='';roleName='';localStorage.removeItem('***');localStorage.removeItem('***');
+  role='';roleName='';localStorage.removeItem('a_role');localStorage.removeItem('a_name')
   document.getElementById('app-main').classList.remove('show');
   document.getElementById('auth-screen').style.display=''
 }
@@ -402,9 +402,9 @@ function showAssignDialog(){
 function doAssign(){
   const cid=document.getElementById('assign-class').value;const title=document.getElementById('assign-title').value.trim()||'练习题';
   if(!cid){showToast('选择班级');return}
-  const as=JSON.parse(localStorage.getItem('***')||'[]');
+  const as=JSON.parse(localStorage.getItem('a_asn')||'[]');
   as.push({id:nextId++,className:classes.find(c=>c.id==cid)?.name||'',classId:cid,teacherName:roleName,level:document.getElementById('ex-level').value,type:document.getElementById('ex-type').value,questions:lastGeneratedQs,createdAt:new Date().toISOString().split('T')[0],studentResults:{}});
-  localStorage.setItem('***',JSON.stringify(as));
+  localStorage.setItem('a_asn',JSON.stringify(as));
   showToast('✅ 已布置，学生可在作业中查看');document.querySelector('.modal-overlay').remove()
 }
 
@@ -412,7 +412,7 @@ function doAssign(){
 // ===== 学生答题 + 老师查看结果 =====
 function loadMyHomework(){
   const co=document.getElementById('hw-content');
-  const as=JSON.parse(localStorage.getItem('***')||'[]');
+  const as=JSON.parse(localStorage.getItem('a_asn')||'[]');
   if(role==='teacher'){
     // Teacher: see assignments + results
     if(!as.length){co.innerHTML='<div class="status-msg"><span class="emoji">📝</span>暂无布置的作业</div>';return}
@@ -443,7 +443,7 @@ function loadMyHomework(){
   co.innerHTML=html
 }
 function doHomework(aid){
-  const as=JSON.parse(localStorage.getItem('***')||'[]');
+  const as=JSON.parse(localStorage.getItem('a_asn')||'[]');
   const a=as.find(x=>x.id==aid);if(!a)return;
   const d=document.createElement('div');d.className='modal-overlay';d.style.display='flex';
   let qhtml='';
@@ -461,7 +461,7 @@ function doHomework(aid){
   document.body.appendChild(d)
 }
 function submitHomework(aid){
-  const as=JSON.parse(localStorage.getItem('***')||'[]');
+  const as=JSON.parse(localStorage.getItem('a_asn')||'[]');
   const a=as.find(x=>x.id==aid);if(!a)return;
   const inputs=document.querySelectorAll('.ans-inp');
   const answers=[];let correct=0;
@@ -472,12 +472,12 @@ function submitHomework(aid){
   if(!answers.some(a=>a)){showToast('至少答一题');return}
   if(!a.studentResults)a.studentResults={};
   a.studentResults[roleName]={answers,submitted:true,score:correct,total:a.questions.length,accuracy:Math.round(correct/a.questions.length*100)+'%',submittedAt:new Date().toISOString().split('T')[0]};
-  localStorage.setItem('***',JSON.stringify(as));
+  localStorage.setItem('a_asn',JSON.stringify(as));
   showToast('✅ 已提交！得分：'+correct+'/'+a.questions.length);
   document.querySelector('.modal-overlay').remove();loadMyHomework()
 }
 function showMyResult(aid){
-  const as=JSON.parse(localStorage.getItem('***')||'[]');
+  const as=JSON.parse(localStorage.getItem('a_asn')||'[]');
   const a=as.find(x=>x.id==aid);if(!a)return;
   const r=a.studentResults&&a.studentResults[roleName];if(!r)return;
   const d=document.createElement('div');d.className='modal-overlay';d.style.display='flex';
@@ -493,7 +493,7 @@ function showMyResult(aid){
   document.body.appendChild(d)
 }
 function showResults(aid){
-  const as=JSON.parse(localStorage.getItem('***')||'[]');
+  const as=JSON.parse(localStorage.getItem('a_asn')||'[]');
   const a=as.find(x=>x.id==aid);if(!a)return;
   const d=document.createElement('div');d.className='modal-overlay';d.style.display='flex';
   const subs=Object.entries(a.studentResults||{}).filter(([k,v])=>v.submitted);
