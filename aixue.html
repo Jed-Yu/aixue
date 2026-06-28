@@ -218,8 +218,14 @@ async function sendCode(type){
   if(codeTimers[type])clearInterval(codeTimers[type]);
   codeTimers[type]=setInterval(()=>{c--;if(c<=0){clearInterval(codeTimers[type]);btn.disabled=false;btn.textContent='重新获取'}else btn.textContent=`${c}s`},1000);
   document.querySelectorAll('[id^="ch-"]').forEach(e=>e.remove());
-  if(r.success){showToast(`📨 已发送到 ${email}`);if(r.demo){const h=document.createElement('div');h.id='ch-'+type;h.style.cssText='font-size:12px;color:var(--success);margin-top:4px';h.textContent=`📨 演示码：${r.code}`;document.getElementById(eid).closest('div').after(h)}}
-  else showToast(r.error||'发送失败')
+  if(r.success){
+    showToast(`📨 已发送到 ${email}`);
+    const msg=document.createElement('div');msg.id='ch-'+type;
+    msg.style.cssText='font-size:13px;color:var(--success);margin-top:8px;padding:10px 14px;background:#E8F8ED;border-radius:8px';
+    msg.textContent='✅ 验证码已发送到 '+email;
+    if(r.demo)msg.textContent+=' 演示码：'+r.code;
+    document.getElementById(eid).closest('.auth-form').appendChild(msg);
+  } else showToast(r.error||'发送失败')
 }
 async function handleRegister(){
   const e=document.getElementById('reg-email').value.trim(),n=document.getElementById('reg-name').value.trim(),p=document.getElementById('reg-pwd').value.trim(),c=document.getElementById('reg-code').value.trim();
