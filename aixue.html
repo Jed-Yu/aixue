@@ -523,8 +523,10 @@ function generateExercise(){
   const pool=isChoice?(choiceBanks[l]||choiceBanks.FCE):(qBanks[l]||qBanks.FCE);
   const lb={'fill-blank':'填空题','choice':'选择题','rewrite':'句子改写'}[t]||'填空题';
   document.getElementById('ex-badge').textContent='🎯 '+l;document.getElementById('ex-badge').style.display='inline-block';
+  // Shuffle pool and pick random questions
+  const shuffled=[...pool];for(let i=shuffled.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[shuffled[i],shuffled[j]]=[shuffled[j],shuffled[i]]}
   const qs=[];
-  for(let i=0;i<c;i++){const p=pool[i%pool.length];qs.push({q:p.q,a:p.a,o:p.o||[]})}
+  for(let i=0;i<c;i++){const p=shuffled[i%shuffled.length];qs.push({q:p.q,a:p.a,o:p.o||[]})}
   setLastGenerated(qs);
   let html='';const sid='sub-'+(Date.now())+'x';
   for(let i=0;i<qs.length;i++){const p=qs[i];
