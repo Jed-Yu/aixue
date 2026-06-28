@@ -587,7 +587,7 @@ function showStudentSub(dataStr){
   d.innerHTML='<div class="modal-box" style="max-width:600px;max-height:80vh;overflow-y:auto">'+
     '<div class="modal-title">'+(s.studentName||'学生')+' · '+(s.level||'')+'</div>'+
     '<div style="text-align:center;font-size:18px;font-weight:700;color:var(--primary);padding:10px;background:var(--primary-light);border-radius:10px;margin-bottom:12px">'+(s.score||0)+'/'+(s.total||0)+' ('+(s.accuracy||'0%')+')</div>'+
-    qhtml+'<div class="btn-group"><button class="btn btn-secondary" onclick="this.closest('"'+".modal-overlay')"+").remove()">关闭</button></div></div>';
+    qhtml+'<div class="btn-group"><button class="btn btn-secondary" onclick="document.body.removeChild(this.closest('.modal-overlay'))">关闭</button></div></div>';
   document.body.appendChild(d)
 }
 </script>
