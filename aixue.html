@@ -254,7 +254,7 @@ function switchTab(n){
   document.querySelectorAll('.panel').forEach(p=>p.classList.remove('active'));
   document.getElementById('panel-'+n).classList.add('active');
   if(n==='classes')renderClasses();
-  if(n==='homework'){updateHWSel();loadHW()}
+  if(n==='homework'){updateHWSel();if(role==='teacher')loadHW();else loadMyHomework()}
   if(n==='aiassist')updateAIClasses()
 }
 
@@ -273,8 +273,14 @@ function generateExercise(){
   const t=document.getElementById('ex-type').value,l=document.getElementById('ex-level').value,c=parseInt(document.getElementById('ex-count').value);
   const isT=role==='teacher';const pool=qBanks[l]||qBanks.FCE;const lb=t==='fill-blank'?'填空题':t==='sentence-writing'?'仿写句子':'句子改写';
   document.getElementById('ex-badge').textContent='🎯 '+l;document.getElementById('ex-badge').style.display='inline-block';
+  // Build questions array
+  const qs=[];
+  for(let i=0;i<c;i++){const p=pool[i%pool.length];qs.push({q:p.q,a:p.a})}
+  setLastGenerated(qs);
+  // Render
   let html='';
-  for(let i=0;i<c;i++){const p=pool[i%pool.length];const q=p.q.replace(/_+/g,'<span class="blank">______</span>');html+=`<div class="ex-card fade-up"><div><span class="ex-num">${i+1}</span><strong>${lb}</strong></div><div class="ex-q">${q}</div>${isT?`<button class="show-ans-btn" onclick="this.nextElementSibling.classList.toggle('show');this.textContent=this.nextElementSibling.classList.contains('show')?'🙈隐藏':'👀查看'">👀 查看答案</button><div class="ex-ans">${p.a}</div>`:''}</div>`}
+  for(let i=0;i<qs.length;i++){const p=qs[i];const q=p.q.replace(/_+/g,'<span class="blank">______</span>');html+=`<div class="ex-card fade-up"><div><span class="ex-num">${i+1}</span><strong>${lb}</strong></div><div class="ex-q">${q}</div>${isT?`<button class="show-ans-btn" onclick="this.nextElementSibling.classList.toggle('show');this.textContent=this.nextElementSibling.classList.contains('show')?'🙈隐藏':'👀查看'">👀 查看答案</button><div class="ex-ans">${p.a}</div>`:''}</div>`}
+  html+=isT?`<div class="btn-group" style="margin-top:12px"><button class="btn btn-primary" onclick="showAssignDialog()">📝 布置给班级</button></div>`:'';
   document.getElementById('ex-output').innerHTML='<div class="ex-list">'+html+'</div>'
 }
 function loadSampleExercise(){generateExercise()}
@@ -376,6 +382,133 @@ function pubHW(cid){
   const qs=[];document.querySelectorAll('#hw-qs .hw-question').forEach(el=>{const q=el.querySelector('.hq')?.value.trim(),a=el.querySelector('.ha')?.value.trim();if(q&&a)qs.push({q,a})});
   if(!qs.length){showToast('添加至少一题');return}
   hwData.push({id:nextId++,cid,title,type,qs,due:''});saveHW();showToast('✅ 已发布');document.querySelector('.modal-overlay').remove();loadHW()
+}
+
+// ===== 老师布置作业（出题后直接布置） =====
+let lastGeneratedQs=null;
+function setLastGenerated(qs){lastGeneratedQs=qs}
+function showAssignDialog(){
+  if(!lastGeneratedQs||!lastGeneratedQs.length){showToast('请先生成题目');return}
+  const d=document.createElement('div');d.className='modal-overlay';d.style.display='flex';
+  let opts='<option value="">选择班级</option>';
+  for(const c of classes)opts+=`<option value="${c.id}">${c.name}</option>`;
+  d.innerHTML=`<div class="modal-box"><div class="modal-title">📝 布置给班级</div>
+    <div class="form-group"><label>班级</label><select id="assign-class">${opts}</select></div>
+    <div class="form-group"><label>标题</label><input type="text" id="assign-title" placeholder="如：现在完成时练习"></div>
+    <div style="font-size:13px;color:var(--text-light);margin-bottom:8px">共 ${lastGeneratedQs.length} 题</div>
+    <div class="btn-group"><button class="btn btn-primary" onclick="doAssign()">📝 布置</button><button class="btn btn-secondary" onclick="this.closest('.modal-overlay').remove()">取消</button></div></div>`;
+  document.body.appendChild(d)
+}
+function doAssign(){
+  const cid=document.getElementById('assign-class').value;const title=document.getElementById('assign-title').value.trim()||'练习题';
+  if(!cid){showToast('选择班级');return}
+  const as=JSON.parse(localStorage.getItem('***')||'[]');
+  as.push({id:nextId++,className:classes.find(c=>c.id==cid)?.name||'',classId:cid,teacherName:roleName,level:document.getElementById('ex-level').value,type:document.getElementById('ex-type').value,questions:lastGeneratedQs,createdAt:new Date().toISOString().split('T')[0],studentResults:{}});
+  localStorage.setItem('***',JSON.stringify(as));
+  showToast('✅ 已布置，学生可在作业中查看');document.querySelector('.modal-overlay').remove()
+}
+
+// ===== 学生答题系统 =====
+// ===== 学生答题 + 老师查看结果 =====
+function loadMyHomework(){
+  const co=document.getElementById('hw-content');
+  const as=JSON.parse(localStorage.getItem('***')||'[]');
+  if(role==='teacher'){
+    // Teacher: see assignments + results
+    if(!as.length){co.innerHTML='<div class="status-msg"><span class="emoji">📝</span>暂无布置的作业</div>';return}
+    let html='<div style="font-size:13px;color:var(--text-light);margin-bottom:8px">共 '+as.length+' 次作业</div>';
+    for(const a of as.reverse()){
+      const subs=Object.entries(a.studentResults||{}).filter(([k,v])=>v.submitted);
+      const accs=subs.map(([k,v])=>(v.score||0)+'/'+v.total);
+      html+=`<div class="hw-card" style="cursor:pointer" onclick="showResults('${a.id}')">
+        <div class="hw-title">${a.title||'练习题'}</div>
+        <div class="hw-meta">${a.className} · ${a.level} · ${a.createdAt}</div>
+        <div style="font-size:12px;margin-top:4px">${subs.length?'✅ '+subs.length+'人提交 · 准确率：'+accs.join(', '):'⏳ 暂无学生提交'}</div>
+      </div>`
+    }
+    co.innerHTML=html;return
+  }
+  // Student: see assigned homework
+  const mine=as.filter(a=>a.className&&classes.some(c=>c.id==a.classId&&c.members&&c.members.some(m=>m.n===roleName)));
+  if(!mine.length){co.innerHTML='<div class="status-msg"><span class="emoji">📝</span>暂无老师布置的作业</div>';return}
+  let html='';
+  for(const a of mine.reverse()){
+    const done=a.studentResults&&a.studentResults[roleName]&&a.studentResults[roleName].submitted;
+    html+=`<div class="hw-card" style="cursor:pointer" onclick="${done?`showMyResult('${a.id}')`:`doHomework('${a.id}')`}">
+      <div class="hw-title">${a.title||'练习题'} ${done?'✅ 已提交':'📝 未完成'}</div>
+      <div class="hw-meta">${a.teacherName||'老师'} · ${a.level} · ${a.createdAt} · ${a.questions.length}题</div>
+      ${done?`<div style="font-size:12px;margin-top:4px;color:var(--success)">得分：${a.studentResults[roleName].score||0}/${a.studentResults[roleName].total||a.questions.length} (${a.studentResults[roleName].accuracy||'0%'})</div>`:''}
+    </div>`
+  }
+  co.innerHTML=html
+}
+function doHomework(aid){
+  const as=JSON.parse(localStorage.getItem('***')||'[]');
+  const a=as.find(x=>x.id==aid);if(!a)return;
+  const d=document.createElement('div');d.className='modal-overlay';d.style.display='flex';
+  let qhtml='';
+  a.questions.forEach((q,i)=>{
+    const qText=q.q||q.qText||'';
+    qhtml+=`<div class="hw-question"><div style="font-weight:600;margin-bottom:6px">第${i+1}题</div><div style="font-size:14px;margin-bottom:8px">${qText.replace(/_+/g,'<span class="blank">______</span>')}</div><input type="text" class="ans-inp" data-idx="${i}" placeholder="你的答案" style="width:100%" autocomplete="off"></div>`
+  });
+  d.innerHTML=`<div class="modal-box" style="max-width:600px;max-height:85vh;overflow-y:auto">
+    <div class="modal-title">${a.title||'练习题'}</div>
+    ${qhtml}
+    <div class="btn-group" style="position:sticky;bottom:0;background:var(--card);padding:10px 0">
+      <button class="btn btn-primary" onclick="submitHomework('${a.id}')">📤 提交</button>
+      <button class="btn btn-secondary" onclick="this.closest('.modal-overlay').remove()">关闭</button>
+    </div></div>`;
+  document.body.appendChild(d)
+}
+function submitHomework(aid){
+  const as=JSON.parse(localStorage.getItem('***')||'[]');
+  const a=as.find(x=>x.id==aid);if(!a)return;
+  const inputs=document.querySelectorAll('.ans-inp');
+  const answers=[];let correct=0;
+  inputs.forEach((inp,i)=>{
+    const ans=inp.value.trim();answers.push(ans);
+    if(a.questions[i]&&a.questions[i].a&&ans.toLowerCase()===a.questions[i].a.toLowerCase())correct++
+  });
+  if(!answers.some(a=>a)){showToast('至少答一题');return}
+  if(!a.studentResults)a.studentResults={};
+  a.studentResults[roleName]={answers,submitted:true,score:correct,total:a.questions.length,accuracy:Math.round(correct/a.questions.length*100)+'%',submittedAt:new Date().toISOString().split('T')[0]};
+  localStorage.setItem('***',JSON.stringify(as));
+  showToast('✅ 已提交！得分：'+correct+'/'+a.questions.length);
+  document.querySelector('.modal-overlay').remove();loadMyHomework()
+}
+function showMyResult(aid){
+  const as=JSON.parse(localStorage.getItem('***')||'[]');
+  const a=as.find(x=>x.id==aid);if(!a)return;
+  const r=a.studentResults&&a.studentResults[roleName];if(!r)return;
+  const d=document.createElement('div');d.className='modal-overlay';d.style.display='flex';
+  let qhtml='';
+  a.questions.forEach((q,i)=>{
+    const myAns=r.answers&&r.answers[i]||'';const correct=myAns.toLowerCase()===q.a.toLowerCase();
+    qhtml+=`<div class="hw-question" style="border-left:4px solid ${correct?'var(--success)':'var(--danger)'}">
+      <div style="font-weight:600;margin-bottom:4px">第${i+1}题 ${correct?'✅':'❌'}</div>
+      <div style="font-size:14px;margin-bottom:4px">${(q.q||'').replace(/_+/g,'<span class="blank">______</span>')}</div>
+      <div style="font-size:13px">你的答案：<strong>${myAns||'(空)'}</strong> ${correct?'':'· 正确答案：'+q.a}</div></div>`
+  });
+  d.innerHTML=`<div class="modal-box" style="max-width:600px"><div class="modal-title">${a.title||'练习题'} · 结果</div><div style="text-align:center;font-size:18px;font-weight:700;color:var(--primary);padding:10px;background:var(--primary-light);border-radius:10px;margin-bottom:12px">${r.score||0}/${r.total||a.questions.length} (${r.accuracy||'0%'})</div>${qhtml}<div class="btn-group"><button class="btn btn-secondary" onclick="this.closest('.modal-overlay').remove()">关闭</button></div></div>`;
+  document.body.appendChild(d)
+}
+function showResults(aid){
+  const as=JSON.parse(localStorage.getItem('***')||'[]');
+  const a=as.find(x=>x.id==aid);if(!a)return;
+  const d=document.createElement('div');d.className='modal-overlay';d.style.display='flex';
+  const subs=Object.entries(a.studentResults||{}).filter(([k,v])=>v.submitted);
+  let html=`<div class="modal-title">${a.title||'练习题'} · 成绩</div><p style="font-size:13px;color:var(--text-light);margin-bottom:12px">${a.className} · ${a.level} · ${a.questions.length}题</p>`;
+  if(!subs.length)html+='<p style="color:var(--text-light)">暂无学生提交</p>';
+  else for(const[name,res]of subs){
+    let details='';
+    a.questions.forEach((q,i)=>{
+      const ans=res.answers&&res.answers[i]||'';const c=(ans||'').toLowerCase()===q.a.toLowerCase();
+      details+=`<div style="font-size:12px;padding:2px 0">第${i+1}题: ${c?'✅':'❌'} 答:${ans||'(空)'} ${c?'':'正:'+q.a}</div>`
+    });
+    html+=`<div class="hw-card"><div style="display:flex;justify-content:space-between"><strong>${name}</strong><span style="color:var(--primary);font-weight:700">${res.score||0}/${res.total||a.questions.length} (${res.accuracy||'0%'})</span></div>${details}</div>`
+  }
+  d.innerHTML=`<div class="modal-box" style="max-width:600px;max-height:80vh;overflow-y:auto">${html}<div class="btn-group"><button class="btn btn-secondary" onclick="this.closest('.modal-overlay').remove()">关闭</button></div></div>`;
+  document.body.appendChild(d)
 }
 
 // ===== AI ASSISTANT =====
