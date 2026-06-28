@@ -572,6 +572,25 @@ function aiAddClass(){
   document.getElementById('ai-out').innerHTML=`<div style="padding:12px;background:#E8F8ED;border-radius:8px;font-size:13px;color:#1E8E3E">✅ 已安排：${day} ${start}-${end} ${cls.name} 加课一节</div>`;
   renderClasses()
 }
+
+function showStudentSub(dataStr){
+  try{var s=JSON.parse(dataStr)}catch(e){return}
+  const d=document.createElement('div');d.className='modal-overlay';d.style.display='flex';
+  let qhtml='';
+  if(s.questions)for(let i=0;i<s.questions.length;i++){
+    const q=s.questions[i];const myAns=s.answers&&s.answers[i]||'';const c=myAns.toLowerCase()===q.a.toLowerCase();
+    qhtml+='<div class="hw-question" style="border-left:4px solid '+(c?'var(--success)':'var(--danger)')+'">'+
+      '<div style="font-weight:600;margin-bottom:4px">第'+(i+1)+'题 '+(c?'✅':'❌')+'</div>'+
+      '<div style="font-size:14px;margin-bottom:4px">'+((q.q||'').replace(/_+/g,'<span class="blank">______</span>'))+'</div>'+
+      '<div style="font-size:13px"><strong>'+(s.studentName||'学生')+'</strong>答：'+(myAns||'(空)')+(c?'':'正确答案：'+q.a)+'</div></div>'
+  }
+  d.innerHTML='<div class="modal-box" style="max-width:600px;max-height:80vh;overflow-y:auto">'+
+    '<div class="modal-title">'+(s.studentName||'学生')+' · '+(s.level||'')+'</div>'+
+    '<div style="text-align:center;font-size:18px;font-weight:700;color:var(--primary);padding:10px;background:var(--primary-light);border-radius:10px;margin-bottom:12px">'+(s.score||0)+'/'+(s.total||0)+' ('+(s.accuracy||'0%')+')</div>'+
+    qhtml+'<div class="btn-group"><button class="btn btn-secondary" onclick="this.closest('"'+".modal-overlay')"+").remove()">关闭</button></div></div>';
+  document.body.appendChild(d)
+}
 </script>
+
 </body>
 </html>
