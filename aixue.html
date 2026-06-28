@@ -142,7 +142,7 @@ select{appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='ht
   <div id="panel-exercise" class="panel active">
     <div class="card">
       <div class="card-title">⚙️ 出题设置</div>
-      <div class="form-group"><label>题 型</label><select id="ex-type"><option value="fill-blank">填空题</option><option value="sentence-writing">仿写句子</option><option value="rewrite">句子改写</option></select></div>
+      <div class="form-group"><label>题 型</label><select id="ex-type"><option value="fill-blank">填空题</option><option value="choice">选择题</option><option value="rewrite">句子改写</option></select></div>
       <div class="form-group"><label>🎯 考试级别</label><select id="ex-level"><option value="YLE">YLE</option><option value="KET">KET</option><option value="PET">PET</option><option value="FCE" selected>FCE</option><option value="CAE">CAE</option><option value="CPE">CPE</option><option value="IELTS">雅思</option><option value="TOEFL">托福</option></select></div>
       <div class="form-group"><label>📊 数量</label><select id="ex-count"><option value="3">3题</option><option value="5" selected>5题</option><option value="8">8题</option><option value="10">10题</option></select></div>
       <div class="btn-group"><button class="btn btn-primary" onclick="generateExercise()">✨ 生成题目</button><button class="btn btn-secondary" onclick="loadSampleExercise()">📂 示例</button></div>
@@ -519,32 +519,54 @@ const qBanks={
 };
 function generateExercise(){
   const t=document.getElementById('ex-type').value,l=document.getElementById('ex-level').value,c=parseInt(document.getElementById('ex-count').value);
-  const isT=role==='teacher';const pool=qBanks[l]||qBanks.FCE;const lb=t==='fill-blank'?'填空题':t==='sentence-writing'?'仿写句子':'句子改写';
+  const isT=role==='teacher';const isChoice=t==='choice';
+  const pool=isChoice?(choiceBanks[l]||choiceBanks.FCE):(qBanks[l]||qBanks.FCE);
+  const lb={'fill-blank':'填空题','choice':'选择题','rewrite':'句子改写'}[t]||'填空题';
   document.getElementById('ex-badge').textContent='🎯 '+l;document.getElementById('ex-badge').style.display='inline-block';
   const qs=[];
-  for(let i=0;i<c;i++){const p=pool[i%pool.length];qs.push({q:p.q,a:p.a})}
+  for(let i=0;i<c;i++){const p=pool[i%pool.length];qs.push({q:p.q,a:p.a,o:p.o||[]})}
   setLastGenerated(qs);
-  // Render
   let html='';const sid='sub-'+(Date.now())+'x';
-  for(let i=0;i<qs.length;i++){const p=qs[i];const q=p.q.replace(/_+/g,'<span class="blank">______</span>');
-    html+=`<div class="ex-card fade-up"><div><span class="ex-num">${i+1}</span><strong>${lb}</strong></div><div class="ex-q">${q}</div>`;
-    if(isT)html+=`<button class="show-ans-btn" onclick="this.nextElementSibling.classList.toggle('show');this.textContent=this.nextElementSibling.classList.contains('show')?'🙈隐藏':'👀查看'">👀 查看答案</button><div class="ex-ans">${p.a}</div>`;
-    else html+=`<div style="margin-top:8px"><input type="text" class="ex-ans-inp" data-idx="${i}" placeholder="输入答案..." style="width:100%;padding:10px 14px;border:2px solid var(--border);border-radius:10px;font-size:14px;outline:none" autocomplete="off"></div>`;
-    html+=`</div>`
+  for(let i=0;i<qs.length;i++){const p=qs[i];
+    if(isChoice){
+      html+=`<div class="ex-card fade-up"><div><span class="ex-num">${i+1}</span><strong>${lb}</strong></div><div class="ex-q">${p.q}</div>`;
+      if(p.o)for(let j=0;j<p.o.length;j++){
+        html+=`<label class="hw-option" onclick="this.closest('.ex-card').querySelectorAll('.hw-option').forEach(e=>e.classList.remove('selected'));this.classList.add('selected')"><input type="radio" name="ex-choice-${i}" value="${p.o[j]}" style="display:none">${String.fromCharCode(65+j)}. ${p.o[j]}</label>`
+      }
+      if(isT)html+=`<button class="show-ans-btn" onclick="this.nextElementSibling.classList.toggle('show')">👀 查看答案</button><div class="ex-ans">${p.a}</div>`;
+      else html+='<input type="hidden" class="ex-choice-val" data-idx="'+i+'">';
+      html+=`</div>`
+    } else {
+      const q=p.q.replace(/_+/g,'<span class="blank">______</span>');
+      html+=`<div class="ex-card fade-up"><div><span class="ex-num">${i+1}</span><strong>${lb}</strong></div><div class="ex-q">${q}</div>`;
+      if(isT)html+=`<button class="show-ans-btn" onclick="this.nextElementSibling.classList.toggle('show');this.textContent=this.nextElementSibling.classList.contains('show')?'🙈隐藏':'👀查看'">👀 查看答案</button><div class="ex-ans">${p.a}</div>`;
+      else html+=`<div style="margin-top:8px"><input type="text" class="ex-ans-inp" data-idx="${i}" placeholder="输入答案..." style="width:100%;padding:10px 14px;border:2px solid var(--border);border-radius:10px;font-size:14px;outline:none" autocomplete="off"></div>`;
+      html+=`</div>`
+    }
   }
   if(!isT)html+=`<div class="btn-group" style="margin-top:8px"><button class="btn btn-primary" id="${sid}" onclick="studentSubmit('${sid}')">📤 提交</button></div>`;
   if(isT)html+=`<div class="btn-group" style="margin-top:12px"><button class="btn btn-primary" onclick="showAssignDialog()">📝 布置给班级</button></div>`;
   document.getElementById('ex-output').innerHTML='<div class="ex-list">'+html+'</div>'
-}
-function studentSubmit(sid){
+}function studentSubmit(sid){
   const l=document.getElementById('ex-level').value,t=document.getElementById('ex-type').value;
-  const inputs=document.querySelectorAll('.ex-ans-inp');
-  if(!inputs.length||!lastGeneratedQs){showToast('请先生成题目');return}
+  const isChoice=t==='choice';
   const answers=[];let correct=0;
-  inputs.forEach((inp,i)=>{
-    const ans=inp.value.trim();answers.push(ans);
-    if(lastGeneratedQs[i]&&lastGeneratedQs[i].a&&ans.toLowerCase()===lastGeneratedQs[i].a.toLowerCase())correct++
-  });
+  if(isChoice){
+    const sel=document.querySelectorAll('.selected');
+    if(!sel.length){showToast('请选择至少一题');return}
+    for(let i=0;i<lastGeneratedQs.length;i++){
+      const picked=document.querySelector('input[name="ex-choice-'+i+'"]:checked');
+      const ans=picked?picked.value:'';answers.push(ans);
+      if(lastGeneratedQs[i]&&lastGeneratedQs[i].a&&ans===lastGeneratedQs[i].a)correct++
+    }
+  } else {
+    const inputs=document.querySelectorAll('.ex-ans-inp');
+    if(!inputs.length||!lastGeneratedQs){showToast('请先生成题目');return}
+    inputs.forEach((inp,i)=>{
+      const ans=inp.value.trim();answers.push(ans);
+      if(lastGeneratedQs[i]&&lastGeneratedQs[i].a&&ans.toLowerCase()===lastGeneratedQs[i].a.toLowerCase())correct++
+    });
+  }
   if(!answers.some(a=>a)){showToast('至少答一题再提交');return}
   const sub=JSON.parse(localStorage.getItem('a_sub')||'[]');
   sub.push({studentName:roleName,level:l,type:t,questions:lastGeneratedQs,answers,score:correct,total:lastGeneratedQs.length,accuracy:Math.round(correct/lastGeneratedQs.length*100)+'%',submittedAt:new Date().toISOString().split('T')[0]+' '+new Date().toTimeString().split(' ')[0]});
@@ -564,6 +586,121 @@ function genK(){
   const ls=c.split('\n').filter(l=>l.trim());let sec={'介绍':[]},cu='介绍';
   for(const l of ls){const s=l.trim();if(/^(用法|结构|注意|关键词)/i.test(s)){cu=s.replace(/[：:].*/,'').trim();if(!sec[cu])sec[cu]=[];const r=s.replace(/^[^：:]*[：:]\s*/,'');if(r)sec[cu].push(r)}else if(s)sec[cu].push(s)}
   let html='',i=0;const tl={0:{t:'语法点'},1:{t:'词汇'},2:{t:'句型'},3:{t:'注意事项'}};
+
+
+const choiceBanks = {
+  YLE:[
+    {q:"What color is the sky?", o:["Blue","Red","Green","Yellow"], a:"Blue"},
+    {q:"How many legs does a cat have?", o:["2","4","6","8"], a:"4"},
+    {q:"Which animal can fly?", o:["Dog","Fish","Bird","Cat"], a:"Bird"},
+    {q:"What do you use to write?", o:["Ball","Pencil","Apple","Chair"], a:"Pencil"},
+    {q:"Where do fish live?", o:["Desert","Forest","Water","Mountain"], a:"Water"},
+    {q:"What is the opposite of big?", o:["Tall","Small","Long","Fast"], a:"Small"},
+    {q:"Which is a fruit?", o:["Carrot","Potato","Apple","Bread"], a:"Apple"},
+    {q:"What do we use to see?", o:["Ears","Eyes","Nose","Mouth"], a:"Eyes"},
+    {q:"When do we eat breakfast?", o:["Morning","Afternoon","Evening","Night"], a:"Morning"},
+    {q:"What month comes after June?", o:["May","July","August","September"], a:"July"},
+  ],
+  KET:[
+    {q:"She ___ to school every day.", o:["go","goes","going","went"], a:"goes"},
+    {q:"There ___ any milk left.", o:["isn't","aren't","don't","doesn't"], a:"isn't"},
+    {q:"I ___ my grandmother yesterday.", o:["visit","visited","visiting","visits"], a:"visited"},
+    {q:"What time ___ the film start?", o:["do","does","is","are"], a:"does"},
+    {q:"This is the ___ book I've ever read.", o:["good","better","best","well"], a:"best"},
+    {q:"We ___ going to the park tomorrow.", o:["is","am","are","be"], a:"are"},
+    {q:"She can ___ French very well.", o:["speak","speaks","speaking","spoke"], a:"speak"},
+    {q:"I've been learning English ___ three years.", o:["since","for","from","by"], a:"for"},
+    {q:"You should ___ a doctor.", o:["see","saw","seeing","to see"], a:"see"},
+    {q:"How ___ money do you need?", o:["many","much","more","most"], a:"much"},
+  ],
+  PET:[
+    {q:"If it ___ tomorrow, we'll cancel the trip.", o:["rain","rains","rained","raining"], a:"rains"},
+    {q:"The letter ___ three days ago.", o:["arrived","has arrived","was arriving","arrives"], a:"arrived"},
+    {q:"I'm looking forward ___ you.", o:["meet","meeting","to meet","meets"], a:"to meeting"},
+    {q:"She ___ English since she was a child.", o:["learns","learned","has been learning","is learning"], a:"has been learning"},
+    {q:"The window ___ by the boy.", o:["broke","was broken","is breaking","breaks"], a:"was broken"},
+    {q:"This is the first time I ___ sushi.", o:["try","tried","have tried","am trying"], a:"have tried"},
+    {q:"You'd better ___ a reservation.", o:["make","made","making","to make"], a:"make"},
+    {q:"The more you practice, the ___ you become.", o:["good","better","best","well"], a:"better"},
+    {q:"Despite ___ tired, she continued working.", o:["be","being","been","was"], a:"being"},
+    {q:"He asked me where I ___ .", o:["live","lived","living","to live"], a:"lived"},
+  ],
+  FCE:[
+    {q:"I ___ London three times but never to Paris.", o:["visited","have visited","was visiting","had visited"], a:"have visited"},
+    {q:"The building ___ in 1920 and still stands today.", o:["built","was built","has built","builds"], a:"was built"},
+    {q:"If I ___ you, I would accept the offer.", o:["am","was","were","be"], a:"were"},
+    {q:"Hardly had we left the house ___ it started raining.", o:["when","than","then","while"], a:"when"},
+    {q:"She regrets not ___ harder for the exam.", o:["study","studying","studied","to study"], a:"studying"},
+    {q:"The teacher demanded that everyone ___ on time.", o:["is","was","be","being"], a:"be"},
+    {q:"She is used to ___ up early for work.", o:["get","gets","getting","got"], a:"getting"},
+    {q:"No sooner had we arrived ___ the meeting began.", o:["when","than","so","that"], a:"than"},
+    {q:"I'd rather you ___ anyone about this.", o:["don't tell","didn't tell","not tell","won't tell"], a:"didn't tell"},
+    {q:"Not until I got home ___ I had forgotten my keys.", o:["realized","I realized","did I realize","had I realize"], a:"did I realize"},
+    {q:"Such ___ the interest that they held another session.", o:["was","were","is","are"], a:"was"},
+    {q:"Were it not ___ her support, I'd have given up.", o:["for","of","to","with"], a:"for"},
+    {q:"She apologised for ___ us waiting.", o:["keep","kept","keeping","to keep"], a:"keeping"},
+    {q:"It's high time we ___ some action.", o:["take","took","taken","taking"], a:"took"},
+    {q:"The company is believed ___ a new product soon.", o:["launch","launching","to launch","launched"], a:"to launch"},
+    {q:"I prefer ___ to taking the bus.", o:["walk","walking","walked","to walk"], a:"walking"},
+    {q:"There's no point ___ about the results now.", o:["worry","worrying","worried","to worry"], a:"in worrying"},
+    {q:"He ___ be at home; the lights are off.", a:"can't/mustn't", o:["mustn't","can't","shouldn't","needn't"]},
+    {q:"The charity ___ to help homeless people.", a:"was set up/set up", o:["set up","was set up","has set up","is setting"]},
+    {q:"I wish I ___ to her advice.", o:["listen","listened","had listened","would listen"], a:"had listened"},
+  ],
+  CAE:[
+    {q:"Under no circumstances ___ enter this area.", o:["you should","should you","you must","must you"], a:"should you"},
+    {q:"Were it not for his help, I ___ the project.", o:["fail","failed","would fail","would have failed"], a:"would have failed"},
+    {q:"So devastating ___ the flood that the town was abandoned.", o:["was","were","is","are"], a:"was"},
+    {q:"Seldom ___ such a moving performance.", o:["I have seen","have I seen","I saw","did I see"], a:"have I seen"},
+    {q:"The findings are ___ to the earlier study.", o:["relate","related","relating","relation"], a:"related"},
+    {q:"Only after the war ___ he return home.", o:["did","was","had","could"], a:"did"},
+    {q:"The painting is ___ to be by Rembrandt.", o:["believe","believing","believed","belief"], a:"believed"},
+    {q:"She has a tendency ___ things.", o:["exaggerate","exaggerating","to exaggerate","exaggerated"], a:"to exaggerate"},
+    {q:"Not once did she ___ for her behaviour.", o:["apologize","apologized","apologizing","apology"], a:"apologize"},
+    {q:"The CEO is reported ___ a pay cut.", o:["take","taking","to take","to have taken"], a:"to have taken"},
+    {q:"Barely had the meeting started ___ the argument began.", o:["when","than","then","while"], a:"when"},
+    {q:"The hypothesis is ___ by recent evidence.", o:["support","supported","supporting","supports"], a:"supported"},
+    {q:"On no account ___ the doors be left open.", o:["must","should","can","will"], a:"must/should"},
+    {q:"Her latest novel is set ___ 19th century Paris.", o:["at","in","on","by"], a:"in"},
+    {q:"The more you study, the ___ you understand.", o:["more","less","better","faster"], a:"better"},
+  ],
+  CPE:[
+    {q:"Not only ___ finish the project, he won an award.", o:["he did","did he","he has","does he"], a:"did he"},
+    {q:"Hardly had the speech begun ___ the protests erupted.", o:["when","than","then","after"], a:"when"},
+    {q:"Never before ___ such a display of generosity.", o:["I have witnessed","have I witnessed","I witnessed","did I witness"], a:"have I witnessed"},
+    {q:"She is a woman ___ integrity is beyond question.", o:["who","whom","whose","which"], a:"whose"},
+    {q:"No sooner had the news broken ___ the market crashed.", o:["when","than","then","so"], a:"than"},
+    {q:"Seldom in history ___ such a scientific breakthrough.", o:["has there been","there has been","there was","was there"], a:"has there been"},
+    {q:"The defendant was ___ of all charges.", o:["acquitted","absolved","accused","convicted"], a:"acquitted"},
+    {q:"Were I ___ the truth, I would have spoken.", o:["know","known","to know","to have known"], a:"to have known"},
+    {q:"The essay ___ three main sections.", o:["comprises of","comprises","is comprised","composing"], a:"comprises"},
+    {q:"In no way ___ held responsible for the accident.", o:["we are","are we","we can","can we"], a:"are we"},
+  ],
+  IELTS:[
+    {q:"The graph ___ the changes in population growth.", o:["illustrates","illustrating","illustrated","illustrate"], a:"illustrates"},
+    {q:"Globalisation has led to increased cultural ___.", o:["exchange","exchanging","exchanges","exchanged"], a:"exchange"},
+    {q:"The ___ of fossil fuels must be reduced.", o:["consume","consumption","consuming","consumer"], a:"consumption"},
+    {q:"There are several advantages ___ renewable energy.", o:["of","to","in","for"], a:"to/of"},
+    {q:"The number of students has increased ___.", o:["steady","steadily","steadying","steadied"], a:"steadily"},
+    {q:"It is widely ___ that climate change is a threat.", o:["argue","argued","arguing","argues"], a:"argued"},
+    {q:"The majority of respondents ___ with the proposal.", o:["agree","agreed","agreeing","agrees"], a:"agreed"},
+    {q:"Access ___ quality education is a fundamental right.", o:["for","to","of","in"], a:"to"},
+    {q:"Young people should be encouraged ___ higher education.", o:["pursue","pursuing","to pursue","pursued"], a:"to pursue"},
+    {q:"In ___, the benefits outweigh the drawbacks.", o:["conclude","conclusion","conclusive","conclusively"], a:"conclusion"},
+  ],
+  TOEFL:[
+    {q:"The professor ___ the importance of critical thinking.", o:["emphasis","emphasized","emphatic","emphasizing"], a:"emphasized"},
+    {q:"Based on the evidence, we can ___ that the theory is correct.", o:["conclude","conclusion","conclusive","concluding"], a:"conclude"},
+    {q:"The study was ___ over a period of five years.", o:["conduct","conducted","conducting","conducts"], a:"conducted"},
+    {q:"There is a strong ___ between sleep and performance.", o:["relate","relationship","relative","relating"], a:"relationship"},
+    {q:"The author ___ the limitations of her own study.", o:["acknowledge","acknowledges","acknowledging","acknowledged"], a:"acknowledges"},
+    {q:"The experiment was designed to ___ the hypothesis.", o:["test","tested","testing","tests"], a:"test"},
+    {q:"The article argues that the policy is ___.", o:["effect","effective","effectively","ineffective"], a:"ineffective"},
+    {q:"The data was ___ from over 500 participants.", o:["collect","collected","collecting","collection"], a:"collected"},
+    {q:"Students are expected to ___ the assignment on time.", o:["complete","completed","completing","completion"], a:"complete"},
+    {q:"The lecture points out several ___ in the argument.", o:["flaw","flaws","flawed","flawing"], a:"flaws"},
+  ],
+};
   for(const[st,sl]of Object.entries(sec)){if(!sl.length)continue;const ex=sl.filter(l=>/[.!?]$/.test(l.trim())&&l.trim().length>5);const d=sl.filter(l=>!ex.includes(l)).join('<br>');html+=`<div class="ex-card" style="border-left-color:var(--primary)"><span style="font-size:12px;font-weight:600;background:var(--primary-light);color:var(--primary);padding:2px 8px;border-radius:6px">${tl[i%4].t}</span><div style="font-weight:700;margin-top:6px">${st}</div><div style="font-size:13px;color:var(--text-light);margin-top:4px">${d||st}</div>${ex.length?`<div style="margin-top:8px;padding:8px 12px;background:rgba(255,255,255,0.7);border-radius:6px;font-size:13px">${ex.join('<br>')}</div>`:''}</div>`;i++}
   if(!html)html=`<div class="ex-card" style="border-left-color:var(--primary)"><div style="font-weight:700">${t}</div>${ls.join('<br>')}</div>`;
   document.getElementById('k-output').innerHTML='<div style="display:grid;gap:10px">'+html+'</div>'
