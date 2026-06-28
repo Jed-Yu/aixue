@@ -183,17 +183,22 @@ select{appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='ht
   <div id="panel-aiassist" class="panel">
     <div class="card" style="text-align:center">
       <div style="font-size:56px;margin-bottom:12px">🤖</div>
-      <div class="modal-title">爱学助手</div>
-      <p style="font-size:13px;color:var(--text-light);margin-bottom:4px">长按输入框录音 · 松手发送</p>
-      <p style="font-size:12px;color:var(--text-light);margin-bottom:12px">格式：<code>09:00到10:30 周一班 多上一节课</code></p>
-      <div style="display:flex;gap:8px;max-width:500px;margin:0 auto">
-        <input type="text" id="ai-inp" placeholder="长按说话，或手动输入指令" style="flex:1"
-          onmousedown="startVoice()" onmouseup="stopVoice()" onmouseleave="stopVoice()"
-          ontouchstart="startVoice()" ontouchend="stopVoice()">
-        <button class="btn btn-primary btn-sm" onclick="processAI()">发送</button>
+      <div class="modal-title">爱学助手 · 加课</div>
+      <p style="font-size:13px;color:var(--text-light);margin-bottom:16px">选择班级和加课时间</p>
+      <div style="max-width:500px;margin:0 auto;text-align:left">
+        <div class="form-group"><label>🏫 选择班级</label><select id="ai-class"></select></div>
+        <div class="form-group"><label>📅 选择日期</label><select id="ai-day"><option>周一</option><option>周二</option><option selected>周三</option><option>周四</option><option>周五</option><option>周六</option><option>周日</option></select></div>
+        <div class="form-group"><label>🕐 开始时间</label><input type="time" id="ai-start" value="09:00"></div>
+        <div class="form-group"><label>🕐 结束时间</label><input type="time" id="ai-end" value="10:30"></div>
+        <div class="form-group"><label>🎙️ 语音输入</label>
+          <input type="text" id="ai-inp" placeholder="长按说话快速填写" style="flex:1"
+            onmousedown="startVoice()" onmouseup="stopVoice()" onmouseleave="stopVoice()"
+            ontouchstart="startVoice()" ontouchend="stopVoice()">
+          <div id="voice-status" style="font-size:12px;margin-top:4px;color:var(--text-light)">🎤 按住这里说话，自动识别填写</div>
+        </div>
+        <button class="btn btn-primary" onclick="aiAddClass()" style="width:100%;margin-top:8px">➕ 确认加课</button>
       </div>
-      <div id="voice-status" style="font-size:13px;margin-top:6px;min-height:20px;color:var(--text-light)">🎤 按住输入框说话</div>
-      <div id="ai-out" style="margin-top:12px;text-align:left"></div>
+      <div id="ai-out" style="margin-top:16px;text-align:left;max-width:500px;margin-left:auto;margin-right:auto"></div>
     </div>
   </div>
 
@@ -250,6 +255,7 @@ function switchTab(n){
   document.getElementById('panel-'+n).classList.add('active');
   if(n==='classes')renderClasses();
   if(n==='homework'){updateHWSel();loadHW()}
+  if(n==='aiassist')updateAIClasses()
 }
 
 // ===== EXERCISE =====
@@ -373,35 +379,44 @@ function pubHW(cid){
 }
 
 // ===== AI ASSISTANT =====
-let voiceRec=null;let voiceTimer=null;let isPressing=false;
+function updateAIClasses(){
+  const s=document.getElementById('ai-class');s.innerHTML='';
+  if(!classes.length){s.innerHTML='<option>暂无班级，先去创建</option>';return}
+  for(const c of classes)s.innerHTML+=`<option value="${c.id}">${c.name} (${c.level})</option>`
+}
+let voiceRec=null;let isPressing=false;
 function startVoice(){
   if(isPressing)return;isPressing=true;
-  const s=document.getElementById('voice-status');
-  if(!('webkitSpeechRecognition'in window)&&!('SpeechRecognition'in window)){s.textContent='⛔ 请用Chrome浏览器';isPressing=false;return}
+  const st=document.getElementById('voice-status');
+  if(!('webkitSpeechRecognition'in window)&&!('SpeechRecognition'in window)){st.textContent='⛔ 请用Chrome浏览器';isPressing=false;return}
   const SR=window.SpeechRecognition||window.webkitSpeechRecognition;
   voiceRec=new SR();voiceRec.lang='zh-CN';voiceRec.continuous=false;voiceRec.interimResults=false;
-  voiceRec.onstart=()=>{s.textContent='🔴 录音中... 松手发送';s.style.color='var(--danger)'};
-  voiceRec.onresult=(e)=>{document.getElementById('ai-inp').value=e.results[0][0].transcript;s.textContent='✅ 已识别';s.style.color='var(--success)';setTimeout(()=>processAI(),300)};
-  voiceRec.onerror=(e)=>{if(e.error!=='no-speech'&&e.error!=='aborted')s.textContent='⛔ 识别失败，请手动输入';else s.textContent='🎤 按住输入框说话';s.style.color='var(--text-light)';isPressing=false};
-  voiceRec.onend=()=>{s.textContent='🎤 按住输入框说话';s.style.color='var(--text-light)';isPressing=false};
-  try{voiceRec.start()}catch(e){s.textContent='⛔ 启动失败';s.style.color='var(--text-light)';isPressing=false}
+  voiceRec.onstart=()=>{st.textContent='🔴 录音中...';st.style.color='var(--danger)'};
+  voiceRec.onresult=(e)=>{
+    const txt=e.results[0][0].transcript;document.getElementById('ai-inp').value=txt;
+    st.textContent='✅ 已识别：'+txt;st.style.color='var(--success)';
+    // Auto-fill day from voice
+    const days=['周一','周二','周三','周四','周五','周六','周日'];
+    for(const d of days){if(txt.includes(d)){document.getElementById('ai-day').value=d;break}}
+    // Auto-fill time if found
+    const tm=txt.match(/(\d{1,2}):?(\d{2})?/);
+    if(tm){const h=tm[1].padStart(2,'0'),m=tm[2]||'00';document.getElementById('ai-start').value=h+':'+m}
+    const tm2=txt.match(/到(\d{1,2}):?(\d{2})?/);
+    if(tm2){const h=tm2[1].padStart(2,'0'),m=tm2[2]||'00';document.getElementById('ai-end').value=h+':'+m}
+  };
+  voiceRec.onerror=(e)=>{if(e.error!=='no-speech'&&e.error!=='aborted')st.textContent='⛔ 识别失败';else st.textContent='🎤 按住说话';st.style.color='var(--text-light)';isPressing=false};
+  voiceRec.onend=()=>{st.textContent='🎤 按住说话自动填写';st.style.color='var(--text-light)';isPressing=false};
+  try{voiceRec.start()}catch(e){st.textContent='⛔ 启动失败';st.style.color='var(--text-light)';isPressing=false}
 }
-function stopVoice(){
-  if(voiceRec){try{voiceRec.stop()}catch(e){}}
-  isPressing=false
-}
-function processAI(){
-  const inp=document.getElementById('ai-inp').value.trim();const out=document.getElementById('ai-out');
-  if(!inp){showToast('输入指令');return}
-  const m=inp.match(/^(\d{1,2}:\d{2})到(\d{1,2}:\d{2})\s*(.+?班)\s*多上一节/);
-  if(!m){out.innerHTML=`<div style="padding:12px;background:#FFF0F0;border-radius:8px;font-size:13px;color:var(--danger)">❌ 格式不对，请按：09:00到10:30 周一班 多上一节课</div>`;return}
-  const cls=classes.find(c=>c.name===m[3].trim());
-  if(!cls){out.innerHTML=`<div style="padding:12px;background:#FFF0F0;border-radius:8px;font-size:13px;color:var(--danger)">❌ 未找到"${m[3]}"</div>`;return}
-  const d=['周日','周一','周二','周三','周四','周五','周六'];const nd=d[(new Date().getDay()+1)%7];
-  if(!cls.schedule)cls.schedule=[];cls.schedule.push({day:nd,start:m[1],end:m[2]});saveClasses();
-  out.innerHTML=`<div style="padding:12px;background:#E8F8ED;border-radius:8px;font-size:13px;color:#1E8E3E">✅ 已安排：${nd} ${m[1]}-${m[2]} ${cls.name} 加课一节</div>`;
-  document.getElementById('ai-inp').value='';renderClasses();
-  document.getElementById('voice-status').textContent='🎤 按住输入框说话'
+function stopVoice(){if(voiceRec){try{voiceRec.stop()}catch(e){}}isPressing=false}
+function aiAddClass(){
+  const sel=document.getElementById('ai-class');const cls=classes.find(c=>c.id==sel.value);
+  if(!cls){showToast('请先创建班级');return}
+  const day=document.getElementById('ai-day').value,start=document.getElementById('ai-start').value,end=document.getElementById('ai-end').value;
+  if(!cls.schedule)cls.schedule=[];
+  cls.schedule.push({day,start,end});saveClasses();
+  document.getElementById('ai-out').innerHTML=`<div style="padding:12px;background:#E8F8ED;border-radius:8px;font-size:13px;color:#1E8E3E">✅ 已安排：${day} ${start}-${end} ${cls.name} 加课一节</div>`;
+  renderClasses()
 }
 </script>
 </body>
