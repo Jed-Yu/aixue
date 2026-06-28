@@ -171,6 +171,23 @@
   .ex-card { background: var(--bg); border-radius: 12px; padding: 18px; margin-bottom: 12px; border-left: 4px solid var(--accent); }
   .ex-card .ex-num { display: inline-flex; align-items: center; justify-content: center; width: 28px; height: 28px; background: var(--accent); color: #fff; border-radius: 50%; font-size: 13px; font-weight: 700; margin-right: 8px; }
   .ex-card .ex-question { font-size: 15px; line-height: 1.7; margin-top: 8px; }
+  .fill-input {
+    display: inline-block; width: 120px; padding: 6px 10px;
+    border: 2px solid var(--border); border-radius: 8px;
+    font-size: 14px; font-family: inherit;
+    transition: all .2s; outline: none;
+    background: #fff;
+  }
+  .fill-input:focus { border-color: var(--primary); }
+  .fill-input.correct { border-color: #34C759; background: #E8F8ED; }
+  .fill-input.wrong { border-color: #FF3B30; background: #FFF0F0; }
+  .check-btn {
+    padding: 6px 16px; border: none; border-radius: 8px;
+    font-size: 13px; font-weight: 600; cursor: pointer;
+    background: var(--success); color: #fff;
+    transition: all .2s;
+  }
+  .check-btn:hover { opacity: 0.9; }
   .ex-card .ex-question .blank { display: inline-block; min-width: 80px; border-bottom: 2px dashed var(--primary); padding: 0 4px; color: var(--primary); font-weight: 600; }
   .ex-card .ex-answer { margin-top: 10px; padding: 10px 14px; background: rgba(52,199,89,0.1); border-radius: 8px; font-size: 14px; color: #1E8E3E; display: none; }
   .ex-card .ex-answer.show { display: block; }
@@ -451,6 +468,7 @@ Have you ever eaten Japanese food?
 
 <script>
 // ========== Session ==========
+let currentUser = null;
 const SESSION_KEY = 'aixue_session_email';
 
 function getSession() { return localStorage.getItem(SESSION_KEY); }
@@ -616,6 +634,7 @@ function enterApp(user) {
 }
 
 function showMainApp(user) {
+  currentUser = user;
   document.getElementById('role-modal').style.display = 'none';
   document.getElementById('app-main').classList.add('show');
   document.getElementById('user-name').textContent = user.name || '用户';
@@ -655,6 +674,7 @@ function skipRole() {
 }
 
 function handleLogout() {
+  currentUser = null;
   clearSession();
   document.getElementById('app-main').classList.remove('show');
   document.getElementById('role-modal').style.display = 'none';
@@ -777,6 +797,8 @@ function showExerciseResult(html) {
 }
 
 function showExerciseFallback(type, count) {
+  const isTeacher = currentUser && currentUser.role === 'teacher';
+  const isStudent = currentUser && currentUser.role === 'student';
   const pp = [
     { q: 'I __________ (visit) London three times.', a: 'have visited' },
     { q: 'She __________ (already/finish) her homework.', a: 'has already finished' },
@@ -802,7 +824,13 @@ function showExerciseFallback(type, count) {
   let html = '';
   for (let i = 0; i < count; i++) {
     const p = pool[i % pool.length];
-    html += `<div class="ex-card fade-up"><div><span class="ex-num">${i+1}</span> <strong>${label}</strong></div><div class="ex-question">${p.q.replace(/_{2,}/g,'<span class="blank">______</span>')}</div><button class="show-answer-btn" onclick="toggleAnswer(this)">👀 查看答案</button><div class="ex-answer">${p.a}</div></div>`;
+    if (isTeacher) {
+      html += `<div class="ex-card fade-up"><div><span class="ex-num">${i+1}</span> <strong>${label}</strong></div><div class="ex-question">${p.q.replace(/_{2,}/g,'<span class="blank">______</span>')}</div><button class="show-answer-btn" onclick="toggleAnswer(this)">👀 查看答案</button><div class="ex-answer">${p.a}</div></div>`;
+    } else {
+      // Student mode: fillable input + check
+      const escA = p.a.replace(/'/g, "\\'");
+      html += `<div class="ex-card fade-up"><div><span class="ex-num">${i+1}</span> <strong>${label}</strong></div><div class="ex-question">${p.q.replace(/_{2,}/g,'<input class="fill-input" id="ans-' + i + '" type="text" placeholder="填答案..." autocomplete="off">')}</div><div style="margin-top:8px;display:flex;gap:8px;flex-wrap:wrap"><button class="check-btn" onclick="checkAnswer(' + i + ', \'' + escA + '\')">✅ 检查</button><button class="show-answer-btn" onclick="document.getElementById(\'ex-ans-' + i + '\').classList.toggle('show')">👀 看答案</button></div><div class="ex-answer" id="ex-ans-' + i + '">${p.a}</div></div>`;
+    }
   }
   showExerciseResult(html);
 }
@@ -812,6 +840,26 @@ function toggleAnswer(btn) {
   if (a && a.classList.contains('ex-answer')) {
     a.classList.toggle('show');
     btn.textContent = a.classList.contains('show') ? '🙈 隐藏答案' : '👀 查看答案';
+  }
+}
+
+function checkAnswer(idx, correct) {
+  const input = document.getElementById('ans-' + idx);
+  const result = document.getElementById('ex-ans-' + idx);
+  if (!input) return;
+  const userAns = input.value.trim().toLowerCase();
+  if (!userAns) { input.style.borderColor = '#FF3B30'; input.focus(); return; }
+  // Check if answer matches (allow multiple correct answers separated by /)
+  const acceptable = correct.toLowerCase().split('/').map(s => s.trim());
+  const matched = acceptable.some(a => userAns === a || userAns.includes(a) || a.includes(userAns));
+  if (matched) {
+    input.style.borderColor = '#34C759';
+    input.className = 'fill-input correct';
+    result.classList.add('show');
+  } else {
+    input.style.borderColor = '#FF3B30';
+    input.className = 'fill-input wrong';
+    result.classList.add('show');
   }
 }
 </script>
